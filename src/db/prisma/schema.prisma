@@ -72,7 +72,7 @@ enum Genre {
 model UserPhotoCard {
   id          String              @id @default(uuid())
   userId      String
-  photoCardId String              @unique
+  photoCardId String              
   quantity    Int
   status      UserPhotocardStatus
 
@@ -86,9 +86,9 @@ model UserPhotoCard {
 }
 
 enum UserPhotocardStatus {
-  owned
-  selling
-  waitingExchange
+  OWNED
+  SELLING
+  WAITING_EXCHANGE
 }
 
 model CardArticle {
@@ -118,26 +118,25 @@ model Order {
 }
 
 enum OrderStatus {
-  pending
-  accepted
-  completed
-  canceld
+  PENDING  
+  ACCEPTED
+  COMPLETED
+  CANCELD
 }
-
 model Exchange {
   id        String         @id @default(uuid())
   giverCard String
   takerCard String
   status    ExchangeStatus
   createdAt DateTime       @default(now())
-  giver     UserPhotoCard  @relation("ExchangeGiver", fields: [giverCard], references: [photoCardId])
-  taker     UserPhotoCard  @relation("ExchangeTaker", fields: [takerCard], references: [photoCardId])
+  giver     UserPhotoCard  @relation("ExchangeGiver", fields: [giverCard], references: [id])
+  taker     UserPhotoCard  @relation("ExchangeTaker", fields: [takerCard], references: [id])
 }
 
 enum ExchangeStatus {
-  pending
-  accepted
-  rejected
-  completed
-  canceld
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELD
 }

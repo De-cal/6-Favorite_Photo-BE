@@ -79,10 +79,10 @@ model UserPhotoCard {
   user      User      @relation(fields: [userId], references: [id])
   photocard PhotoCard @relation(fields: [photoCardId], references: [id])
 
-  DetailPage DetailPage[]
-  Order      Order[]
-  giver      Exchange[]
-  taker      Exchange[]
+  CardArticle CardArticle[]
+  Order       Order[]
+  giver       Exchange[]    @relation("ExchangeGiver")
+  taker       Exchange[]    @relation("ExchangeTaker")
 }
 
 enum UserPhotocardStatus {
@@ -91,7 +91,7 @@ enum UserPhotocardStatus {
   waitingExchange
 }
 
-model DetailPage {
+model CardArticle {
   id              String   @id @default(uuid())
   title           String
   exchangeText    String
@@ -121,6 +121,7 @@ enum OrderStatus {
   pending
   accepted
   completed
+  canceld
 }
 
 model Exchange {
@@ -129,8 +130,8 @@ model Exchange {
   takerCard String
   status    ExchangeStatus
   createdAt DateTime       @default(now())
-  giver     UserPhotoCard  @relation(fields: [giverCard], references: [photoCardId])
-  taker     UserPhotoCard  @relation(fields: [takerCard], references: [photoCardId])
+  giver     UserPhotoCard  @relation("ExchangeGiver", fields: [giverCard], references: [photoCardId])
+  taker     UserPhotoCard  @relation("ExchangeTaker", fields: [takerCard], references: [photoCardId])
 }
 
 enum ExchangeStatus {
@@ -138,4 +139,5 @@ enum ExchangeStatus {
   accepted
   rejected
   completed
+  canceld
 }

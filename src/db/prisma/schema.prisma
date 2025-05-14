@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password      String
+  nickname      String
+  pointAmount   Int
+  createdAt     DateTime        @default(now())
+  notifications Notification[]
+  UserPhotoCard UserPhotoCard[]
+  Order         Order[]
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  isRead    Boolean
+  message   String
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum NotificationType {
+  EXCHANGE_PROPOSED
+  EXCHANGE_ACCEPTED
+  EXCHANGE_REJECTED
+  ORDER_COMPLETED_BUYER
+  ORDER_COMPLETED_SELLER
+  OUT_OF_STOCK
+}
+
+model PhotoCard {
+  id            String          @id @default(uuid())
+  title         String
+  description   String
+  rank          RankList
+  genre         Genre
+  price         Int
+  imgUrl        String
+  createdAt     DateTime        @default(now())
+  UserPhotoCard UserPhotoCard[]
+  Order         Order[]
+}
+
+enum RankList {
+  COMMON
+  RARE
+  SUPERRARE
+  LEGENDARY
+}
+
+enum Genre {
+  LANDSCAPE
+  PORTRAIT
+  ANIMAL
+  OBJECT
+  FOOD
+  ETC
+}
+
+model UserPhotoCard {
+  id          String              @id @default(uuid())
+  userId      String
+  photoCardId String              @unique
+  quantity    Int
+  status      UserPhotocardStatus
+
+  user      User      @relation(fields: [userId], references: [id])
+  photocard PhotoCard @relation(fields: [photoCardId], references: [id])
+
+  DetailPage DetailPage[]
+  Order      Order[]
+  giver      Exchange[]
+  taker      Exchange[]
+}
+
+enum UserPhotocardStatus {
+  owned
+  selling
+  waitingExchange
+}
+
+model DetailPage {
+  id              String   @id @default(uuid())
+  title           String
+  exchangeText    String
+  userPhotoCardId String
+  createdAt       DateTime @default(now())
+
+  userPhotoCard UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  quantity        Int
+  price           Int
+  totalPrice      Int
+  status          OrderStatus
+  userPhotoCardId String
+  userId          String
+  photoCardId     String
+  createdAt       DateTime    @default(now())
+
+  buyer     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
+  seller    User          @relation(fields: [userId], references: [id])
+  photocard PhotoCard     @relation(fields: [photoCardId], references: [id])
+}
+
+enum OrderStatus {
+  pending
+  accepted
+  completed
+}
+
+model Exchange {
+  id        String         @id @default(uuid())
+  giverCard String
+  takerCard String
+  status    ExchangeStatus
+  createdAt DateTime       @default(now())
+  giver     UserPhotoCard  @relation(fields: [giverCard], references: [photoCardId])
+  taker     UserPhotoCard  @relation(fields: [takerCard], references: [photoCardId])
+}
+
+enum ExchangeStatus {
+  pending
+  accepted
+  rejected
+  completed
+}

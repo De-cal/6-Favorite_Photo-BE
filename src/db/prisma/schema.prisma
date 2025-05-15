@@ -9,15 +9,16 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  password      String
-  nickname      String
-  pointAmount   Int
-  createdAt     DateTime        @default(now())
-  notifications Notification[]
-  UserPhotoCard UserPhotoCard[]
-  Order         Order[]
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  nickname    String
+  pointAmount Int
+  createdAt   DateTime @default(now())
+
+  notification  Notification[]
+  userPhotoCard UserPhotoCard[]
+  order         Order[]
 }
 
 model Notification {
@@ -32,69 +33,75 @@ model Notification {
 }
 
 enum NotificationType {
-  EXCHANGE_PROPOSED
-  EXCHANGE_ACCEPTED
-  EXCHANGE_REJECTED
-  ORDER_COMPLETED_BUYER
-  ORDER_COMPLETED_SELLER
-  OUT_OF_STOCK
+  EXCHANGE_PROPOSED // 교환 요청
+  EXCHANGE_ACCEPTED // 교환 수락
+  EXCHANGE_REJECTED // 교환 거절
+  ORDER_COMPLETED_BUYER // 구매 완료
+  ORDER_COMPLETED_SELLER // 판매 완료
+  SOLDOUT // 품절
 }
 
 model PhotoCard {
-  id            String          @id @default(uuid())
-  title         String
-  description   String
-  rank          RankList
-  genre         Genre
-  price         Int
-  imgUrl        String
-  createdAt     DateTime        @default(now())
-  UserPhotoCard UserPhotoCard[]
-  Order         Order[]
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  rank        RankList
+  genre       Genre
+  price       Int
+  imgUrl      String
+  createdAt   DateTime @default(now())
+
+  userPhotoCard UserPhotoCard[]
+  order         Order[]
 }
 
 enum RankList {
-  COMMON
-  RARE
-  SUPERRARE
-  LEGENDARY
+  COMMON // 일반
+  RARE // 레어
+  SUPERRARE // 슈퍼레어
+  LEGENDARY // 레전더리
 }
 
 enum Genre {
-  LANDSCAPE
-  PORTRAIT
-  ANIMAL
-  OBJECT
-  FOOD
-  ETC
+  LANDSCAPE // 풍경
+  PORTRAIT // 인물
+  ANIMAL // 동물
+  OBJECT // 사물
+  FOOD // 음식
+  ETC // 기타
 }
 
 model UserPhotoCard {
   id          String              @id @default(uuid())
   userId      String
-  photoCardId String              
+  photoCardId String
   quantity    Int
   status      UserPhotocardStatus
 
   user      User      @relation(fields: [userId], references: [id])
   photocard PhotoCard @relation(fields: [photoCardId], references: [id])
 
-  CardArticle CardArticle[]
-  Order       Order[]
+  cardArticle CardArticle[]
+  order       Order[]
   giver       Exchange[]    @relation("ExchangeGiver")
   taker       Exchange[]    @relation("ExchangeTaker")
 }
 
 enum UserPhotocardStatus {
-  OWNED
-  SELLING
-  WAITING_EXCHANGE
+  OWNED // 보유중
+  SELLING // 판매중
+  EXCHANGE_REQUESTED // 교환 요청
+  SOLDOUT // 품절
 }
 
 model CardArticle {
   id              String   @id @default(uuid())
   title           String
+  sellingQuantity Int
+  price           Int
   exchangeText    String
+  rank            RankList
+  genre           Genre
   userPhotoCardId String
   createdAt       DateTime @default(now())
 
@@ -118,25 +125,27 @@ model Order {
 }
 
 enum OrderStatus {
-  PENDING  
-  ACCEPTED
-  COMPLETED
-  CANCELD
+  PENDING // 구매 or 판매중
+  ACCEPTED // 구매 or 판매 확정
+  COMPLETED // 구매 or 판매 완료
+  CANCELED // 구매 or 판매 취소
 }
+
 model Exchange {
-  id        String         @id @default(uuid())
-  giverCard String
-  takerCard String
-  status    ExchangeStatus
-  createdAt DateTime       @default(now())
-  giver     UserPhotoCard  @relation("ExchangeGiver", fields: [giverCard], references: [id])
-  taker     UserPhotoCard  @relation("ExchangeTaker", fields: [takerCard], references: [id])
+  id          String         @id @default(uuid())
+  giverCardId String
+  takerCardId String
+  status      ExchangeStatus
+  createdAt   DateTime       @default(now())
+
+  giverCard UserPhotoCard @relation("ExchangeGiver", fields: [giverCardId], references: [id])
+  takerCard UserPhotoCard @relation("ExchangeTaker", fields: [takerCardId], references: [id])
 }
 
 enum ExchangeStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-  COMPLETED
-  CANCELD
+  PENDING // 교환 중
+  ACCEPTED // 교환 확정
+  REJECTED // 교환 거절
+  COMPLETED // 교환 완료
+  CANCELED // 교환 취소
 }

@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.7.0
- * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+ * Prisma Client JS version: 6.8.1
+ * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
  */
 Prisma.prismaVersion = {
-  client: "6.7.0",
-  engine: "3cff47a7f5d65c3ea74883f1d736e41d68ce91ed"
+  client: "6.8.1",
+  engine: "2060c79ba17c6bb9f5823312b6f6b7f4a845738e"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -132,7 +132,6 @@ exports.Prisma.UserScalarFieldEnum = {
 exports.Prisma.NotificationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  type: 'type',
   isRead: 'isRead',
   message: 'message',
   createdAt: 'createdAt'
@@ -146,6 +145,7 @@ exports.Prisma.PhotoCardScalarFieldEnum = {
   genre: 'genre',
   price: 'price',
   imgUrl: 'imgUrl',
+  creatorId: 'creatorId',
   createdAt: 'createdAt'
 };
 
@@ -154,17 +154,19 @@ exports.Prisma.UserPhotoCardScalarFieldEnum = {
   userId: 'userId',
   photoCardId: 'photoCardId',
   quantity: 'quantity',
+  price: 'price',
   status: 'status'
 };
 
 exports.Prisma.CardArticleScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  sellingQuantity: 'sellingQuantity',
   price: 'price',
+  totalQuantity: 'totalQuantity',
+  remainingQuantity: 'remainingQuantity',
   exchangeText: 'exchangeText',
-  rank: 'rank',
-  genre: 'genre',
+  exchangeRank: 'exchangeRank',
+  exchangeGenre: 'exchangeGenre',
   userPhotoCardId: 'userPhotoCardId',
   createdAt: 'createdAt'
 };
@@ -174,7 +176,6 @@ exports.Prisma.OrderScalarFieldEnum = {
   quantity: 'quantity',
   price: 'price',
   totalPrice: 'totalPrice',
-  status: 'status',
   userPhotoCardId: 'userPhotoCardId',
   userId: 'userId',
   photoCardId: 'photoCardId',
@@ -185,6 +186,7 @@ exports.Prisma.ExchangeScalarFieldEnum = {
   id: 'id',
   giverCardId: 'giverCardId',
   takerCardId: 'takerCardId',
+  description: 'description',
   status: 'status',
   createdAt: 'createdAt'
 };
@@ -198,15 +200,6 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-exports.NotificationType = exports.$Enums.NotificationType = {
-  EXCHANGE_PROPOSED: 'EXCHANGE_PROPOSED',
-  EXCHANGE_ACCEPTED: 'EXCHANGE_ACCEPTED',
-  EXCHANGE_REJECTED: 'EXCHANGE_REJECTED',
-  ORDER_COMPLETED_BUYER: 'ORDER_COMPLETED_BUYER',
-  ORDER_COMPLETED_SELLER: 'ORDER_COMPLETED_SELLER',
-  SOLDOUT: 'SOLDOUT'
-};
-
 exports.RankList = exports.$Enums.RankList = {
   COMMON: 'COMMON',
   RARE: 'RARE',
@@ -230,18 +223,10 @@ exports.UserPhotocardStatus = exports.$Enums.UserPhotocardStatus = {
   SOLDOUT: 'SOLDOUT'
 };
 
-exports.OrderStatus = exports.$Enums.OrderStatus = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  COMPLETED: 'COMPLETED',
-  CANCELED: 'CANCELED'
-};
-
 exports.ExchangeStatus = exports.$Enums.ExchangeStatus = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
   REJECTED: 'REJECTED',
-  COMPLETED: 'COMPLETED',
   CANCELED: 'CANCELED'
 };
 

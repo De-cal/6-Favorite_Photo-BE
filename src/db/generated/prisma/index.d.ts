@@ -53,19 +53,7 @@ export type Exchange = $Result.DefaultSelection<Prisma.$ExchangePayload>
  * Enums
  */
 export namespace $Enums {
-  export const NotificationType: {
-  EXCHANGE_PROPOSED: 'EXCHANGE_PROPOSED',
-  EXCHANGE_ACCEPTED: 'EXCHANGE_ACCEPTED',
-  EXCHANGE_REJECTED: 'EXCHANGE_REJECTED',
-  ORDER_COMPLETED_BUYER: 'ORDER_COMPLETED_BUYER',
-  ORDER_COMPLETED_SELLER: 'ORDER_COMPLETED_SELLER',
-  SOLDOUT: 'SOLDOUT'
-};
-
-export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
-
-
-export const RankList: {
+  export const RankList: {
   COMMON: 'COMMON',
   RARE: 'RARE',
   SUPERRARE: 'SUPERRARE',
@@ -97,31 +85,16 @@ export const UserPhotocardStatus: {
 export type UserPhotocardStatus = (typeof UserPhotocardStatus)[keyof typeof UserPhotocardStatus]
 
 
-export const OrderStatus: {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  COMPLETED: 'COMPLETED',
-  CANCELED: 'CANCELED'
-};
-
-export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
-
-
 export const ExchangeStatus: {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
   REJECTED: 'REJECTED',
-  COMPLETED: 'COMPLETED',
   CANCELED: 'CANCELED'
 };
 
 export type ExchangeStatus = (typeof ExchangeStatus)[keyof typeof ExchangeStatus]
 
 }
-
-export type NotificationType = $Enums.NotificationType
-
-export const NotificationType: typeof $Enums.NotificationType
 
 export type RankList = $Enums.RankList
 
@@ -134,10 +107,6 @@ export const Genre: typeof $Enums.Genre
 export type UserPhotocardStatus = $Enums.UserPhotocardStatus
 
 export const UserPhotocardStatus: typeof $Enums.UserPhotocardStatus
-
-export type OrderStatus = $Enums.OrderStatus
-
-export const OrderStatus: typeof $Enums.OrderStatus
 
 export type ExchangeStatus = $Enums.ExchangeStatus
 
@@ -395,8 +364,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.8.1
+   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
    */
   export type PrismaVersion = {
     client: string
@@ -1512,12 +1481,14 @@ export namespace Prisma {
     notification: number
     userPhotoCard: number
     order: number
+    photoCard: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     notification?: boolean | UserCountOutputTypeCountNotificationArgs
     userPhotoCard?: boolean | UserCountOutputTypeCountUserPhotoCardArgs
     order?: boolean | UserCountOutputTypeCountOrderArgs
+    photoCard?: boolean | UserCountOutputTypeCountPhotoCardArgs
   }
 
   // Custom InputTypes
@@ -1550,6 +1521,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountOrderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountPhotoCardArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PhotoCardWhereInput
   }
 
 
@@ -1864,6 +1842,7 @@ export namespace Prisma {
     notification?: boolean | User$notificationArgs<ExtArgs>
     userPhotoCard?: boolean | User$userPhotoCardArgs<ExtArgs>
     order?: boolean | User$orderArgs<ExtArgs>
+    photoCard?: boolean | User$photoCardArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1899,6 +1878,7 @@ export namespace Prisma {
     notification?: boolean | User$notificationArgs<ExtArgs>
     userPhotoCard?: boolean | User$userPhotoCardArgs<ExtArgs>
     order?: boolean | User$orderArgs<ExtArgs>
+    photoCard?: boolean | User$photoCardArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1910,6 +1890,7 @@ export namespace Prisma {
       notification: Prisma.$NotificationPayload<ExtArgs>[]
       userPhotoCard: Prisma.$UserPhotoCardPayload<ExtArgs>[]
       order: Prisma.$OrderPayload<ExtArgs>[]
+      photoCard: Prisma.$PhotoCardPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2315,6 +2296,7 @@ export namespace Prisma {
     notification<T extends User$notificationArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userPhotoCard<T extends User$userPhotoCardArgs<ExtArgs> = {}>(args?: Subset<T, User$userPhotoCardArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPhotoCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     order<T extends User$orderArgs<ExtArgs> = {}>(args?: Subset<T, User$orderArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    photoCard<T extends User$photoCardArgs<ExtArgs> = {}>(args?: Subset<T, User$photoCardArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PhotoCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2810,6 +2792,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.photoCard
+   */
+  export type User$photoCardArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PhotoCard
+     */
+    select?: PhotoCardSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PhotoCard
+     */
+    omit?: PhotoCardOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoCardInclude<ExtArgs> | null
+    where?: PhotoCardWhereInput
+    orderBy?: PhotoCardOrderByWithRelationInput | PhotoCardOrderByWithRelationInput[]
+    cursor?: PhotoCardWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PhotoCardScalarFieldEnum | PhotoCardScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2841,7 +2847,6 @@ export namespace Prisma {
   export type NotificationMinAggregateOutputType = {
     id: string | null
     userId: string | null
-    type: $Enums.NotificationType | null
     isRead: boolean | null
     message: string | null
     createdAt: Date | null
@@ -2850,7 +2855,6 @@ export namespace Prisma {
   export type NotificationMaxAggregateOutputType = {
     id: string | null
     userId: string | null
-    type: $Enums.NotificationType | null
     isRead: boolean | null
     message: string | null
     createdAt: Date | null
@@ -2859,7 +2863,6 @@ export namespace Prisma {
   export type NotificationCountAggregateOutputType = {
     id: number
     userId: number
-    type: number
     isRead: number
     message: number
     createdAt: number
@@ -2870,7 +2873,6 @@ export namespace Prisma {
   export type NotificationMinAggregateInputType = {
     id?: true
     userId?: true
-    type?: true
     isRead?: true
     message?: true
     createdAt?: true
@@ -2879,7 +2881,6 @@ export namespace Prisma {
   export type NotificationMaxAggregateInputType = {
     id?: true
     userId?: true
-    type?: true
     isRead?: true
     message?: true
     createdAt?: true
@@ -2888,7 +2889,6 @@ export namespace Prisma {
   export type NotificationCountAggregateInputType = {
     id?: true
     userId?: true
-    type?: true
     isRead?: true
     message?: true
     createdAt?: true
@@ -2970,7 +2970,6 @@ export namespace Prisma {
   export type NotificationGroupByOutputType = {
     id: string
     userId: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt: Date
@@ -2996,7 +2995,6 @@ export namespace Prisma {
   export type NotificationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    type?: boolean
     isRead?: boolean
     message?: boolean
     createdAt?: boolean
@@ -3006,7 +3004,6 @@ export namespace Prisma {
   export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    type?: boolean
     isRead?: boolean
     message?: boolean
     createdAt?: boolean
@@ -3016,7 +3013,6 @@ export namespace Prisma {
   export type NotificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
-    type?: boolean
     isRead?: boolean
     message?: boolean
     createdAt?: boolean
@@ -3026,13 +3022,12 @@ export namespace Prisma {
   export type NotificationSelectScalar = {
     id?: boolean
     userId?: boolean
-    type?: boolean
     isRead?: boolean
     message?: boolean
     createdAt?: boolean
   }
 
-  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "isRead" | "message" | "createdAt", ExtArgs["result"]["notification"]>
+  export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "isRead" | "message" | "createdAt", ExtArgs["result"]["notification"]>
   export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3051,7 +3046,6 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
-      type: $Enums.NotificationType
       isRead: boolean
       message: string
       createdAt: Date
@@ -3481,7 +3475,6 @@ export namespace Prisma {
   interface NotificationFieldRefs {
     readonly id: FieldRef<"Notification", 'String'>
     readonly userId: FieldRef<"Notification", 'String'>
-    readonly type: FieldRef<"Notification", 'NotificationType'>
     readonly isRead: FieldRef<"Notification", 'Boolean'>
     readonly message: FieldRef<"Notification", 'String'>
     readonly createdAt: FieldRef<"Notification", 'DateTime'>
@@ -3927,6 +3920,7 @@ export namespace Prisma {
     genre: $Enums.Genre | null
     price: number | null
     imgUrl: string | null
+    creatorId: string | null
     createdAt: Date | null
   }
 
@@ -3938,6 +3932,7 @@ export namespace Prisma {
     genre: $Enums.Genre | null
     price: number | null
     imgUrl: string | null
+    creatorId: string | null
     createdAt: Date | null
   }
 
@@ -3949,6 +3944,7 @@ export namespace Prisma {
     genre: number
     price: number
     imgUrl: number
+    creatorId: number
     createdAt: number
     _all: number
   }
@@ -3970,6 +3966,7 @@ export namespace Prisma {
     genre?: true
     price?: true
     imgUrl?: true
+    creatorId?: true
     createdAt?: true
   }
 
@@ -3981,6 +3978,7 @@ export namespace Prisma {
     genre?: true
     price?: true
     imgUrl?: true
+    creatorId?: true
     createdAt?: true
   }
 
@@ -3992,6 +3990,7 @@ export namespace Prisma {
     genre?: true
     price?: true
     imgUrl?: true
+    creatorId?: true
     createdAt?: true
     _all?: true
   }
@@ -4090,6 +4089,7 @@ export namespace Prisma {
     genre: $Enums.Genre
     price: number
     imgUrl: string
+    creatorId: string
     createdAt: Date
     _count: PhotoCardCountAggregateOutputType | null
     _avg: PhotoCardAvgAggregateOutputType | null
@@ -4120,7 +4120,9 @@ export namespace Prisma {
     genre?: boolean
     price?: boolean
     imgUrl?: boolean
+    creatorId?: boolean
     createdAt?: boolean
+    creator?: boolean | UserDefaultArgs<ExtArgs>
     userPhotoCard?: boolean | PhotoCard$userPhotoCardArgs<ExtArgs>
     order?: boolean | PhotoCard$orderArgs<ExtArgs>
     _count?: boolean | PhotoCardCountOutputTypeDefaultArgs<ExtArgs>
@@ -4134,7 +4136,9 @@ export namespace Prisma {
     genre?: boolean
     price?: boolean
     imgUrl?: boolean
+    creatorId?: boolean
     createdAt?: boolean
+    creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["photoCard"]>
 
   export type PhotoCardSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -4145,7 +4149,9 @@ export namespace Prisma {
     genre?: boolean
     price?: boolean
     imgUrl?: boolean
+    creatorId?: boolean
     createdAt?: boolean
+    creator?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["photoCard"]>
 
   export type PhotoCardSelectScalar = {
@@ -4156,21 +4162,28 @@ export namespace Prisma {
     genre?: boolean
     price?: boolean
     imgUrl?: boolean
+    creatorId?: boolean
     createdAt?: boolean
   }
 
-  export type PhotoCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "rank" | "genre" | "price" | "imgUrl" | "createdAt", ExtArgs["result"]["photoCard"]>
+  export type PhotoCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "rank" | "genre" | "price" | "imgUrl" | "creatorId" | "createdAt", ExtArgs["result"]["photoCard"]>
   export type PhotoCardInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | UserDefaultArgs<ExtArgs>
     userPhotoCard?: boolean | PhotoCard$userPhotoCardArgs<ExtArgs>
     order?: boolean | PhotoCard$orderArgs<ExtArgs>
     _count?: boolean | PhotoCardCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type PhotoCardIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type PhotoCardIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type PhotoCardIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type PhotoCardIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $PhotoCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "PhotoCard"
     objects: {
+      creator: Prisma.$UserPayload<ExtArgs>
       userPhotoCard: Prisma.$UserPhotoCardPayload<ExtArgs>[]
       order: Prisma.$OrderPayload<ExtArgs>[]
     }
@@ -4182,6 +4195,7 @@ export namespace Prisma {
       genre: $Enums.Genre
       price: number
       imgUrl: string
+      creatorId: string
       createdAt: Date
     }, ExtArgs["result"]["photoCard"]>
     composites: {}
@@ -4577,6 +4591,7 @@ export namespace Prisma {
    */
   export interface Prisma__PhotoCardClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    creator<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     userPhotoCard<T extends PhotoCard$userPhotoCardArgs<ExtArgs> = {}>(args?: Subset<T, PhotoCard$userPhotoCardArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPhotoCardPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     order<T extends PhotoCard$orderArgs<ExtArgs> = {}>(args?: Subset<T, PhotoCard$orderArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -4615,6 +4630,7 @@ export namespace Prisma {
     readonly genre: FieldRef<"PhotoCard", 'Genre'>
     readonly price: FieldRef<"PhotoCard", 'Int'>
     readonly imgUrl: FieldRef<"PhotoCard", 'String'>
+    readonly creatorId: FieldRef<"PhotoCard", 'String'>
     readonly createdAt: FieldRef<"PhotoCard", 'DateTime'>
   }
     
@@ -4865,6 +4881,10 @@ export namespace Prisma {
      */
     data: PhotoCardCreateManyInput | PhotoCardCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoCardIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4935,6 +4955,10 @@ export namespace Prisma {
      * Limit how many PhotoCards to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PhotoCardIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -5084,10 +5108,12 @@ export namespace Prisma {
 
   export type UserPhotoCardAvgAggregateOutputType = {
     quantity: number | null
+    price: number | null
   }
 
   export type UserPhotoCardSumAggregateOutputType = {
     quantity: number | null
+    price: number | null
   }
 
   export type UserPhotoCardMinAggregateOutputType = {
@@ -5095,6 +5121,7 @@ export namespace Prisma {
     userId: string | null
     photoCardId: string | null
     quantity: number | null
+    price: number | null
     status: $Enums.UserPhotocardStatus | null
   }
 
@@ -5103,6 +5130,7 @@ export namespace Prisma {
     userId: string | null
     photoCardId: string | null
     quantity: number | null
+    price: number | null
     status: $Enums.UserPhotocardStatus | null
   }
 
@@ -5111,6 +5139,7 @@ export namespace Prisma {
     userId: number
     photoCardId: number
     quantity: number
+    price: number
     status: number
     _all: number
   }
@@ -5118,10 +5147,12 @@ export namespace Prisma {
 
   export type UserPhotoCardAvgAggregateInputType = {
     quantity?: true
+    price?: true
   }
 
   export type UserPhotoCardSumAggregateInputType = {
     quantity?: true
+    price?: true
   }
 
   export type UserPhotoCardMinAggregateInputType = {
@@ -5129,6 +5160,7 @@ export namespace Prisma {
     userId?: true
     photoCardId?: true
     quantity?: true
+    price?: true
     status?: true
   }
 
@@ -5137,6 +5169,7 @@ export namespace Prisma {
     userId?: true
     photoCardId?: true
     quantity?: true
+    price?: true
     status?: true
   }
 
@@ -5145,6 +5178,7 @@ export namespace Prisma {
     userId?: true
     photoCardId?: true
     quantity?: true
+    price?: true
     status?: true
     _all?: true
   }
@@ -5240,6 +5274,7 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     _count: UserPhotoCardCountAggregateOutputType | null
     _avg: UserPhotoCardAvgAggregateOutputType | null
@@ -5267,9 +5302,10 @@ export namespace Prisma {
     userId?: boolean
     photoCardId?: boolean
     quantity?: boolean
+    price?: boolean
     status?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    photocard?: boolean | PhotoCardDefaultArgs<ExtArgs>
+    photoCard?: boolean | PhotoCardDefaultArgs<ExtArgs>
     cardArticle?: boolean | UserPhotoCard$cardArticleArgs<ExtArgs>
     order?: boolean | UserPhotoCard$orderArgs<ExtArgs>
     giver?: boolean | UserPhotoCard$giverArgs<ExtArgs>
@@ -5282,9 +5318,10 @@ export namespace Prisma {
     userId?: boolean
     photoCardId?: boolean
     quantity?: boolean
+    price?: boolean
     status?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    photocard?: boolean | PhotoCardDefaultArgs<ExtArgs>
+    photoCard?: boolean | PhotoCardDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userPhotoCard"]>
 
   export type UserPhotoCardSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5292,9 +5329,10 @@ export namespace Prisma {
     userId?: boolean
     photoCardId?: boolean
     quantity?: boolean
+    price?: boolean
     status?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
-    photocard?: boolean | PhotoCardDefaultArgs<ExtArgs>
+    photoCard?: boolean | PhotoCardDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userPhotoCard"]>
 
   export type UserPhotoCardSelectScalar = {
@@ -5302,13 +5340,14 @@ export namespace Prisma {
     userId?: boolean
     photoCardId?: boolean
     quantity?: boolean
+    price?: boolean
     status?: boolean
   }
 
-  export type UserPhotoCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "photoCardId" | "quantity" | "status", ExtArgs["result"]["userPhotoCard"]>
+  export type UserPhotoCardOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "photoCardId" | "quantity" | "price" | "status", ExtArgs["result"]["userPhotoCard"]>
   export type UserPhotoCardInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    photocard?: boolean | PhotoCardDefaultArgs<ExtArgs>
+    photoCard?: boolean | PhotoCardDefaultArgs<ExtArgs>
     cardArticle?: boolean | UserPhotoCard$cardArticleArgs<ExtArgs>
     order?: boolean | UserPhotoCard$orderArgs<ExtArgs>
     giver?: boolean | UserPhotoCard$giverArgs<ExtArgs>
@@ -5317,18 +5356,18 @@ export namespace Prisma {
   }
   export type UserPhotoCardIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    photocard?: boolean | PhotoCardDefaultArgs<ExtArgs>
+    photoCard?: boolean | PhotoCardDefaultArgs<ExtArgs>
   }
   export type UserPhotoCardIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
-    photocard?: boolean | PhotoCardDefaultArgs<ExtArgs>
+    photoCard?: boolean | PhotoCardDefaultArgs<ExtArgs>
   }
 
   export type $UserPhotoCardPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "UserPhotoCard"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
-      photocard: Prisma.$PhotoCardPayload<ExtArgs>
+      photoCard: Prisma.$PhotoCardPayload<ExtArgs>
       cardArticle: Prisma.$CardArticlePayload<ExtArgs>[]
       order: Prisma.$OrderPayload<ExtArgs>[]
       giver: Prisma.$ExchangePayload<ExtArgs>[]
@@ -5339,6 +5378,7 @@ export namespace Prisma {
       userId: string
       photoCardId: string
       quantity: number
+      price: number
       status: $Enums.UserPhotocardStatus
     }, ExtArgs["result"]["userPhotoCard"]>
     composites: {}
@@ -5735,7 +5775,7 @@ export namespace Prisma {
   export interface Prisma__UserPhotoCardClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    photocard<T extends PhotoCardDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PhotoCardDefaultArgs<ExtArgs>>): Prisma__PhotoCardClient<$Result.GetResult<Prisma.$PhotoCardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    photoCard<T extends PhotoCardDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PhotoCardDefaultArgs<ExtArgs>>): Prisma__PhotoCardClient<$Result.GetResult<Prisma.$PhotoCardPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     cardArticle<T extends UserPhotoCard$cardArticleArgs<ExtArgs> = {}>(args?: Subset<T, UserPhotoCard$cardArticleArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CardArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     order<T extends UserPhotoCard$orderArgs<ExtArgs> = {}>(args?: Subset<T, UserPhotoCard$orderArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     giver<T extends UserPhotoCard$giverArgs<ExtArgs> = {}>(args?: Subset<T, UserPhotoCard$giverArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExchangePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5773,6 +5813,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"UserPhotoCard", 'String'>
     readonly photoCardId: FieldRef<"UserPhotoCard", 'String'>
     readonly quantity: FieldRef<"UserPhotoCard", 'Int'>
+    readonly price: FieldRef<"UserPhotoCard", 'Int'>
     readonly status: FieldRef<"UserPhotoCard", 'UserPhotocardStatus'>
   }
     
@@ -6297,23 +6338,26 @@ export namespace Prisma {
   }
 
   export type CardArticleAvgAggregateOutputType = {
-    sellingQuantity: number | null
     price: number | null
+    totalQuantity: number | null
+    remainingQuantity: number | null
   }
 
   export type CardArticleSumAggregateOutputType = {
-    sellingQuantity: number | null
     price: number | null
+    totalQuantity: number | null
+    remainingQuantity: number | null
   }
 
   export type CardArticleMinAggregateOutputType = {
     id: string | null
     title: string | null
-    sellingQuantity: number | null
     price: number | null
+    totalQuantity: number | null
+    remainingQuantity: number | null
     exchangeText: string | null
-    rank: $Enums.RankList | null
-    genre: $Enums.Genre | null
+    exchangeRank: $Enums.RankList | null
+    exchangeGenre: $Enums.Genre | null
     userPhotoCardId: string | null
     createdAt: Date | null
   }
@@ -6321,11 +6365,12 @@ export namespace Prisma {
   export type CardArticleMaxAggregateOutputType = {
     id: string | null
     title: string | null
-    sellingQuantity: number | null
     price: number | null
+    totalQuantity: number | null
+    remainingQuantity: number | null
     exchangeText: string | null
-    rank: $Enums.RankList | null
-    genre: $Enums.Genre | null
+    exchangeRank: $Enums.RankList | null
+    exchangeGenre: $Enums.Genre | null
     userPhotoCardId: string | null
     createdAt: Date | null
   }
@@ -6333,11 +6378,12 @@ export namespace Prisma {
   export type CardArticleCountAggregateOutputType = {
     id: number
     title: number
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: number
-    rank: number
-    genre: number
+    exchangeRank: number
+    exchangeGenre: number
     userPhotoCardId: number
     createdAt: number
     _all: number
@@ -6345,23 +6391,26 @@ export namespace Prisma {
 
 
   export type CardArticleAvgAggregateInputType = {
-    sellingQuantity?: true
     price?: true
+    totalQuantity?: true
+    remainingQuantity?: true
   }
 
   export type CardArticleSumAggregateInputType = {
-    sellingQuantity?: true
     price?: true
+    totalQuantity?: true
+    remainingQuantity?: true
   }
 
   export type CardArticleMinAggregateInputType = {
     id?: true
     title?: true
-    sellingQuantity?: true
     price?: true
+    totalQuantity?: true
+    remainingQuantity?: true
     exchangeText?: true
-    rank?: true
-    genre?: true
+    exchangeRank?: true
+    exchangeGenre?: true
     userPhotoCardId?: true
     createdAt?: true
   }
@@ -6369,11 +6418,12 @@ export namespace Prisma {
   export type CardArticleMaxAggregateInputType = {
     id?: true
     title?: true
-    sellingQuantity?: true
     price?: true
+    totalQuantity?: true
+    remainingQuantity?: true
     exchangeText?: true
-    rank?: true
-    genre?: true
+    exchangeRank?: true
+    exchangeGenre?: true
     userPhotoCardId?: true
     createdAt?: true
   }
@@ -6381,11 +6431,12 @@ export namespace Prisma {
   export type CardArticleCountAggregateInputType = {
     id?: true
     title?: true
-    sellingQuantity?: true
     price?: true
+    totalQuantity?: true
+    remainingQuantity?: true
     exchangeText?: true
-    rank?: true
-    genre?: true
+    exchangeRank?: true
+    exchangeGenre?: true
     userPhotoCardId?: true
     createdAt?: true
     _all?: true
@@ -6480,11 +6531,12 @@ export namespace Prisma {
   export type CardArticleGroupByOutputType = {
     id: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     userPhotoCardId: string
     createdAt: Date
     _count: CardArticleCountAggregateOutputType | null
@@ -6511,11 +6563,12 @@ export namespace Prisma {
   export type CardArticleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    sellingQuantity?: boolean
     price?: boolean
+    totalQuantity?: boolean
+    remainingQuantity?: boolean
     exchangeText?: boolean
-    rank?: boolean
-    genre?: boolean
+    exchangeRank?: boolean
+    exchangeGenre?: boolean
     userPhotoCardId?: boolean
     createdAt?: boolean
     userPhotoCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -6524,11 +6577,12 @@ export namespace Prisma {
   export type CardArticleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    sellingQuantity?: boolean
     price?: boolean
+    totalQuantity?: boolean
+    remainingQuantity?: boolean
     exchangeText?: boolean
-    rank?: boolean
-    genre?: boolean
+    exchangeRank?: boolean
+    exchangeGenre?: boolean
     userPhotoCardId?: boolean
     createdAt?: boolean
     userPhotoCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -6537,11 +6591,12 @@ export namespace Prisma {
   export type CardArticleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
-    sellingQuantity?: boolean
     price?: boolean
+    totalQuantity?: boolean
+    remainingQuantity?: boolean
     exchangeText?: boolean
-    rank?: boolean
-    genre?: boolean
+    exchangeRank?: boolean
+    exchangeGenre?: boolean
     userPhotoCardId?: boolean
     createdAt?: boolean
     userPhotoCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -6550,16 +6605,17 @@ export namespace Prisma {
   export type CardArticleSelectScalar = {
     id?: boolean
     title?: boolean
-    sellingQuantity?: boolean
     price?: boolean
+    totalQuantity?: boolean
+    remainingQuantity?: boolean
     exchangeText?: boolean
-    rank?: boolean
-    genre?: boolean
+    exchangeRank?: boolean
+    exchangeGenre?: boolean
     userPhotoCardId?: boolean
     createdAt?: boolean
   }
 
-  export type CardArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "sellingQuantity" | "price" | "exchangeText" | "rank" | "genre" | "userPhotoCardId" | "createdAt", ExtArgs["result"]["cardArticle"]>
+  export type CardArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "price" | "totalQuantity" | "remainingQuantity" | "exchangeText" | "exchangeRank" | "exchangeGenre" | "userPhotoCardId" | "createdAt", ExtArgs["result"]["cardArticle"]>
   export type CardArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userPhotoCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
   }
@@ -6578,11 +6634,12 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
-      sellingQuantity: number
       price: number
+      totalQuantity: number
+      remainingQuantity: number
       exchangeText: string
-      rank: $Enums.RankList
-      genre: $Enums.Genre
+      exchangeRank: $Enums.RankList
+      exchangeGenre: $Enums.Genre
       userPhotoCardId: string
       createdAt: Date
     }, ExtArgs["result"]["cardArticle"]>
@@ -7011,11 +7068,12 @@ export namespace Prisma {
   interface CardArticleFieldRefs {
     readonly id: FieldRef<"CardArticle", 'String'>
     readonly title: FieldRef<"CardArticle", 'String'>
-    readonly sellingQuantity: FieldRef<"CardArticle", 'Int'>
     readonly price: FieldRef<"CardArticle", 'Int'>
+    readonly totalQuantity: FieldRef<"CardArticle", 'Int'>
+    readonly remainingQuantity: FieldRef<"CardArticle", 'Int'>
     readonly exchangeText: FieldRef<"CardArticle", 'String'>
-    readonly rank: FieldRef<"CardArticle", 'RankList'>
-    readonly genre: FieldRef<"CardArticle", 'Genre'>
+    readonly exchangeRank: FieldRef<"CardArticle", 'RankList'>
+    readonly exchangeGenre: FieldRef<"CardArticle", 'Genre'>
     readonly userPhotoCardId: FieldRef<"CardArticle", 'String'>
     readonly createdAt: FieldRef<"CardArticle", 'DateTime'>
   }
@@ -7461,7 +7519,6 @@ export namespace Prisma {
     quantity: number | null
     price: number | null
     totalPrice: number | null
-    status: $Enums.OrderStatus | null
     userPhotoCardId: string | null
     userId: string | null
     photoCardId: string | null
@@ -7473,7 +7530,6 @@ export namespace Prisma {
     quantity: number | null
     price: number | null
     totalPrice: number | null
-    status: $Enums.OrderStatus | null
     userPhotoCardId: string | null
     userId: string | null
     photoCardId: string | null
@@ -7485,7 +7541,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: number
     userPhotoCardId: number
     userId: number
     photoCardId: number
@@ -7511,7 +7566,6 @@ export namespace Prisma {
     quantity?: true
     price?: true
     totalPrice?: true
-    status?: true
     userPhotoCardId?: true
     userId?: true
     photoCardId?: true
@@ -7523,7 +7577,6 @@ export namespace Prisma {
     quantity?: true
     price?: true
     totalPrice?: true
-    status?: true
     userPhotoCardId?: true
     userId?: true
     photoCardId?: true
@@ -7535,7 +7588,6 @@ export namespace Prisma {
     quantity?: true
     price?: true
     totalPrice?: true
-    status?: true
     userPhotoCardId?: true
     userId?: true
     photoCardId?: true
@@ -7634,7 +7686,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     userId: string
     photoCardId: string
@@ -7665,7 +7716,6 @@ export namespace Prisma {
     quantity?: boolean
     price?: boolean
     totalPrice?: boolean
-    status?: boolean
     userPhotoCardId?: boolean
     userId?: boolean
     photoCardId?: boolean
@@ -7680,7 +7730,6 @@ export namespace Prisma {
     quantity?: boolean
     price?: boolean
     totalPrice?: boolean
-    status?: boolean
     userPhotoCardId?: boolean
     userId?: boolean
     photoCardId?: boolean
@@ -7695,7 +7744,6 @@ export namespace Prisma {
     quantity?: boolean
     price?: boolean
     totalPrice?: boolean
-    status?: boolean
     userPhotoCardId?: boolean
     userId?: boolean
     photoCardId?: boolean
@@ -7710,14 +7758,13 @@ export namespace Prisma {
     quantity?: boolean
     price?: boolean
     totalPrice?: boolean
-    status?: boolean
     userPhotoCardId?: boolean
     userId?: boolean
     photoCardId?: boolean
     createdAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "totalPrice" | "status" | "userPhotoCardId" | "userId" | "photoCardId" | "createdAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quantity" | "price" | "totalPrice" | "userPhotoCardId" | "userId" | "photoCardId" | "createdAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     buyer?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
     seller?: boolean | UserDefaultArgs<ExtArgs>
@@ -7746,7 +7793,6 @@ export namespace Prisma {
       quantity: number
       price: number
       totalPrice: number
-      status: $Enums.OrderStatus
       userPhotoCardId: string
       userId: string
       photoCardId: string
@@ -8181,7 +8227,6 @@ export namespace Prisma {
     readonly quantity: FieldRef<"Order", 'Int'>
     readonly price: FieldRef<"Order", 'Int'>
     readonly totalPrice: FieldRef<"Order", 'Int'>
-    readonly status: FieldRef<"Order", 'OrderStatus'>
     readonly userPhotoCardId: FieldRef<"Order", 'String'>
     readonly userId: FieldRef<"Order", 'String'>
     readonly photoCardId: FieldRef<"Order", 'String'>
@@ -8614,6 +8659,7 @@ export namespace Prisma {
     id: string | null
     giverCardId: string | null
     takerCardId: string | null
+    description: string | null
     status: $Enums.ExchangeStatus | null
     createdAt: Date | null
   }
@@ -8622,6 +8668,7 @@ export namespace Prisma {
     id: string | null
     giverCardId: string | null
     takerCardId: string | null
+    description: string | null
     status: $Enums.ExchangeStatus | null
     createdAt: Date | null
   }
@@ -8630,6 +8677,7 @@ export namespace Prisma {
     id: number
     giverCardId: number
     takerCardId: number
+    description: number
     status: number
     createdAt: number
     _all: number
@@ -8640,6 +8688,7 @@ export namespace Prisma {
     id?: true
     giverCardId?: true
     takerCardId?: true
+    description?: true
     status?: true
     createdAt?: true
   }
@@ -8648,6 +8697,7 @@ export namespace Prisma {
     id?: true
     giverCardId?: true
     takerCardId?: true
+    description?: true
     status?: true
     createdAt?: true
   }
@@ -8656,6 +8706,7 @@ export namespace Prisma {
     id?: true
     giverCardId?: true
     takerCardId?: true
+    description?: true
     status?: true
     createdAt?: true
     _all?: true
@@ -8737,6 +8788,7 @@ export namespace Prisma {
     id: string
     giverCardId: string
     takerCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt: Date
     _count: ExchangeCountAggregateOutputType | null
@@ -8762,6 +8814,7 @@ export namespace Prisma {
     id?: boolean
     giverCardId?: boolean
     takerCardId?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
     giverCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -8772,6 +8825,7 @@ export namespace Prisma {
     id?: boolean
     giverCardId?: boolean
     takerCardId?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
     giverCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -8782,6 +8836,7 @@ export namespace Prisma {
     id?: boolean
     giverCardId?: boolean
     takerCardId?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
     giverCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -8792,11 +8847,12 @@ export namespace Prisma {
     id?: boolean
     giverCardId?: boolean
     takerCardId?: boolean
+    description?: boolean
     status?: boolean
     createdAt?: boolean
   }
 
-  export type ExchangeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "giverCardId" | "takerCardId" | "status" | "createdAt", ExtArgs["result"]["exchange"]>
+  export type ExchangeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "giverCardId" | "takerCardId" | "description" | "status" | "createdAt", ExtArgs["result"]["exchange"]>
   export type ExchangeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     giverCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
     takerCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
@@ -8820,6 +8876,7 @@ export namespace Prisma {
       id: string
       giverCardId: string
       takerCardId: string
+      description: string
       status: $Enums.ExchangeStatus
       createdAt: Date
     }, ExtArgs["result"]["exchange"]>
@@ -9250,6 +9307,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Exchange", 'String'>
     readonly giverCardId: FieldRef<"Exchange", 'String'>
     readonly takerCardId: FieldRef<"Exchange", 'String'>
+    readonly description: FieldRef<"Exchange", 'String'>
     readonly status: FieldRef<"Exchange", 'ExchangeStatus'>
     readonly createdAt: FieldRef<"Exchange", 'DateTime'>
   }
@@ -9695,7 +9753,6 @@ export namespace Prisma {
   export const NotificationScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
-    type: 'type',
     isRead: 'isRead',
     message: 'message',
     createdAt: 'createdAt'
@@ -9712,6 +9769,7 @@ export namespace Prisma {
     genre: 'genre',
     price: 'price',
     imgUrl: 'imgUrl',
+    creatorId: 'creatorId',
     createdAt: 'createdAt'
   };
 
@@ -9723,6 +9781,7 @@ export namespace Prisma {
     userId: 'userId',
     photoCardId: 'photoCardId',
     quantity: 'quantity',
+    price: 'price',
     status: 'status'
   };
 
@@ -9732,11 +9791,12 @@ export namespace Prisma {
   export const CardArticleScalarFieldEnum: {
     id: 'id',
     title: 'title',
-    sellingQuantity: 'sellingQuantity',
     price: 'price',
+    totalQuantity: 'totalQuantity',
+    remainingQuantity: 'remainingQuantity',
     exchangeText: 'exchangeText',
-    rank: 'rank',
-    genre: 'genre',
+    exchangeRank: 'exchangeRank',
+    exchangeGenre: 'exchangeGenre',
     userPhotoCardId: 'userPhotoCardId',
     createdAt: 'createdAt'
   };
@@ -9749,7 +9809,6 @@ export namespace Prisma {
     quantity: 'quantity',
     price: 'price',
     totalPrice: 'totalPrice',
-    status: 'status',
     userPhotoCardId: 'userPhotoCardId',
     userId: 'userId',
     photoCardId: 'photoCardId',
@@ -9763,6 +9822,7 @@ export namespace Prisma {
     id: 'id',
     giverCardId: 'giverCardId',
     takerCardId: 'takerCardId',
+    description: 'description',
     status: 'status',
     createdAt: 'createdAt'
   };
@@ -9834,20 +9894,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'NotificationType'
-   */
-  export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
-    
-
-
-  /**
-   * Reference to a field of type 'NotificationType[]'
-   */
-  export type ListEnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -9897,20 +9943,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'OrderStatus'
-   */
-  export type EnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'OrderStatus[]'
-   */
-  export type ListEnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus[]'>
-    
-
-
-  /**
    * Reference to a field of type 'ExchangeStatus'
    */
   export type EnumExchangeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ExchangeStatus'>
@@ -9954,6 +9986,7 @@ export namespace Prisma {
     notification?: NotificationListRelationFilter
     userPhotoCard?: UserPhotoCardListRelationFilter
     order?: OrderListRelationFilter
+    photoCard?: PhotoCardListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -9966,6 +9999,7 @@ export namespace Prisma {
     notification?: NotificationOrderByRelationAggregateInput
     userPhotoCard?: UserPhotoCardOrderByRelationAggregateInput
     order?: OrderOrderByRelationAggregateInput
+    photoCard?: PhotoCardOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -9981,6 +10015,7 @@ export namespace Prisma {
     notification?: NotificationListRelationFilter
     userPhotoCard?: UserPhotoCardListRelationFilter
     order?: OrderListRelationFilter
+    photoCard?: PhotoCardListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -10015,7 +10050,6 @@ export namespace Prisma {
     NOT?: NotificationWhereInput | NotificationWhereInput[]
     id?: StringFilter<"Notification"> | string
     userId?: StringFilter<"Notification"> | string
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
     isRead?: BoolFilter<"Notification"> | boolean
     message?: StringFilter<"Notification"> | string
     createdAt?: DateTimeFilter<"Notification"> | Date | string
@@ -10025,7 +10059,6 @@ export namespace Prisma {
   export type NotificationOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
-    type?: SortOrder
     isRead?: SortOrder
     message?: SortOrder
     createdAt?: SortOrder
@@ -10038,7 +10071,6 @@ export namespace Prisma {
     OR?: NotificationWhereInput[]
     NOT?: NotificationWhereInput | NotificationWhereInput[]
     userId?: StringFilter<"Notification"> | string
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
     isRead?: BoolFilter<"Notification"> | boolean
     message?: StringFilter<"Notification"> | string
     createdAt?: DateTimeFilter<"Notification"> | Date | string
@@ -10048,7 +10080,6 @@ export namespace Prisma {
   export type NotificationOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
-    type?: SortOrder
     isRead?: SortOrder
     message?: SortOrder
     createdAt?: SortOrder
@@ -10063,7 +10094,6 @@ export namespace Prisma {
     NOT?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Notification"> | string
     userId?: StringWithAggregatesFilter<"Notification"> | string
-    type?: EnumNotificationTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationType
     isRead?: BoolWithAggregatesFilter<"Notification"> | boolean
     message?: StringWithAggregatesFilter<"Notification"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
@@ -10080,7 +10110,9 @@ export namespace Prisma {
     genre?: EnumGenreFilter<"PhotoCard"> | $Enums.Genre
     price?: IntFilter<"PhotoCard"> | number
     imgUrl?: StringFilter<"PhotoCard"> | string
+    creatorId?: StringFilter<"PhotoCard"> | string
     createdAt?: DateTimeFilter<"PhotoCard"> | Date | string
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     userPhotoCard?: UserPhotoCardListRelationFilter
     order?: OrderListRelationFilter
   }
@@ -10093,7 +10125,9 @@ export namespace Prisma {
     genre?: SortOrder
     price?: SortOrder
     imgUrl?: SortOrder
+    creatorId?: SortOrder
     createdAt?: SortOrder
+    creator?: UserOrderByWithRelationInput
     userPhotoCard?: UserPhotoCardOrderByRelationAggregateInput
     order?: OrderOrderByRelationAggregateInput
   }
@@ -10109,7 +10143,9 @@ export namespace Prisma {
     genre?: EnumGenreFilter<"PhotoCard"> | $Enums.Genre
     price?: IntFilter<"PhotoCard"> | number
     imgUrl?: StringFilter<"PhotoCard"> | string
+    creatorId?: StringFilter<"PhotoCard"> | string
     createdAt?: DateTimeFilter<"PhotoCard"> | Date | string
+    creator?: XOR<UserScalarRelationFilter, UserWhereInput>
     userPhotoCard?: UserPhotoCardListRelationFilter
     order?: OrderListRelationFilter
   }, "id">
@@ -10122,6 +10158,7 @@ export namespace Prisma {
     genre?: SortOrder
     price?: SortOrder
     imgUrl?: SortOrder
+    creatorId?: SortOrder
     createdAt?: SortOrder
     _count?: PhotoCardCountOrderByAggregateInput
     _avg?: PhotoCardAvgOrderByAggregateInput
@@ -10141,6 +10178,7 @@ export namespace Prisma {
     genre?: EnumGenreWithAggregatesFilter<"PhotoCard"> | $Enums.Genre
     price?: IntWithAggregatesFilter<"PhotoCard"> | number
     imgUrl?: StringWithAggregatesFilter<"PhotoCard"> | string
+    creatorId?: StringWithAggregatesFilter<"PhotoCard"> | string
     createdAt?: DateTimeWithAggregatesFilter<"PhotoCard"> | Date | string
   }
 
@@ -10152,9 +10190,10 @@ export namespace Prisma {
     userId?: StringFilter<"UserPhotoCard"> | string
     photoCardId?: StringFilter<"UserPhotoCard"> | string
     quantity?: IntFilter<"UserPhotoCard"> | number
+    price?: IntFilter<"UserPhotoCard"> | number
     status?: EnumUserPhotocardStatusFilter<"UserPhotoCard"> | $Enums.UserPhotocardStatus
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    photocard?: XOR<PhotoCardScalarRelationFilter, PhotoCardWhereInput>
+    photoCard?: XOR<PhotoCardScalarRelationFilter, PhotoCardWhereInput>
     cardArticle?: CardArticleListRelationFilter
     order?: OrderListRelationFilter
     giver?: ExchangeListRelationFilter
@@ -10166,9 +10205,10 @@ export namespace Prisma {
     userId?: SortOrder
     photoCardId?: SortOrder
     quantity?: SortOrder
+    price?: SortOrder
     status?: SortOrder
     user?: UserOrderByWithRelationInput
-    photocard?: PhotoCardOrderByWithRelationInput
+    photoCard?: PhotoCardOrderByWithRelationInput
     cardArticle?: CardArticleOrderByRelationAggregateInput
     order?: OrderOrderByRelationAggregateInput
     giver?: ExchangeOrderByRelationAggregateInput
@@ -10183,9 +10223,10 @@ export namespace Prisma {
     userId?: StringFilter<"UserPhotoCard"> | string
     photoCardId?: StringFilter<"UserPhotoCard"> | string
     quantity?: IntFilter<"UserPhotoCard"> | number
+    price?: IntFilter<"UserPhotoCard"> | number
     status?: EnumUserPhotocardStatusFilter<"UserPhotoCard"> | $Enums.UserPhotocardStatus
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    photocard?: XOR<PhotoCardScalarRelationFilter, PhotoCardWhereInput>
+    photoCard?: XOR<PhotoCardScalarRelationFilter, PhotoCardWhereInput>
     cardArticle?: CardArticleListRelationFilter
     order?: OrderListRelationFilter
     giver?: ExchangeListRelationFilter
@@ -10197,6 +10238,7 @@ export namespace Prisma {
     userId?: SortOrder
     photoCardId?: SortOrder
     quantity?: SortOrder
+    price?: SortOrder
     status?: SortOrder
     _count?: UserPhotoCardCountOrderByAggregateInput
     _avg?: UserPhotoCardAvgOrderByAggregateInput
@@ -10213,6 +10255,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"UserPhotoCard"> | string
     photoCardId?: StringWithAggregatesFilter<"UserPhotoCard"> | string
     quantity?: IntWithAggregatesFilter<"UserPhotoCard"> | number
+    price?: IntWithAggregatesFilter<"UserPhotoCard"> | number
     status?: EnumUserPhotocardStatusWithAggregatesFilter<"UserPhotoCard"> | $Enums.UserPhotocardStatus
   }
 
@@ -10222,11 +10265,12 @@ export namespace Prisma {
     NOT?: CardArticleWhereInput | CardArticleWhereInput[]
     id?: StringFilter<"CardArticle"> | string
     title?: StringFilter<"CardArticle"> | string
-    sellingQuantity?: IntFilter<"CardArticle"> | number
     price?: IntFilter<"CardArticle"> | number
+    totalQuantity?: IntFilter<"CardArticle"> | number
+    remainingQuantity?: IntFilter<"CardArticle"> | number
     exchangeText?: StringFilter<"CardArticle"> | string
-    rank?: EnumRankListFilter<"CardArticle"> | $Enums.RankList
-    genre?: EnumGenreFilter<"CardArticle"> | $Enums.Genre
+    exchangeRank?: EnumRankListFilter<"CardArticle"> | $Enums.RankList
+    exchangeGenre?: EnumGenreFilter<"CardArticle"> | $Enums.Genre
     userPhotoCardId?: StringFilter<"CardArticle"> | string
     createdAt?: DateTimeFilter<"CardArticle"> | Date | string
     userPhotoCard?: XOR<UserPhotoCardScalarRelationFilter, UserPhotoCardWhereInput>
@@ -10235,11 +10279,12 @@ export namespace Prisma {
   export type CardArticleOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
-    sellingQuantity?: SortOrder
     price?: SortOrder
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
     exchangeText?: SortOrder
-    rank?: SortOrder
-    genre?: SortOrder
+    exchangeRank?: SortOrder
+    exchangeGenre?: SortOrder
     userPhotoCardId?: SortOrder
     createdAt?: SortOrder
     userPhotoCard?: UserPhotoCardOrderByWithRelationInput
@@ -10251,11 +10296,12 @@ export namespace Prisma {
     OR?: CardArticleWhereInput[]
     NOT?: CardArticleWhereInput | CardArticleWhereInput[]
     title?: StringFilter<"CardArticle"> | string
-    sellingQuantity?: IntFilter<"CardArticle"> | number
     price?: IntFilter<"CardArticle"> | number
+    totalQuantity?: IntFilter<"CardArticle"> | number
+    remainingQuantity?: IntFilter<"CardArticle"> | number
     exchangeText?: StringFilter<"CardArticle"> | string
-    rank?: EnumRankListFilter<"CardArticle"> | $Enums.RankList
-    genre?: EnumGenreFilter<"CardArticle"> | $Enums.Genre
+    exchangeRank?: EnumRankListFilter<"CardArticle"> | $Enums.RankList
+    exchangeGenre?: EnumGenreFilter<"CardArticle"> | $Enums.Genre
     userPhotoCardId?: StringFilter<"CardArticle"> | string
     createdAt?: DateTimeFilter<"CardArticle"> | Date | string
     userPhotoCard?: XOR<UserPhotoCardScalarRelationFilter, UserPhotoCardWhereInput>
@@ -10264,11 +10310,12 @@ export namespace Prisma {
   export type CardArticleOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
-    sellingQuantity?: SortOrder
     price?: SortOrder
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
     exchangeText?: SortOrder
-    rank?: SortOrder
-    genre?: SortOrder
+    exchangeRank?: SortOrder
+    exchangeGenre?: SortOrder
     userPhotoCardId?: SortOrder
     createdAt?: SortOrder
     _count?: CardArticleCountOrderByAggregateInput
@@ -10284,11 +10331,12 @@ export namespace Prisma {
     NOT?: CardArticleScalarWhereWithAggregatesInput | CardArticleScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"CardArticle"> | string
     title?: StringWithAggregatesFilter<"CardArticle"> | string
-    sellingQuantity?: IntWithAggregatesFilter<"CardArticle"> | number
     price?: IntWithAggregatesFilter<"CardArticle"> | number
+    totalQuantity?: IntWithAggregatesFilter<"CardArticle"> | number
+    remainingQuantity?: IntWithAggregatesFilter<"CardArticle"> | number
     exchangeText?: StringWithAggregatesFilter<"CardArticle"> | string
-    rank?: EnumRankListWithAggregatesFilter<"CardArticle"> | $Enums.RankList
-    genre?: EnumGenreWithAggregatesFilter<"CardArticle"> | $Enums.Genre
+    exchangeRank?: EnumRankListWithAggregatesFilter<"CardArticle"> | $Enums.RankList
+    exchangeGenre?: EnumGenreWithAggregatesFilter<"CardArticle"> | $Enums.Genre
     userPhotoCardId?: StringWithAggregatesFilter<"CardArticle"> | string
     createdAt?: DateTimeWithAggregatesFilter<"CardArticle"> | Date | string
   }
@@ -10301,7 +10349,6 @@ export namespace Prisma {
     quantity?: IntFilter<"Order"> | number
     price?: IntFilter<"Order"> | number
     totalPrice?: IntFilter<"Order"> | number
-    status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     userPhotoCardId?: StringFilter<"Order"> | string
     userId?: StringFilter<"Order"> | string
     photoCardId?: StringFilter<"Order"> | string
@@ -10316,7 +10363,6 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     totalPrice?: SortOrder
-    status?: SortOrder
     userPhotoCardId?: SortOrder
     userId?: SortOrder
     photoCardId?: SortOrder
@@ -10334,7 +10380,6 @@ export namespace Prisma {
     quantity?: IntFilter<"Order"> | number
     price?: IntFilter<"Order"> | number
     totalPrice?: IntFilter<"Order"> | number
-    status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     userPhotoCardId?: StringFilter<"Order"> | string
     userId?: StringFilter<"Order"> | string
     photoCardId?: StringFilter<"Order"> | string
@@ -10349,7 +10394,6 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     totalPrice?: SortOrder
-    status?: SortOrder
     userPhotoCardId?: SortOrder
     userId?: SortOrder
     photoCardId?: SortOrder
@@ -10369,7 +10413,6 @@ export namespace Prisma {
     quantity?: IntWithAggregatesFilter<"Order"> | number
     price?: IntWithAggregatesFilter<"Order"> | number
     totalPrice?: IntWithAggregatesFilter<"Order"> | number
-    status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
     userPhotoCardId?: StringWithAggregatesFilter<"Order"> | string
     userId?: StringWithAggregatesFilter<"Order"> | string
     photoCardId?: StringWithAggregatesFilter<"Order"> | string
@@ -10383,6 +10426,7 @@ export namespace Prisma {
     id?: StringFilter<"Exchange"> | string
     giverCardId?: StringFilter<"Exchange"> | string
     takerCardId?: StringFilter<"Exchange"> | string
+    description?: StringFilter<"Exchange"> | string
     status?: EnumExchangeStatusFilter<"Exchange"> | $Enums.ExchangeStatus
     createdAt?: DateTimeFilter<"Exchange"> | Date | string
     giverCard?: XOR<UserPhotoCardScalarRelationFilter, UserPhotoCardWhereInput>
@@ -10393,6 +10437,7 @@ export namespace Prisma {
     id?: SortOrder
     giverCardId?: SortOrder
     takerCardId?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     giverCard?: UserPhotoCardOrderByWithRelationInput
@@ -10406,6 +10451,7 @@ export namespace Prisma {
     NOT?: ExchangeWhereInput | ExchangeWhereInput[]
     giverCardId?: StringFilter<"Exchange"> | string
     takerCardId?: StringFilter<"Exchange"> | string
+    description?: StringFilter<"Exchange"> | string
     status?: EnumExchangeStatusFilter<"Exchange"> | $Enums.ExchangeStatus
     createdAt?: DateTimeFilter<"Exchange"> | Date | string
     giverCard?: XOR<UserPhotoCardScalarRelationFilter, UserPhotoCardWhereInput>
@@ -10416,6 +10462,7 @@ export namespace Prisma {
     id?: SortOrder
     giverCardId?: SortOrder
     takerCardId?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
     _count?: ExchangeCountOrderByAggregateInput
@@ -10430,6 +10477,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Exchange"> | string
     giverCardId?: StringWithAggregatesFilter<"Exchange"> | string
     takerCardId?: StringWithAggregatesFilter<"Exchange"> | string
+    description?: StringWithAggregatesFilter<"Exchange"> | string
     status?: EnumExchangeStatusWithAggregatesFilter<"Exchange"> | $Enums.ExchangeStatus
     createdAt?: DateTimeWithAggregatesFilter<"Exchange"> | Date | string
   }
@@ -10444,6 +10492,7 @@ export namespace Prisma {
     notification?: NotificationCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
     order?: OrderCreateNestedManyWithoutSellerInput
+    photoCard?: PhotoCardCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -10456,6 +10505,7 @@ export namespace Prisma {
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
     order?: OrderUncheckedCreateNestedManyWithoutSellerInput
+    photoCard?: PhotoCardUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUpdateInput = {
@@ -10468,6 +10518,7 @@ export namespace Prisma {
     notification?: NotificationUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
     order?: OrderUpdateManyWithoutSellerNestedInput
+    photoCard?: PhotoCardUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -10480,6 +10531,7 @@ export namespace Prisma {
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
     order?: OrderUncheckedUpdateManyWithoutSellerNestedInput
+    photoCard?: PhotoCardUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -10511,7 +10563,6 @@ export namespace Prisma {
 
   export type NotificationCreateInput = {
     id?: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt?: Date | string
@@ -10521,7 +10572,6 @@ export namespace Prisma {
   export type NotificationUncheckedCreateInput = {
     id?: string
     userId: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt?: Date | string
@@ -10529,7 +10579,6 @@ export namespace Prisma {
 
   export type NotificationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10539,7 +10588,6 @@ export namespace Prisma {
   export type NotificationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10548,7 +10596,6 @@ export namespace Prisma {
   export type NotificationCreateManyInput = {
     id?: string
     userId: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt?: Date | string
@@ -10556,7 +10603,6 @@ export namespace Prisma {
 
   export type NotificationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10565,7 +10611,6 @@ export namespace Prisma {
   export type NotificationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10580,7 +10625,8 @@ export namespace Prisma {
     price: number
     imgUrl: string
     createdAt?: Date | string
-    userPhotoCard?: UserPhotoCardCreateNestedManyWithoutPhotocardInput
+    creator: UserCreateNestedOneWithoutPhotoCardInput
+    userPhotoCard?: UserPhotoCardCreateNestedManyWithoutPhotoCardInput
     order?: OrderCreateNestedManyWithoutPhotocardInput
   }
 
@@ -10592,8 +10638,9 @@ export namespace Prisma {
     genre: $Enums.Genre
     price: number
     imgUrl: string
+    creatorId: string
     createdAt?: Date | string
-    userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutPhotocardInput
+    userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutPhotoCardInput
     order?: OrderUncheckedCreateNestedManyWithoutPhotocardInput
   }
 
@@ -10606,7 +10653,8 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPhotoCard?: UserPhotoCardUpdateManyWithoutPhotocardNestedInput
+    creator?: UserUpdateOneRequiredWithoutPhotoCardNestedInput
+    userPhotoCard?: UserPhotoCardUpdateManyWithoutPhotoCardNestedInput
     order?: OrderUpdateManyWithoutPhotocardNestedInput
   }
 
@@ -10618,8 +10666,9 @@ export namespace Prisma {
     genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutPhotocardNestedInput
+    userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutPhotoCardNestedInput
     order?: OrderUncheckedUpdateManyWithoutPhotocardNestedInput
   }
 
@@ -10631,6 +10680,7 @@ export namespace Prisma {
     genre: $Enums.Genre
     price: number
     imgUrl: string
+    creatorId: string
     createdAt?: Date | string
   }
 
@@ -10653,15 +10703,17 @@ export namespace Prisma {
     genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserPhotoCardCreateInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     user: UserCreateNestedOneWithoutUserPhotoCardInput
-    photocard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
+    photoCard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
     cardArticle?: CardArticleCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderCreateNestedManyWithoutBuyerInput
     giver?: ExchangeCreateNestedManyWithoutGiverCardInput
@@ -10673,6 +10725,7 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderUncheckedCreateNestedManyWithoutBuyerInput
@@ -10683,9 +10736,10 @@ export namespace Prisma {
   export type UserPhotoCardUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     user?: UserUpdateOneRequiredWithoutUserPhotoCardNestedInput
-    photocard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
+    photoCard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
     cardArticle?: CardArticleUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUpdateManyWithoutBuyerNestedInput
     giver?: ExchangeUpdateManyWithoutGiverCardNestedInput
@@ -10697,6 +10751,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
@@ -10709,12 +10764,14 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
   }
 
   export type UserPhotoCardUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
   }
 
@@ -10723,17 +10780,19 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
   }
 
   export type CardArticleCreateInput = {
     id?: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     createdAt?: Date | string
     userPhotoCard: UserPhotoCardCreateNestedOneWithoutCardArticleInput
   }
@@ -10741,11 +10800,12 @@ export namespace Prisma {
   export type CardArticleUncheckedCreateInput = {
     id?: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     userPhotoCardId: string
     createdAt?: Date | string
   }
@@ -10753,11 +10813,12 @@ export namespace Prisma {
   export type CardArticleUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userPhotoCard?: UserPhotoCardUpdateOneRequiredWithoutCardArticleNestedInput
   }
@@ -10765,11 +10826,12 @@ export namespace Prisma {
   export type CardArticleUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10777,11 +10839,12 @@ export namespace Prisma {
   export type CardArticleCreateManyInput = {
     id?: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     userPhotoCardId: string
     createdAt?: Date | string
   }
@@ -10789,22 +10852,24 @@ export namespace Prisma {
   export type CardArticleUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CardArticleUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10814,7 +10879,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     createdAt?: Date | string
     buyer: UserPhotoCardCreateNestedOneWithoutOrderInput
     seller: UserCreateNestedOneWithoutOrderInput
@@ -10826,7 +10890,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     userId: string
     photoCardId: string
@@ -10838,7 +10901,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     buyer?: UserPhotoCardUpdateOneRequiredWithoutOrderNestedInput
     seller?: UserUpdateOneRequiredWithoutOrderNestedInput
@@ -10850,7 +10912,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
@@ -10862,7 +10923,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     userId: string
     photoCardId: string
@@ -10874,7 +10934,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10883,7 +10942,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
@@ -10892,6 +10950,7 @@ export namespace Prisma {
 
   export type ExchangeCreateInput = {
     id?: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
     giverCard: UserPhotoCardCreateNestedOneWithoutGiverInput
@@ -10902,12 +10961,14 @@ export namespace Prisma {
     id?: string
     giverCardId: string
     takerCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
   }
 
   export type ExchangeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     giverCard?: UserPhotoCardUpdateOneRequiredWithoutGiverNestedInput
@@ -10918,6 +10979,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     giverCardId?: StringFieldUpdateOperationsInput | string
     takerCardId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10926,12 +10988,14 @@ export namespace Prisma {
     id?: string
     giverCardId: string
     takerCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
   }
 
   export type ExchangeUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10940,6 +11004,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     giverCardId?: StringFieldUpdateOperationsInput | string
     takerCardId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10999,6 +11064,12 @@ export namespace Prisma {
     none?: OrderWhereInput
   }
 
+  export type PhotoCardListRelationFilter = {
+    every?: PhotoCardWhereInput
+    some?: PhotoCardWhereInput
+    none?: PhotoCardWhereInput
+  }
+
   export type NotificationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -11008,6 +11079,10 @@ export namespace Prisma {
   }
 
   export type OrderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PhotoCardOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -11094,13 +11169,6 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumNotificationTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
-  }
-
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -11114,7 +11182,6 @@ export namespace Prisma {
   export type NotificationCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    type?: SortOrder
     isRead?: SortOrder
     message?: SortOrder
     createdAt?: SortOrder
@@ -11123,7 +11190,6 @@ export namespace Prisma {
   export type NotificationMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    type?: SortOrder
     isRead?: SortOrder
     message?: SortOrder
     createdAt?: SortOrder
@@ -11132,20 +11198,9 @@ export namespace Prisma {
   export type NotificationMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
-    type?: SortOrder
     isRead?: SortOrder
     message?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type EnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.NotificationType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumNotificationTypeFilter<$PrismaModel>
-    _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -11178,6 +11233,7 @@ export namespace Prisma {
     genre?: SortOrder
     price?: SortOrder
     imgUrl?: SortOrder
+    creatorId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11193,6 +11249,7 @@ export namespace Prisma {
     genre?: SortOrder
     price?: SortOrder
     imgUrl?: SortOrder
+    creatorId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11204,6 +11261,7 @@ export namespace Prisma {
     genre?: SortOrder
     price?: SortOrder
     imgUrl?: SortOrder
+    creatorId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11268,11 +11326,13 @@ export namespace Prisma {
     userId?: SortOrder
     photoCardId?: SortOrder
     quantity?: SortOrder
+    price?: SortOrder
     status?: SortOrder
   }
 
   export type UserPhotoCardAvgOrderByAggregateInput = {
     quantity?: SortOrder
+    price?: SortOrder
   }
 
   export type UserPhotoCardMaxOrderByAggregateInput = {
@@ -11280,6 +11340,7 @@ export namespace Prisma {
     userId?: SortOrder
     photoCardId?: SortOrder
     quantity?: SortOrder
+    price?: SortOrder
     status?: SortOrder
   }
 
@@ -11288,11 +11349,13 @@ export namespace Prisma {
     userId?: SortOrder
     photoCardId?: SortOrder
     quantity?: SortOrder
+    price?: SortOrder
     status?: SortOrder
   }
 
   export type UserPhotoCardSumOrderByAggregateInput = {
     quantity?: SortOrder
+    price?: SortOrder
   }
 
   export type EnumUserPhotocardStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -11313,28 +11376,31 @@ export namespace Prisma {
   export type CardArticleCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    sellingQuantity?: SortOrder
     price?: SortOrder
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
     exchangeText?: SortOrder
-    rank?: SortOrder
-    genre?: SortOrder
+    exchangeRank?: SortOrder
+    exchangeGenre?: SortOrder
     userPhotoCardId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type CardArticleAvgOrderByAggregateInput = {
-    sellingQuantity?: SortOrder
     price?: SortOrder
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
   }
 
   export type CardArticleMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    sellingQuantity?: SortOrder
     price?: SortOrder
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
     exchangeText?: SortOrder
-    rank?: SortOrder
-    genre?: SortOrder
+    exchangeRank?: SortOrder
+    exchangeGenre?: SortOrder
     userPhotoCardId?: SortOrder
     createdAt?: SortOrder
   }
@@ -11342,25 +11408,20 @@ export namespace Prisma {
   export type CardArticleMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
-    sellingQuantity?: SortOrder
     price?: SortOrder
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
     exchangeText?: SortOrder
-    rank?: SortOrder
-    genre?: SortOrder
+    exchangeRank?: SortOrder
+    exchangeGenre?: SortOrder
     userPhotoCardId?: SortOrder
     createdAt?: SortOrder
   }
 
   export type CardArticleSumOrderByAggregateInput = {
-    sellingQuantity?: SortOrder
     price?: SortOrder
-  }
-
-  export type EnumOrderStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
+    totalQuantity?: SortOrder
+    remainingQuantity?: SortOrder
   }
 
   export type OrderCountOrderByAggregateInput = {
@@ -11368,7 +11429,6 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     totalPrice?: SortOrder
-    status?: SortOrder
     userPhotoCardId?: SortOrder
     userId?: SortOrder
     photoCardId?: SortOrder
@@ -11386,7 +11446,6 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     totalPrice?: SortOrder
-    status?: SortOrder
     userPhotoCardId?: SortOrder
     userId?: SortOrder
     photoCardId?: SortOrder
@@ -11398,7 +11457,6 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     totalPrice?: SortOrder
-    status?: SortOrder
     userPhotoCardId?: SortOrder
     userId?: SortOrder
     photoCardId?: SortOrder
@@ -11409,16 +11467,6 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     totalPrice?: SortOrder
-  }
-
-  export type EnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrderStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrderStatusFilter<$PrismaModel>
-    _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
   export type EnumExchangeStatusFilter<$PrismaModel = never> = {
@@ -11432,6 +11480,7 @@ export namespace Prisma {
     id?: SortOrder
     giverCardId?: SortOrder
     takerCardId?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -11440,6 +11489,7 @@ export namespace Prisma {
     id?: SortOrder
     giverCardId?: SortOrder
     takerCardId?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -11448,6 +11498,7 @@ export namespace Prisma {
     id?: SortOrder
     giverCardId?: SortOrder
     takerCardId?: SortOrder
+    description?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
   }
@@ -11483,6 +11534,13 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
+  export type PhotoCardCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<PhotoCardCreateWithoutCreatorInput, PhotoCardUncheckedCreateWithoutCreatorInput> | PhotoCardCreateWithoutCreatorInput[] | PhotoCardUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PhotoCardCreateOrConnectWithoutCreatorInput | PhotoCardCreateOrConnectWithoutCreatorInput[]
+    createMany?: PhotoCardCreateManyCreatorInputEnvelope
+    connect?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+  }
+
   export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
@@ -11502,6 +11560,13 @@ export namespace Prisma {
     connectOrCreate?: OrderCreateOrConnectWithoutSellerInput | OrderCreateOrConnectWithoutSellerInput[]
     createMany?: OrderCreateManySellerInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type PhotoCardUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<PhotoCardCreateWithoutCreatorInput, PhotoCardUncheckedCreateWithoutCreatorInput> | PhotoCardCreateWithoutCreatorInput[] | PhotoCardUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PhotoCardCreateOrConnectWithoutCreatorInput | PhotoCardCreateOrConnectWithoutCreatorInput[]
+    createMany?: PhotoCardCreateManyCreatorInputEnvelope
+    connect?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -11562,6 +11627,20 @@ export namespace Prisma {
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
+  export type PhotoCardUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<PhotoCardCreateWithoutCreatorInput, PhotoCardUncheckedCreateWithoutCreatorInput> | PhotoCardCreateWithoutCreatorInput[] | PhotoCardUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PhotoCardCreateOrConnectWithoutCreatorInput | PhotoCardCreateOrConnectWithoutCreatorInput[]
+    upsert?: PhotoCardUpsertWithWhereUniqueWithoutCreatorInput | PhotoCardUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: PhotoCardCreateManyCreatorInputEnvelope
+    set?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    disconnect?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    delete?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    connect?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    update?: PhotoCardUpdateWithWhereUniqueWithoutCreatorInput | PhotoCardUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: PhotoCardUpdateManyWithWhereWithoutCreatorInput | PhotoCardUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: PhotoCardScalarWhereInput | PhotoCardScalarWhereInput[]
+  }
+
   export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
@@ -11604,14 +11683,24 @@ export namespace Prisma {
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
+  export type PhotoCardUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<PhotoCardCreateWithoutCreatorInput, PhotoCardUncheckedCreateWithoutCreatorInput> | PhotoCardCreateWithoutCreatorInput[] | PhotoCardUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: PhotoCardCreateOrConnectWithoutCreatorInput | PhotoCardCreateOrConnectWithoutCreatorInput[]
+    upsert?: PhotoCardUpsertWithWhereUniqueWithoutCreatorInput | PhotoCardUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: PhotoCardCreateManyCreatorInputEnvelope
+    set?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    disconnect?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    delete?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    connect?: PhotoCardWhereUniqueInput | PhotoCardWhereUniqueInput[]
+    update?: PhotoCardUpdateWithWhereUniqueWithoutCreatorInput | PhotoCardUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: PhotoCardUpdateManyWithWhereWithoutCreatorInput | PhotoCardUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: PhotoCardScalarWhereInput | PhotoCardScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutNotificationInput = {
     create?: XOR<UserCreateWithoutNotificationInput, UserUncheckedCreateWithoutNotificationInput>
     connectOrCreate?: UserCreateOrConnectWithoutNotificationInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type EnumNotificationTypeFieldUpdateOperationsInput = {
-    set?: $Enums.NotificationType
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -11626,10 +11715,16 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationInput, UserUpdateWithoutNotificationInput>, UserUncheckedUpdateWithoutNotificationInput>
   }
 
-  export type UserPhotoCardCreateNestedManyWithoutPhotocardInput = {
-    create?: XOR<UserPhotoCardCreateWithoutPhotocardInput, UserPhotoCardUncheckedCreateWithoutPhotocardInput> | UserPhotoCardCreateWithoutPhotocardInput[] | UserPhotoCardUncheckedCreateWithoutPhotocardInput[]
-    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotocardInput | UserPhotoCardCreateOrConnectWithoutPhotocardInput[]
-    createMany?: UserPhotoCardCreateManyPhotocardInputEnvelope
+  export type UserCreateNestedOneWithoutPhotoCardInput = {
+    create?: XOR<UserCreateWithoutPhotoCardInput, UserUncheckedCreateWithoutPhotoCardInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPhotoCardInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserPhotoCardCreateNestedManyWithoutPhotoCardInput = {
+    create?: XOR<UserPhotoCardCreateWithoutPhotoCardInput, UserPhotoCardUncheckedCreateWithoutPhotoCardInput> | UserPhotoCardCreateWithoutPhotoCardInput[] | UserPhotoCardUncheckedCreateWithoutPhotoCardInput[]
+    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotoCardInput | UserPhotoCardCreateOrConnectWithoutPhotoCardInput[]
+    createMany?: UserPhotoCardCreateManyPhotoCardInputEnvelope
     connect?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
   }
 
@@ -11640,10 +11735,10 @@ export namespace Prisma {
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
   }
 
-  export type UserPhotoCardUncheckedCreateNestedManyWithoutPhotocardInput = {
-    create?: XOR<UserPhotoCardCreateWithoutPhotocardInput, UserPhotoCardUncheckedCreateWithoutPhotocardInput> | UserPhotoCardCreateWithoutPhotocardInput[] | UserPhotoCardUncheckedCreateWithoutPhotocardInput[]
-    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotocardInput | UserPhotoCardCreateOrConnectWithoutPhotocardInput[]
-    createMany?: UserPhotoCardCreateManyPhotocardInputEnvelope
+  export type UserPhotoCardUncheckedCreateNestedManyWithoutPhotoCardInput = {
+    create?: XOR<UserPhotoCardCreateWithoutPhotoCardInput, UserPhotoCardUncheckedCreateWithoutPhotoCardInput> | UserPhotoCardCreateWithoutPhotoCardInput[] | UserPhotoCardUncheckedCreateWithoutPhotoCardInput[]
+    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotoCardInput | UserPhotoCardCreateOrConnectWithoutPhotoCardInput[]
+    createMany?: UserPhotoCardCreateManyPhotoCardInputEnvelope
     connect?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
   }
 
@@ -11662,17 +11757,25 @@ export namespace Prisma {
     set?: $Enums.Genre
   }
 
-  export type UserPhotoCardUpdateManyWithoutPhotocardNestedInput = {
-    create?: XOR<UserPhotoCardCreateWithoutPhotocardInput, UserPhotoCardUncheckedCreateWithoutPhotocardInput> | UserPhotoCardCreateWithoutPhotocardInput[] | UserPhotoCardUncheckedCreateWithoutPhotocardInput[]
-    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotocardInput | UserPhotoCardCreateOrConnectWithoutPhotocardInput[]
-    upsert?: UserPhotoCardUpsertWithWhereUniqueWithoutPhotocardInput | UserPhotoCardUpsertWithWhereUniqueWithoutPhotocardInput[]
-    createMany?: UserPhotoCardCreateManyPhotocardInputEnvelope
+  export type UserUpdateOneRequiredWithoutPhotoCardNestedInput = {
+    create?: XOR<UserCreateWithoutPhotoCardInput, UserUncheckedCreateWithoutPhotoCardInput>
+    connectOrCreate?: UserCreateOrConnectWithoutPhotoCardInput
+    upsert?: UserUpsertWithoutPhotoCardInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPhotoCardInput, UserUpdateWithoutPhotoCardInput>, UserUncheckedUpdateWithoutPhotoCardInput>
+  }
+
+  export type UserPhotoCardUpdateManyWithoutPhotoCardNestedInput = {
+    create?: XOR<UserPhotoCardCreateWithoutPhotoCardInput, UserPhotoCardUncheckedCreateWithoutPhotoCardInput> | UserPhotoCardCreateWithoutPhotoCardInput[] | UserPhotoCardUncheckedCreateWithoutPhotoCardInput[]
+    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotoCardInput | UserPhotoCardCreateOrConnectWithoutPhotoCardInput[]
+    upsert?: UserPhotoCardUpsertWithWhereUniqueWithoutPhotoCardInput | UserPhotoCardUpsertWithWhereUniqueWithoutPhotoCardInput[]
+    createMany?: UserPhotoCardCreateManyPhotoCardInputEnvelope
     set?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
     disconnect?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
     delete?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
     connect?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
-    update?: UserPhotoCardUpdateWithWhereUniqueWithoutPhotocardInput | UserPhotoCardUpdateWithWhereUniqueWithoutPhotocardInput[]
-    updateMany?: UserPhotoCardUpdateManyWithWhereWithoutPhotocardInput | UserPhotoCardUpdateManyWithWhereWithoutPhotocardInput[]
+    update?: UserPhotoCardUpdateWithWhereUniqueWithoutPhotoCardInput | UserPhotoCardUpdateWithWhereUniqueWithoutPhotoCardInput[]
+    updateMany?: UserPhotoCardUpdateManyWithWhereWithoutPhotoCardInput | UserPhotoCardUpdateManyWithWhereWithoutPhotoCardInput[]
     deleteMany?: UserPhotoCardScalarWhereInput | UserPhotoCardScalarWhereInput[]
   }
 
@@ -11690,17 +11793,17 @@ export namespace Prisma {
     deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
-  export type UserPhotoCardUncheckedUpdateManyWithoutPhotocardNestedInput = {
-    create?: XOR<UserPhotoCardCreateWithoutPhotocardInput, UserPhotoCardUncheckedCreateWithoutPhotocardInput> | UserPhotoCardCreateWithoutPhotocardInput[] | UserPhotoCardUncheckedCreateWithoutPhotocardInput[]
-    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotocardInput | UserPhotoCardCreateOrConnectWithoutPhotocardInput[]
-    upsert?: UserPhotoCardUpsertWithWhereUniqueWithoutPhotocardInput | UserPhotoCardUpsertWithWhereUniqueWithoutPhotocardInput[]
-    createMany?: UserPhotoCardCreateManyPhotocardInputEnvelope
+  export type UserPhotoCardUncheckedUpdateManyWithoutPhotoCardNestedInput = {
+    create?: XOR<UserPhotoCardCreateWithoutPhotoCardInput, UserPhotoCardUncheckedCreateWithoutPhotoCardInput> | UserPhotoCardCreateWithoutPhotoCardInput[] | UserPhotoCardUncheckedCreateWithoutPhotoCardInput[]
+    connectOrCreate?: UserPhotoCardCreateOrConnectWithoutPhotoCardInput | UserPhotoCardCreateOrConnectWithoutPhotoCardInput[]
+    upsert?: UserPhotoCardUpsertWithWhereUniqueWithoutPhotoCardInput | UserPhotoCardUpsertWithWhereUniqueWithoutPhotoCardInput[]
+    createMany?: UserPhotoCardCreateManyPhotoCardInputEnvelope
     set?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
     disconnect?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
     delete?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
     connect?: UserPhotoCardWhereUniqueInput | UserPhotoCardWhereUniqueInput[]
-    update?: UserPhotoCardUpdateWithWhereUniqueWithoutPhotocardInput | UserPhotoCardUpdateWithWhereUniqueWithoutPhotocardInput[]
-    updateMany?: UserPhotoCardUpdateManyWithWhereWithoutPhotocardInput | UserPhotoCardUpdateManyWithWhereWithoutPhotocardInput[]
+    update?: UserPhotoCardUpdateWithWhereUniqueWithoutPhotoCardInput | UserPhotoCardUpdateWithWhereUniqueWithoutPhotoCardInput[]
+    updateMany?: UserPhotoCardUpdateManyWithWhereWithoutPhotoCardInput | UserPhotoCardUpdateManyWithWhereWithoutPhotoCardInput[]
     deleteMany?: UserPhotoCardScalarWhereInput | UserPhotoCardScalarWhereInput[]
   }
 
@@ -11950,10 +12053,6 @@ export namespace Prisma {
     connect?: PhotoCardWhereUniqueInput
   }
 
-  export type EnumOrderStatusFieldUpdateOperationsInput = {
-    set?: $Enums.OrderStatus
-  }
-
   export type UserPhotoCardUpdateOneRequiredWithoutOrderNestedInput = {
     create?: XOR<UserPhotoCardCreateWithoutOrderInput, UserPhotoCardUncheckedCreateWithoutOrderInput>
     connectOrCreate?: UserPhotoCardCreateOrConnectWithoutOrderInput
@@ -12104,26 +12203,9 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedEnumNotificationTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.NotificationType[] | ListEnumNotificationTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.NotificationType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumNotificationTypeFilter<$PrismaModel>
-    _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -12185,23 +12267,6 @@ export namespace Prisma {
     _max?: NestedEnumUserPhotocardStatusFilter<$PrismaModel>
   }
 
-  export type NestedEnumOrderStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
-  }
-
-  export type NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrderStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumOrderStatusFilter<$PrismaModel>
-    _max?: NestedEnumOrderStatusFilter<$PrismaModel>
-  }
-
   export type NestedEnumExchangeStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ExchangeStatus | EnumExchangeStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ExchangeStatus[] | ListEnumExchangeStatusFieldRefInput<$PrismaModel>
@@ -12221,7 +12286,6 @@ export namespace Prisma {
 
   export type NotificationCreateWithoutUserInput = {
     id?: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt?: Date | string
@@ -12229,7 +12293,6 @@ export namespace Prisma {
 
   export type NotificationUncheckedCreateWithoutUserInput = {
     id?: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt?: Date | string
@@ -12248,8 +12311,9 @@ export namespace Prisma {
   export type UserPhotoCardCreateWithoutUserInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
-    photocard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
+    photoCard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
     cardArticle?: CardArticleCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderCreateNestedManyWithoutBuyerInput
     giver?: ExchangeCreateNestedManyWithoutGiverCardInput
@@ -12260,6 +12324,7 @@ export namespace Prisma {
     id?: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderUncheckedCreateNestedManyWithoutBuyerInput
@@ -12282,7 +12347,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     createdAt?: Date | string
     buyer: UserPhotoCardCreateNestedOneWithoutOrderInput
     photocard: PhotoCardCreateNestedOneWithoutOrderInput
@@ -12293,7 +12357,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     photoCardId: string
     createdAt?: Date | string
@@ -12306,6 +12369,42 @@ export namespace Prisma {
 
   export type OrderCreateManySellerInputEnvelope = {
     data: OrderCreateManySellerInput | OrderCreateManySellerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PhotoCardCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    description: string
+    rank: $Enums.RankList
+    genre: $Enums.Genre
+    price: number
+    imgUrl: string
+    createdAt?: Date | string
+    userPhotoCard?: UserPhotoCardCreateNestedManyWithoutPhotoCardInput
+    order?: OrderCreateNestedManyWithoutPhotocardInput
+  }
+
+  export type PhotoCardUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    description: string
+    rank: $Enums.RankList
+    genre: $Enums.Genre
+    price: number
+    imgUrl: string
+    createdAt?: Date | string
+    userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutPhotoCardInput
+    order?: OrderUncheckedCreateNestedManyWithoutPhotocardInput
+  }
+
+  export type PhotoCardCreateOrConnectWithoutCreatorInput = {
+    where: PhotoCardWhereUniqueInput
+    create: XOR<PhotoCardCreateWithoutCreatorInput, PhotoCardUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type PhotoCardCreateManyCreatorInputEnvelope = {
+    data: PhotoCardCreateManyCreatorInput | PhotoCardCreateManyCreatorInput[]
     skipDuplicates?: boolean
   }
 
@@ -12331,7 +12430,6 @@ export namespace Prisma {
     NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
     id?: StringFilter<"Notification"> | string
     userId?: StringFilter<"Notification"> | string
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
     isRead?: BoolFilter<"Notification"> | boolean
     message?: StringFilter<"Notification"> | string
     createdAt?: DateTimeFilter<"Notification"> | Date | string
@@ -12361,6 +12459,7 @@ export namespace Prisma {
     userId?: StringFilter<"UserPhotoCard"> | string
     photoCardId?: StringFilter<"UserPhotoCard"> | string
     quantity?: IntFilter<"UserPhotoCard"> | number
+    price?: IntFilter<"UserPhotoCard"> | number
     status?: EnumUserPhotocardStatusFilter<"UserPhotoCard"> | $Enums.UserPhotocardStatus
   }
 
@@ -12388,11 +12487,41 @@ export namespace Prisma {
     quantity?: IntFilter<"Order"> | number
     price?: IntFilter<"Order"> | number
     totalPrice?: IntFilter<"Order"> | number
-    status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     userPhotoCardId?: StringFilter<"Order"> | string
     userId?: StringFilter<"Order"> | string
     photoCardId?: StringFilter<"Order"> | string
     createdAt?: DateTimeFilter<"Order"> | Date | string
+  }
+
+  export type PhotoCardUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: PhotoCardWhereUniqueInput
+    update: XOR<PhotoCardUpdateWithoutCreatorInput, PhotoCardUncheckedUpdateWithoutCreatorInput>
+    create: XOR<PhotoCardCreateWithoutCreatorInput, PhotoCardUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type PhotoCardUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: PhotoCardWhereUniqueInput
+    data: XOR<PhotoCardUpdateWithoutCreatorInput, PhotoCardUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type PhotoCardUpdateManyWithWhereWithoutCreatorInput = {
+    where: PhotoCardScalarWhereInput
+    data: XOR<PhotoCardUpdateManyMutationInput, PhotoCardUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type PhotoCardScalarWhereInput = {
+    AND?: PhotoCardScalarWhereInput | PhotoCardScalarWhereInput[]
+    OR?: PhotoCardScalarWhereInput[]
+    NOT?: PhotoCardScalarWhereInput | PhotoCardScalarWhereInput[]
+    id?: StringFilter<"PhotoCard"> | string
+    title?: StringFilter<"PhotoCard"> | string
+    description?: StringFilter<"PhotoCard"> | string
+    rank?: EnumRankListFilter<"PhotoCard"> | $Enums.RankList
+    genre?: EnumGenreFilter<"PhotoCard"> | $Enums.Genre
+    price?: IntFilter<"PhotoCard"> | number
+    imgUrl?: StringFilter<"PhotoCard"> | string
+    creatorId?: StringFilter<"PhotoCard"> | string
+    createdAt?: DateTimeFilter<"PhotoCard"> | Date | string
   }
 
   export type UserCreateWithoutNotificationInput = {
@@ -12404,6 +12533,7 @@ export namespace Prisma {
     createdAt?: Date | string
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
     order?: OrderCreateNestedManyWithoutSellerInput
+    photoCard?: PhotoCardCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutNotificationInput = {
@@ -12415,6 +12545,7 @@ export namespace Prisma {
     createdAt?: Date | string
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
     order?: OrderUncheckedCreateNestedManyWithoutSellerInput
+    photoCard?: PhotoCardUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutNotificationInput = {
@@ -12442,6 +12573,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
     order?: OrderUpdateManyWithoutSellerNestedInput
+    photoCard?: PhotoCardUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationInput = {
@@ -12453,11 +12585,42 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
     order?: OrderUncheckedUpdateManyWithoutSellerNestedInput
+    photoCard?: PhotoCardUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
-  export type UserPhotoCardCreateWithoutPhotocardInput = {
+  export type UserCreateWithoutPhotoCardInput = {
+    id?: string
+    email: string
+    password: string
+    nickname: string
+    pointAmount: number
+    createdAt?: Date | string
+    notification?: NotificationCreateNestedManyWithoutUserInput
+    userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
+    order?: OrderCreateNestedManyWithoutSellerInput
+  }
+
+  export type UserUncheckedCreateWithoutPhotoCardInput = {
+    id?: string
+    email: string
+    password: string
+    nickname: string
+    pointAmount: number
+    createdAt?: Date | string
+    notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
+    order?: OrderUncheckedCreateNestedManyWithoutSellerInput
+  }
+
+  export type UserCreateOrConnectWithoutPhotoCardInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutPhotoCardInput, UserUncheckedCreateWithoutPhotoCardInput>
+  }
+
+  export type UserPhotoCardCreateWithoutPhotoCardInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     user: UserCreateNestedOneWithoutUserPhotoCardInput
     cardArticle?: CardArticleCreateNestedManyWithoutUserPhotoCardInput
@@ -12466,10 +12629,11 @@ export namespace Prisma {
     taker?: ExchangeCreateNestedManyWithoutTakerCardInput
   }
 
-  export type UserPhotoCardUncheckedCreateWithoutPhotocardInput = {
+  export type UserPhotoCardUncheckedCreateWithoutPhotoCardInput = {
     id?: string
     userId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderUncheckedCreateNestedManyWithoutBuyerInput
@@ -12477,13 +12641,13 @@ export namespace Prisma {
     taker?: ExchangeUncheckedCreateNestedManyWithoutTakerCardInput
   }
 
-  export type UserPhotoCardCreateOrConnectWithoutPhotocardInput = {
+  export type UserPhotoCardCreateOrConnectWithoutPhotoCardInput = {
     where: UserPhotoCardWhereUniqueInput
-    create: XOR<UserPhotoCardCreateWithoutPhotocardInput, UserPhotoCardUncheckedCreateWithoutPhotocardInput>
+    create: XOR<UserPhotoCardCreateWithoutPhotoCardInput, UserPhotoCardUncheckedCreateWithoutPhotoCardInput>
   }
 
-  export type UserPhotoCardCreateManyPhotocardInputEnvelope = {
-    data: UserPhotoCardCreateManyPhotocardInput | UserPhotoCardCreateManyPhotocardInput[]
+  export type UserPhotoCardCreateManyPhotoCardInputEnvelope = {
+    data: UserPhotoCardCreateManyPhotoCardInput | UserPhotoCardCreateManyPhotoCardInput[]
     skipDuplicates?: boolean
   }
 
@@ -12492,7 +12656,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     createdAt?: Date | string
     buyer: UserPhotoCardCreateNestedOneWithoutOrderInput
     seller: UserCreateNestedOneWithoutOrderInput
@@ -12503,7 +12666,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     userId: string
     createdAt?: Date | string
@@ -12519,20 +12681,55 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserPhotoCardUpsertWithWhereUniqueWithoutPhotocardInput = {
-    where: UserPhotoCardWhereUniqueInput
-    update: XOR<UserPhotoCardUpdateWithoutPhotocardInput, UserPhotoCardUncheckedUpdateWithoutPhotocardInput>
-    create: XOR<UserPhotoCardCreateWithoutPhotocardInput, UserPhotoCardUncheckedCreateWithoutPhotocardInput>
+  export type UserUpsertWithoutPhotoCardInput = {
+    update: XOR<UserUpdateWithoutPhotoCardInput, UserUncheckedUpdateWithoutPhotoCardInput>
+    create: XOR<UserCreateWithoutPhotoCardInput, UserUncheckedCreateWithoutPhotoCardInput>
+    where?: UserWhereInput
   }
 
-  export type UserPhotoCardUpdateWithWhereUniqueWithoutPhotocardInput = {
-    where: UserPhotoCardWhereUniqueInput
-    data: XOR<UserPhotoCardUpdateWithoutPhotocardInput, UserPhotoCardUncheckedUpdateWithoutPhotocardInput>
+  export type UserUpdateToOneWithWhereWithoutPhotoCardInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutPhotoCardInput, UserUncheckedUpdateWithoutPhotoCardInput>
   }
 
-  export type UserPhotoCardUpdateManyWithWhereWithoutPhotocardInput = {
+  export type UserUpdateWithoutPhotoCardInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    pointAmount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notification?: NotificationUpdateManyWithoutUserNestedInput
+    userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
+    order?: OrderUpdateManyWithoutSellerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutPhotoCardInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    nickname?: StringFieldUpdateOperationsInput | string
+    pointAmount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
+    order?: OrderUncheckedUpdateManyWithoutSellerNestedInput
+  }
+
+  export type UserPhotoCardUpsertWithWhereUniqueWithoutPhotoCardInput = {
+    where: UserPhotoCardWhereUniqueInput
+    update: XOR<UserPhotoCardUpdateWithoutPhotoCardInput, UserPhotoCardUncheckedUpdateWithoutPhotoCardInput>
+    create: XOR<UserPhotoCardCreateWithoutPhotoCardInput, UserPhotoCardUncheckedCreateWithoutPhotoCardInput>
+  }
+
+  export type UserPhotoCardUpdateWithWhereUniqueWithoutPhotoCardInput = {
+    where: UserPhotoCardWhereUniqueInput
+    data: XOR<UserPhotoCardUpdateWithoutPhotoCardInput, UserPhotoCardUncheckedUpdateWithoutPhotoCardInput>
+  }
+
+  export type UserPhotoCardUpdateManyWithWhereWithoutPhotoCardInput = {
     where: UserPhotoCardScalarWhereInput
-    data: XOR<UserPhotoCardUpdateManyMutationInput, UserPhotoCardUncheckedUpdateManyWithoutPhotocardInput>
+    data: XOR<UserPhotoCardUpdateManyMutationInput, UserPhotoCardUncheckedUpdateManyWithoutPhotoCardInput>
   }
 
   export type OrderUpsertWithWhereUniqueWithoutPhotocardInput = {
@@ -12560,6 +12757,7 @@ export namespace Prisma {
     createdAt?: Date | string
     notification?: NotificationCreateNestedManyWithoutUserInput
     order?: OrderCreateNestedManyWithoutSellerInput
+    photoCard?: PhotoCardCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutUserPhotoCardInput = {
@@ -12571,6 +12769,7 @@ export namespace Prisma {
     createdAt?: Date | string
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     order?: OrderUncheckedCreateNestedManyWithoutSellerInput
+    photoCard?: PhotoCardUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutUserPhotoCardInput = {
@@ -12587,6 +12786,7 @@ export namespace Prisma {
     price: number
     imgUrl: string
     createdAt?: Date | string
+    creator: UserCreateNestedOneWithoutPhotoCardInput
     order?: OrderCreateNestedManyWithoutPhotocardInput
   }
 
@@ -12598,6 +12798,7 @@ export namespace Prisma {
     genre: $Enums.Genre
     price: number
     imgUrl: string
+    creatorId: string
     createdAt?: Date | string
     order?: OrderUncheckedCreateNestedManyWithoutPhotocardInput
   }
@@ -12610,22 +12811,24 @@ export namespace Prisma {
   export type CardArticleCreateWithoutUserPhotoCardInput = {
     id?: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     createdAt?: Date | string
   }
 
   export type CardArticleUncheckedCreateWithoutUserPhotoCardInput = {
     id?: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     createdAt?: Date | string
   }
 
@@ -12644,7 +12847,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     createdAt?: Date | string
     seller: UserCreateNestedOneWithoutOrderInput
     photocard: PhotoCardCreateNestedOneWithoutOrderInput
@@ -12655,7 +12857,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userId: string
     photoCardId: string
     createdAt?: Date | string
@@ -12673,6 +12874,7 @@ export namespace Prisma {
 
   export type ExchangeCreateWithoutGiverCardInput = {
     id?: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
     takerCard: UserPhotoCardCreateNestedOneWithoutTakerInput
@@ -12681,6 +12883,7 @@ export namespace Prisma {
   export type ExchangeUncheckedCreateWithoutGiverCardInput = {
     id?: string
     takerCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
   }
@@ -12697,6 +12900,7 @@ export namespace Prisma {
 
   export type ExchangeCreateWithoutTakerCardInput = {
     id?: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
     giverCard: UserPhotoCardCreateNestedOneWithoutGiverInput
@@ -12705,6 +12909,7 @@ export namespace Prisma {
   export type ExchangeUncheckedCreateWithoutTakerCardInput = {
     id?: string
     giverCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
   }
@@ -12739,6 +12944,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUpdateManyWithoutUserNestedInput
     order?: OrderUpdateManyWithoutSellerNestedInput
+    photoCard?: PhotoCardUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserPhotoCardInput = {
@@ -12750,6 +12956,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     order?: OrderUncheckedUpdateManyWithoutSellerNestedInput
+    photoCard?: PhotoCardUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type PhotoCardUpsertWithoutUserPhotoCardInput = {
@@ -12772,6 +12979,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: UserUpdateOneRequiredWithoutPhotoCardNestedInput
     order?: OrderUpdateManyWithoutPhotocardNestedInput
   }
 
@@ -12783,6 +12991,7 @@ export namespace Prisma {
     genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     order?: OrderUncheckedUpdateManyWithoutPhotocardNestedInput
   }
@@ -12809,11 +13018,12 @@ export namespace Prisma {
     NOT?: CardArticleScalarWhereInput | CardArticleScalarWhereInput[]
     id?: StringFilter<"CardArticle"> | string
     title?: StringFilter<"CardArticle"> | string
-    sellingQuantity?: IntFilter<"CardArticle"> | number
     price?: IntFilter<"CardArticle"> | number
+    totalQuantity?: IntFilter<"CardArticle"> | number
+    remainingQuantity?: IntFilter<"CardArticle"> | number
     exchangeText?: StringFilter<"CardArticle"> | string
-    rank?: EnumRankListFilter<"CardArticle"> | $Enums.RankList
-    genre?: EnumGenreFilter<"CardArticle"> | $Enums.Genre
+    exchangeRank?: EnumRankListFilter<"CardArticle"> | $Enums.RankList
+    exchangeGenre?: EnumGenreFilter<"CardArticle"> | $Enums.Genre
     userPhotoCardId?: StringFilter<"CardArticle"> | string
     createdAt?: DateTimeFilter<"CardArticle"> | Date | string
   }
@@ -12857,6 +13067,7 @@ export namespace Prisma {
     id?: StringFilter<"Exchange"> | string
     giverCardId?: StringFilter<"Exchange"> | string
     takerCardId?: StringFilter<"Exchange"> | string
+    description?: StringFilter<"Exchange"> | string
     status?: EnumExchangeStatusFilter<"Exchange"> | $Enums.ExchangeStatus
     createdAt?: DateTimeFilter<"Exchange"> | Date | string
   }
@@ -12880,9 +13091,10 @@ export namespace Prisma {
   export type UserPhotoCardCreateWithoutCardArticleInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     user: UserCreateNestedOneWithoutUserPhotoCardInput
-    photocard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
+    photoCard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
     order?: OrderCreateNestedManyWithoutBuyerInput
     giver?: ExchangeCreateNestedManyWithoutGiverCardInput
     taker?: ExchangeCreateNestedManyWithoutTakerCardInput
@@ -12893,6 +13105,7 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     order?: OrderUncheckedCreateNestedManyWithoutBuyerInput
     giver?: ExchangeUncheckedCreateNestedManyWithoutGiverCardInput
@@ -12918,9 +13131,10 @@ export namespace Prisma {
   export type UserPhotoCardUpdateWithoutCardArticleInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     user?: UserUpdateOneRequiredWithoutUserPhotoCardNestedInput
-    photocard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
+    photoCard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
     order?: OrderUpdateManyWithoutBuyerNestedInput
     giver?: ExchangeUpdateManyWithoutGiverCardNestedInput
     taker?: ExchangeUpdateManyWithoutTakerCardNestedInput
@@ -12931,6 +13145,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     order?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
     giver?: ExchangeUncheckedUpdateManyWithoutGiverCardNestedInput
@@ -12940,9 +13155,10 @@ export namespace Prisma {
   export type UserPhotoCardCreateWithoutOrderInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     user: UserCreateNestedOneWithoutUserPhotoCardInput
-    photocard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
+    photoCard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
     cardArticle?: CardArticleCreateNestedManyWithoutUserPhotoCardInput
     giver?: ExchangeCreateNestedManyWithoutGiverCardInput
     taker?: ExchangeCreateNestedManyWithoutTakerCardInput
@@ -12953,6 +13169,7 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedCreateNestedManyWithoutUserPhotoCardInput
     giver?: ExchangeUncheckedCreateNestedManyWithoutGiverCardInput
@@ -12973,6 +13190,7 @@ export namespace Prisma {
     createdAt?: Date | string
     notification?: NotificationCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
+    photoCard?: PhotoCardCreateNestedManyWithoutCreatorInput
   }
 
   export type UserUncheckedCreateWithoutOrderInput = {
@@ -12984,6 +13202,7 @@ export namespace Prisma {
     createdAt?: Date | string
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
+    photoCard?: PhotoCardUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type UserCreateOrConnectWithoutOrderInput = {
@@ -13000,7 +13219,8 @@ export namespace Prisma {
     price: number
     imgUrl: string
     createdAt?: Date | string
-    userPhotoCard?: UserPhotoCardCreateNestedManyWithoutPhotocardInput
+    creator: UserCreateNestedOneWithoutPhotoCardInput
+    userPhotoCard?: UserPhotoCardCreateNestedManyWithoutPhotoCardInput
   }
 
   export type PhotoCardUncheckedCreateWithoutOrderInput = {
@@ -13011,8 +13231,9 @@ export namespace Prisma {
     genre: $Enums.Genre
     price: number
     imgUrl: string
+    creatorId: string
     createdAt?: Date | string
-    userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutPhotocardInput
+    userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutPhotoCardInput
   }
 
   export type PhotoCardCreateOrConnectWithoutOrderInput = {
@@ -13034,9 +13255,10 @@ export namespace Prisma {
   export type UserPhotoCardUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     user?: UserUpdateOneRequiredWithoutUserPhotoCardNestedInput
-    photocard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
+    photoCard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
     cardArticle?: CardArticleUpdateManyWithoutUserPhotoCardNestedInput
     giver?: ExchangeUpdateManyWithoutGiverCardNestedInput
     taker?: ExchangeUpdateManyWithoutTakerCardNestedInput
@@ -13047,6 +13269,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedUpdateManyWithoutUserPhotoCardNestedInput
     giver?: ExchangeUncheckedUpdateManyWithoutGiverCardNestedInput
@@ -13073,6 +13296,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
+    photoCard?: PhotoCardUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrderInput = {
@@ -13084,6 +13308,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
+    photoCard?: PhotoCardUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type PhotoCardUpsertWithoutOrderInput = {
@@ -13106,7 +13331,8 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPhotoCard?: UserPhotoCardUpdateManyWithoutPhotocardNestedInput
+    creator?: UserUpdateOneRequiredWithoutPhotoCardNestedInput
+    userPhotoCard?: UserPhotoCardUpdateManyWithoutPhotoCardNestedInput
   }
 
   export type PhotoCardUncheckedUpdateWithoutOrderInput = {
@@ -13117,16 +13343,18 @@ export namespace Prisma {
     genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     price?: IntFieldUpdateOperationsInput | number
     imgUrl?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutPhotocardNestedInput
+    userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutPhotoCardNestedInput
   }
 
   export type UserPhotoCardCreateWithoutGiverInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     user: UserCreateNestedOneWithoutUserPhotoCardInput
-    photocard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
+    photoCard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
     cardArticle?: CardArticleCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderCreateNestedManyWithoutBuyerInput
     taker?: ExchangeCreateNestedManyWithoutTakerCardInput
@@ -13137,6 +13365,7 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderUncheckedCreateNestedManyWithoutBuyerInput
@@ -13151,9 +13380,10 @@ export namespace Prisma {
   export type UserPhotoCardCreateWithoutTakerInput = {
     id?: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     user: UserCreateNestedOneWithoutUserPhotoCardInput
-    photocard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
+    photoCard: PhotoCardCreateNestedOneWithoutUserPhotoCardInput
     cardArticle?: CardArticleCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderCreateNestedManyWithoutBuyerInput
     giver?: ExchangeCreateNestedManyWithoutGiverCardInput
@@ -13164,6 +13394,7 @@ export namespace Prisma {
     userId: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedCreateNestedManyWithoutUserPhotoCardInput
     order?: OrderUncheckedCreateNestedManyWithoutBuyerInput
@@ -13189,9 +13420,10 @@ export namespace Prisma {
   export type UserPhotoCardUpdateWithoutGiverInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     user?: UserUpdateOneRequiredWithoutUserPhotoCardNestedInput
-    photocard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
+    photoCard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
     cardArticle?: CardArticleUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUpdateManyWithoutBuyerNestedInput
     taker?: ExchangeUpdateManyWithoutTakerCardNestedInput
@@ -13202,6 +13434,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
@@ -13222,9 +13455,10 @@ export namespace Prisma {
   export type UserPhotoCardUpdateWithoutTakerInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     user?: UserUpdateOneRequiredWithoutUserPhotoCardNestedInput
-    photocard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
+    photoCard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
     cardArticle?: CardArticleUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUpdateManyWithoutBuyerNestedInput
     giver?: ExchangeUpdateManyWithoutGiverCardNestedInput
@@ -13235,6 +13469,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
@@ -13243,7 +13478,6 @@ export namespace Prisma {
 
   export type NotificationCreateManyUserInput = {
     id?: string
-    type: $Enums.NotificationType
     isRead: boolean
     message: string
     createdAt?: Date | string
@@ -13253,6 +13487,7 @@ export namespace Prisma {
     id?: string
     photoCardId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
   }
 
@@ -13261,15 +13496,24 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     photoCardId: string
     createdAt?: Date | string
   }
 
+  export type PhotoCardCreateManyCreatorInput = {
+    id?: string
+    title: string
+    description: string
+    rank: $Enums.RankList
+    genre: $Enums.Genre
+    price: number
+    imgUrl: string
+    createdAt?: Date | string
+  }
+
   export type NotificationUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13277,7 +13521,6 @@ export namespace Prisma {
 
   export type NotificationUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13285,7 +13528,6 @@ export namespace Prisma {
 
   export type NotificationUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
     isRead?: BoolFieldUpdateOperationsInput | boolean
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13294,8 +13536,9 @@ export namespace Prisma {
   export type UserPhotoCardUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
-    photocard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
+    photoCard?: PhotoCardUpdateOneRequiredWithoutUserPhotoCardNestedInput
     cardArticle?: CardArticleUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUpdateManyWithoutBuyerNestedInput
     giver?: ExchangeUpdateManyWithoutGiverCardNestedInput
@@ -13306,6 +13549,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
@@ -13317,6 +13561,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
   }
 
@@ -13325,7 +13570,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     buyer?: UserPhotoCardUpdateOneRequiredWithoutOrderNestedInput
     photocard?: PhotoCardUpdateOneRequiredWithoutOrderNestedInput
@@ -13336,7 +13580,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13347,16 +13590,53 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserPhotoCardCreateManyPhotocardInput = {
+  export type PhotoCardUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    price?: IntFieldUpdateOperationsInput | number
+    imgUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userPhotoCard?: UserPhotoCardUpdateManyWithoutPhotoCardNestedInput
+    order?: OrderUpdateManyWithoutPhotocardNestedInput
+  }
+
+  export type PhotoCardUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    price?: IntFieldUpdateOperationsInput | number
+    imgUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutPhotoCardNestedInput
+    order?: OrderUncheckedUpdateManyWithoutPhotocardNestedInput
+  }
+
+  export type PhotoCardUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    price?: IntFieldUpdateOperationsInput | number
+    imgUrl?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserPhotoCardCreateManyPhotoCardInput = {
     id?: string
     userId: string
     quantity: number
+    price: number
     status: $Enums.UserPhotocardStatus
   }
 
@@ -13365,15 +13645,15 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userPhotoCardId: string
     userId: string
     createdAt?: Date | string
   }
 
-  export type UserPhotoCardUpdateWithoutPhotocardInput = {
+  export type UserPhotoCardUpdateWithoutPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     user?: UserUpdateOneRequiredWithoutUserPhotoCardNestedInput
     cardArticle?: CardArticleUpdateManyWithoutUserPhotoCardNestedInput
@@ -13382,10 +13662,11 @@ export namespace Prisma {
     taker?: ExchangeUpdateManyWithoutTakerCardNestedInput
   }
 
-  export type UserPhotoCardUncheckedUpdateWithoutPhotocardInput = {
+  export type UserPhotoCardUncheckedUpdateWithoutPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
     cardArticle?: CardArticleUncheckedUpdateManyWithoutUserPhotoCardNestedInput
     order?: OrderUncheckedUpdateManyWithoutBuyerNestedInput
@@ -13393,10 +13674,11 @@ export namespace Prisma {
     taker?: ExchangeUncheckedUpdateManyWithoutTakerCardNestedInput
   }
 
-  export type UserPhotoCardUncheckedUpdateManyWithoutPhotocardInput = {
+  export type UserPhotoCardUncheckedUpdateManyWithoutPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
+    price?: IntFieldUpdateOperationsInput | number
     status?: EnumUserPhotocardStatusFieldUpdateOperationsInput | $Enums.UserPhotocardStatus
   }
 
@@ -13405,7 +13687,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     buyer?: UserPhotoCardUpdateOneRequiredWithoutOrderNestedInput
     seller?: UserUpdateOneRequiredWithoutOrderNestedInput
@@ -13416,7 +13697,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13427,7 +13707,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userPhotoCardId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13436,11 +13715,12 @@ export namespace Prisma {
   export type CardArticleCreateManyUserPhotoCardInput = {
     id?: string
     title: string
-    sellingQuantity: number
     price: number
+    totalQuantity: number
+    remainingQuantity: number
     exchangeText: string
-    rank: $Enums.RankList
-    genre: $Enums.Genre
+    exchangeRank: $Enums.RankList
+    exchangeGenre: $Enums.Genre
     createdAt?: Date | string
   }
 
@@ -13449,7 +13729,6 @@ export namespace Prisma {
     quantity: number
     price: number
     totalPrice: number
-    status: $Enums.OrderStatus
     userId: string
     photoCardId: string
     createdAt?: Date | string
@@ -13458,6 +13737,7 @@ export namespace Prisma {
   export type ExchangeCreateManyGiverCardInput = {
     id?: string
     takerCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
   }
@@ -13465,6 +13745,7 @@ export namespace Prisma {
   export type ExchangeCreateManyTakerCardInput = {
     id?: string
     giverCardId: string
+    description: string
     status: $Enums.ExchangeStatus
     createdAt?: Date | string
   }
@@ -13472,33 +13753,36 @@ export namespace Prisma {
   export type CardArticleUpdateWithoutUserPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CardArticleUncheckedUpdateWithoutUserPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CardArticleUncheckedUpdateManyWithoutUserPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    sellingQuantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
+    totalQuantity?: IntFieldUpdateOperationsInput | number
+    remainingQuantity?: IntFieldUpdateOperationsInput | number
     exchangeText?: StringFieldUpdateOperationsInput | string
-    rank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
-    genre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
+    exchangeRank?: EnumRankListFieldUpdateOperationsInput | $Enums.RankList
+    exchangeGenre?: EnumGenreFieldUpdateOperationsInput | $Enums.Genre
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -13507,7 +13791,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     seller?: UserUpdateOneRequiredWithoutOrderNestedInput
     photocard?: PhotoCardUpdateOneRequiredWithoutOrderNestedInput
@@ -13518,7 +13801,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13529,7 +13811,6 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: IntFieldUpdateOperationsInput | number
     totalPrice?: IntFieldUpdateOperationsInput | number
-    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     userId?: StringFieldUpdateOperationsInput | string
     photoCardId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13537,6 +13818,7 @@ export namespace Prisma {
 
   export type ExchangeUpdateWithoutGiverCardInput = {
     id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     takerCard?: UserPhotoCardUpdateOneRequiredWithoutTakerNestedInput
@@ -13545,6 +13827,7 @@ export namespace Prisma {
   export type ExchangeUncheckedUpdateWithoutGiverCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     takerCardId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13552,12 +13835,14 @@ export namespace Prisma {
   export type ExchangeUncheckedUpdateManyWithoutGiverCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     takerCardId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ExchangeUpdateWithoutTakerCardInput = {
     id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     giverCard?: UserPhotoCardUpdateOneRequiredWithoutGiverNestedInput
@@ -13566,6 +13851,7 @@ export namespace Prisma {
   export type ExchangeUncheckedUpdateWithoutTakerCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverCardId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13573,6 +13859,7 @@ export namespace Prisma {
   export type ExchangeUncheckedUpdateManyWithoutTakerCardInput = {
     id?: StringFieldUpdateOperationsInput | string
     giverCardId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
     status?: EnumExchangeStatusFieldUpdateOperationsInput | $Enums.ExchangeStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -9,18 +9,17 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  password    String
-  nickname    String
-  pointAmount Int
-  createCount Int      @default(0) //포토카드 생성횟수수
-  createdAt   DateTime @default(now())
-
-  notification  Notification[]
-  userPhotoCard UserPhotoCard[]
-  order         Order[]
-  photoCard     PhotoCard[]
+  id             String           @id @default(uuid())
+  email          String           @unique
+  password       String
+  nickname       String
+  pointAmount    Int
+  createCount    Int              @default(0) //포토카드 생성횟수수
+  createdAt      DateTime         @default(now())
+  notification   Notification[]
+  photoCards     PhotoCard[]
+  order          Order[]
+  OwnedPhotoCard OwnedPhotoCard[]
 }
 
 model Notification {
@@ -29,8 +28,7 @@ model Notification {
   isRead    Boolean
   message   String
   createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model PhotoCard {
@@ -43,11 +41,11 @@ model PhotoCard {
   imgUrl      String
   creatorId   String
   creator     User     @relation(fields: [creatorId], references: [id])
-  //퀀티티티
   createdAt   DateTime @default(now())
 
-  userPhotoCard UserPhotoCard[]
-  order         Order[]
+  ownedPhotoCard OwnedPhotoCard[]
+  order          Order[]
+  SellingCard    SellingCard[]
 }
 
 enum RankList {
@@ -66,43 +64,37 @@ enum Genre {
   ETC // 기타
 }
 
-model UserPhotoCard {
-  id          String              @id @default(uuid())
+model OwnedPhotoCard {
+  id          String    @id @default(uuid())
   userId      String
   photoCardId String
   quantity    Int
-  price       Int //실제판매가격격            
-  status      UserPhotocardStatus
-
-  user      User      @relation(fields: [userId], references: [id])
-  photoCard PhotoCard @relation(fields: [photoCardId], references: [id])
-
-  cardArticle CardArticle[]
+  price       Int //실제판매가격        
+  user        User      @relation(fields: [userId], references: [id])
+  photoCard   PhotoCard @relation(fields: [photoCardId], references: [id])
   order       Order[]
-  giver       Exchange[]    @relation("ExchangeGiver")
-  taker       Exchange[]    @relation("ExchangeTaker")
 }
 
-enum UserPhotocardStatus {
-  OWNED // 보유중  ->마이갤러리
+enum SellingPhotocardStatus {
   SELLING // 판매중   => 핀메중
-  EXCHANGE_REQUESTED // 교환 요청  ->교환제시 대기중 
+  // EXCHANGE_REQUESTING // 교환 요청  ->교환제시 대기중 
   SOLDOUT // 품절
 }
 
-model CardArticle {
-  id                String   @id @default(uuid())
-  title             String
+model SellingCard {
+  id                String                 @id @default(uuid())
   price             Int
   totalQuantity     Int
   remainingQuantity Int
   exchangeText      String
   exchangeRank      RankList
   exchangeGenre     Genre
-  userPhotoCardId   String
-  createdAt         DateTime @default(now())
-
-  userPhotoCard UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
+  PhotoCardId       String
+  createdAt         DateTime               @default(now())
+  status            SellingPhotocardStatus
+  PhotoCard         PhotoCard              @relation(fields: [PhotoCardId], references: [id])
+  requestedCard     Exchange[]             @relation("ExchangeGiver")
+  Exchange          Exchange[]
 }
 
 model Order {
@@ -111,25 +103,27 @@ model Order {
   price           Int
   totalPrice      Int
   userPhotoCardId String
-  userId          String
+  buyerId         String
   photoCardId     String
   createdAt       DateTime @default(now())
 
-  buyer     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
-  seller    User          @relation(fields: [userId], references: [id])
-  photocard PhotoCard     @relation(fields: [photoCardId], references: [id])
+  buyer            User            @relation(fields: [buyerId], references: [id])
+  photocard        PhotoCard       @relation(fields: [photoCardId], references: [id])
+  OwnedPhotoCard   OwnedPhotoCard? @relation(fields: [ownedPhotoCardId], references: [id])
+  ownedPhotoCardId String?
 }
 
 model Exchange {
-  id          String         @id @default(uuid())
-  giverCardId String
-  takerCardId String
-  description String
-  status      ExchangeStatus
-  createdAt   DateTime       @default(now())
-
-  giverCard UserPhotoCard @relation("ExchangeGiver", fields: [giverCardId], references: [id])
-  takerCard UserPhotoCard @relation("ExchangeTaker", fields: [takerCardId], references: [id])
+  id             String         @id @default(uuid())
+  giverCardId    String
+  takerCardId    String
+  description    String
+  status         ExchangeStatus
+  createdAt      DateTime       @default(now())
+  requestingCard SellingCard    @relation("ExchangeRequesting", fields: [sellingCardId], references: [id])
+  SellingCard    SellingCard?   @relation(fields: [sellingCardId], references: [id])
+  sellingCardId  String?
+  sellingCardId  String
 }
 
 enum ExchangeStatus {

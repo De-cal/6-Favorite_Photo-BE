@@ -161,7 +161,6 @@ exports.Prisma.UserPhotoCardScalarFieldEnum = {
 
 exports.Prisma.CardArticleScalarFieldEnum = {
   id: 'id',
-  title: 'title',
   price: 'price',
   totalQuantity: 'totalQuantity',
   remainingQuantity: 'remainingQuantity',

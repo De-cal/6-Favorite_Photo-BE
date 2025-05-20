@@ -43,7 +43,6 @@ model PhotoCard {
   imgUrl      String
   creatorId   String
   creator     User     @relation(fields: [creatorId], references: [id])
-  //퀀티티티
   createdAt   DateTime @default(now())
 
   userPhotoCard UserPhotoCard[]
@@ -92,7 +91,6 @@ enum UserPhotocardStatus {
 
 model CardArticle {
   id                String   @id @default(uuid())
-  title             String
   price             Int
   totalQuantity     Int
   remainingQuantity Int

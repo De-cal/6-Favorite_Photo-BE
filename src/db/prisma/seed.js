@@ -108,7 +108,6 @@ async function main() {
 
         await prisma.cardArticle.create({
           data: {
-            title: `판매 카드 - ${card.title}`,
             price: sellingCard.price,
             totalQuantity: 2,
             remainingQuantity: 2,

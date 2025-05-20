@@ -6368,7 +6368,6 @@ export namespace Prisma {
 
   export type CardArticleMinAggregateOutputType = {
     id: string | null
-    title: string | null
     price: number | null
     totalQuantity: number | null
     remainingQuantity: number | null
@@ -6381,7 +6380,6 @@ export namespace Prisma {
 
   export type CardArticleMaxAggregateOutputType = {
     id: string | null
-    title: string | null
     price: number | null
     totalQuantity: number | null
     remainingQuantity: number | null
@@ -6394,7 +6392,6 @@ export namespace Prisma {
 
   export type CardArticleCountAggregateOutputType = {
     id: number
-    title: number
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -6421,7 +6418,6 @@ export namespace Prisma {
 
   export type CardArticleMinAggregateInputType = {
     id?: true
-    title?: true
     price?: true
     totalQuantity?: true
     remainingQuantity?: true
@@ -6434,7 +6430,6 @@ export namespace Prisma {
 
   export type CardArticleMaxAggregateInputType = {
     id?: true
-    title?: true
     price?: true
     totalQuantity?: true
     remainingQuantity?: true
@@ -6447,7 +6442,6 @@ export namespace Prisma {
 
   export type CardArticleCountAggregateInputType = {
     id?: true
-    title?: true
     price?: true
     totalQuantity?: true
     remainingQuantity?: true
@@ -6547,7 +6541,6 @@ export namespace Prisma {
 
   export type CardArticleGroupByOutputType = {
     id: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -6579,7 +6572,6 @@ export namespace Prisma {
 
   export type CardArticleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    title?: boolean
     price?: boolean
     totalQuantity?: boolean
     remainingQuantity?: boolean
@@ -6593,7 +6585,6 @@ export namespace Prisma {
 
   export type CardArticleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    title?: boolean
     price?: boolean
     totalQuantity?: boolean
     remainingQuantity?: boolean
@@ -6607,7 +6598,6 @@ export namespace Prisma {
 
   export type CardArticleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    title?: boolean
     price?: boolean
     totalQuantity?: boolean
     remainingQuantity?: boolean
@@ -6621,7 +6611,6 @@ export namespace Prisma {
 
   export type CardArticleSelectScalar = {
     id?: boolean
-    title?: boolean
     price?: boolean
     totalQuantity?: boolean
     remainingQuantity?: boolean
@@ -6632,7 +6621,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type CardArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "price" | "totalQuantity" | "remainingQuantity" | "exchangeText" | "exchangeRank" | "exchangeGenre" | "userPhotoCardId" | "createdAt", ExtArgs["result"]["cardArticle"]>
+  export type CardArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "price" | "totalQuantity" | "remainingQuantity" | "exchangeText" | "exchangeRank" | "exchangeGenre" | "userPhotoCardId" | "createdAt", ExtArgs["result"]["cardArticle"]>
   export type CardArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userPhotoCard?: boolean | UserPhotoCardDefaultArgs<ExtArgs>
   }
@@ -6650,7 +6639,6 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      title: string
       price: number
       totalQuantity: number
       remainingQuantity: number
@@ -7084,7 +7072,6 @@ export namespace Prisma {
    */
   interface CardArticleFieldRefs {
     readonly id: FieldRef<"CardArticle", 'String'>
-    readonly title: FieldRef<"CardArticle", 'String'>
     readonly price: FieldRef<"CardArticle", 'Int'>
     readonly totalQuantity: FieldRef<"CardArticle", 'Int'>
     readonly remainingQuantity: FieldRef<"CardArticle", 'Int'>
@@ -9808,7 +9795,6 @@ export namespace Prisma {
 
   export const CardArticleScalarFieldEnum: {
     id: 'id',
-    title: 'title',
     price: 'price',
     totalQuantity: 'totalQuantity',
     remainingQuantity: 'remainingQuantity',
@@ -10287,7 +10273,6 @@ export namespace Prisma {
     OR?: CardArticleWhereInput[]
     NOT?: CardArticleWhereInput | CardArticleWhereInput[]
     id?: StringFilter<"CardArticle"> | string
-    title?: StringFilter<"CardArticle"> | string
     price?: IntFilter<"CardArticle"> | number
     totalQuantity?: IntFilter<"CardArticle"> | number
     remainingQuantity?: IntFilter<"CardArticle"> | number
@@ -10301,7 +10286,6 @@ export namespace Prisma {
 
   export type CardArticleOrderByWithRelationInput = {
     id?: SortOrder
-    title?: SortOrder
     price?: SortOrder
     totalQuantity?: SortOrder
     remainingQuantity?: SortOrder
@@ -10318,7 +10302,6 @@ export namespace Prisma {
     AND?: CardArticleWhereInput | CardArticleWhereInput[]
     OR?: CardArticleWhereInput[]
     NOT?: CardArticleWhereInput | CardArticleWhereInput[]
-    title?: StringFilter<"CardArticle"> | string
     price?: IntFilter<"CardArticle"> | number
     totalQuantity?: IntFilter<"CardArticle"> | number
     remainingQuantity?: IntFilter<"CardArticle"> | number
@@ -10332,7 +10315,6 @@ export namespace Prisma {
 
   export type CardArticleOrderByWithAggregationInput = {
     id?: SortOrder
-    title?: SortOrder
     price?: SortOrder
     totalQuantity?: SortOrder
     remainingQuantity?: SortOrder
@@ -10353,7 +10335,6 @@ export namespace Prisma {
     OR?: CardArticleScalarWhereWithAggregatesInput[]
     NOT?: CardArticleScalarWhereWithAggregatesInput | CardArticleScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"CardArticle"> | string
-    title?: StringWithAggregatesFilter<"CardArticle"> | string
     price?: IntWithAggregatesFilter<"CardArticle"> | number
     totalQuantity?: IntWithAggregatesFilter<"CardArticle"> | number
     remainingQuantity?: IntWithAggregatesFilter<"CardArticle"> | number
@@ -10816,7 +10797,6 @@ export namespace Prisma {
 
   export type CardArticleCreateInput = {
     id?: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -10829,7 +10809,6 @@ export namespace Prisma {
 
   export type CardArticleUncheckedCreateInput = {
     id?: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -10842,7 +10821,6 @@ export namespace Prisma {
 
   export type CardArticleUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number
@@ -10855,7 +10833,6 @@ export namespace Prisma {
 
   export type CardArticleUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number
@@ -10868,7 +10845,6 @@ export namespace Prisma {
 
   export type CardArticleCreateManyInput = {
     id?: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -10881,7 +10857,6 @@ export namespace Prisma {
 
   export type CardArticleUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number
@@ -10893,7 +10868,6 @@ export namespace Prisma {
 
   export type CardArticleUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number
@@ -11410,7 +11384,6 @@ export namespace Prisma {
 
   export type CardArticleCountOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
     price?: SortOrder
     totalQuantity?: SortOrder
     remainingQuantity?: SortOrder
@@ -11429,7 +11402,6 @@ export namespace Prisma {
 
   export type CardArticleMaxOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
     price?: SortOrder
     totalQuantity?: SortOrder
     remainingQuantity?: SortOrder
@@ -11442,7 +11414,6 @@ export namespace Prisma {
 
   export type CardArticleMinOrderByAggregateInput = {
     id?: SortOrder
-    title?: SortOrder
     price?: SortOrder
     totalQuantity?: SortOrder
     remainingQuantity?: SortOrder
@@ -12855,7 +12826,6 @@ export namespace Prisma {
 
   export type CardArticleCreateWithoutUserPhotoCardInput = {
     id?: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -12867,7 +12837,6 @@ export namespace Prisma {
 
   export type CardArticleUncheckedCreateWithoutUserPhotoCardInput = {
     id?: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -13064,7 +13033,6 @@ export namespace Prisma {
     OR?: CardArticleScalarWhereInput[]
     NOT?: CardArticleScalarWhereInput | CardArticleScalarWhereInput[]
     id?: StringFilter<"CardArticle"> | string
-    title?: StringFilter<"CardArticle"> | string
     price?: IntFilter<"CardArticle"> | number
     totalQuantity?: IntFilter<"CardArticle"> | number
     remainingQuantity?: IntFilter<"CardArticle"> | number
@@ -13765,7 +13733,6 @@ export namespace Prisma {
 
   export type CardArticleCreateManyUserPhotoCardInput = {
     id?: string
-    title: string
     price: number
     totalQuantity: number
     remainingQuantity: number
@@ -13803,7 +13770,6 @@ export namespace Prisma {
 
   export type CardArticleUpdateWithoutUserPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number
@@ -13815,7 +13781,6 @@ export namespace Prisma {
 
   export type CardArticleUncheckedUpdateWithoutUserPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number
@@ -13827,7 +13792,6 @@ export namespace Prisma {
 
   export type CardArticleUncheckedUpdateManyWithoutUserPhotoCardInput = {
     id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     totalQuantity?: IntFieldUpdateOperationsInput | number
     remainingQuantity?: IntFieldUpdateOperationsInput | number

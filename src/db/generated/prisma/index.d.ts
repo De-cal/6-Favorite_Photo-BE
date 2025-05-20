@@ -1647,10 +1647,12 @@ export namespace Prisma {
 
   export type UserAvgAggregateOutputType = {
     pointAmount: number | null
+    createCount: number | null
   }
 
   export type UserSumAggregateOutputType = {
     pointAmount: number | null
+    createCount: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1659,6 +1661,7 @@ export namespace Prisma {
     password: string | null
     nickname: string | null
     pointAmount: number | null
+    createCount: number | null
     createdAt: Date | null
   }
 
@@ -1668,6 +1671,7 @@ export namespace Prisma {
     password: string | null
     nickname: string | null
     pointAmount: number | null
+    createCount: number | null
     createdAt: Date | null
   }
 
@@ -1677,6 +1681,7 @@ export namespace Prisma {
     password: number
     nickname: number
     pointAmount: number
+    createCount: number
     createdAt: number
     _all: number
   }
@@ -1684,10 +1689,12 @@ export namespace Prisma {
 
   export type UserAvgAggregateInputType = {
     pointAmount?: true
+    createCount?: true
   }
 
   export type UserSumAggregateInputType = {
     pointAmount?: true
+    createCount?: true
   }
 
   export type UserMinAggregateInputType = {
@@ -1696,6 +1703,7 @@ export namespace Prisma {
     password?: true
     nickname?: true
     pointAmount?: true
+    createCount?: true
     createdAt?: true
   }
 
@@ -1705,6 +1713,7 @@ export namespace Prisma {
     password?: true
     nickname?: true
     pointAmount?: true
+    createCount?: true
     createdAt?: true
   }
 
@@ -1714,6 +1723,7 @@ export namespace Prisma {
     password?: true
     nickname?: true
     pointAmount?: true
+    createCount?: true
     createdAt?: true
     _all?: true
   }
@@ -1810,6 +1820,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount: number
     createdAt: Date
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
@@ -1838,6 +1849,7 @@ export namespace Prisma {
     password?: boolean
     nickname?: boolean
     pointAmount?: boolean
+    createCount?: boolean
     createdAt?: boolean
     notification?: boolean | User$notificationArgs<ExtArgs>
     userPhotoCard?: boolean | User$userPhotoCardArgs<ExtArgs>
@@ -1852,6 +1864,7 @@ export namespace Prisma {
     password?: boolean
     nickname?: boolean
     pointAmount?: boolean
+    createCount?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1861,6 +1874,7 @@ export namespace Prisma {
     password?: boolean
     nickname?: boolean
     pointAmount?: boolean
+    createCount?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1870,10 +1884,11 @@ export namespace Prisma {
     password?: boolean
     nickname?: boolean
     pointAmount?: boolean
+    createCount?: boolean
     createdAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "nickname" | "pointAmount" | "createdAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "nickname" | "pointAmount" | "createCount" | "createdAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     notification?: boolean | User$notificationArgs<ExtArgs>
     userPhotoCard?: boolean | User$userPhotoCardArgs<ExtArgs>
@@ -1898,6 +1913,7 @@ export namespace Prisma {
       password: string
       nickname: string
       pointAmount: number
+      createCount: number
       createdAt: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -2331,6 +2347,7 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly nickname: FieldRef<"User", 'String'>
     readonly pointAmount: FieldRef<"User", 'Int'>
+    readonly createCount: FieldRef<"User", 'Int'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
   }
     
@@ -9744,6 +9761,7 @@ export namespace Prisma {
     password: 'password',
     nickname: 'nickname',
     pointAmount: 'pointAmount',
+    createCount: 'createCount',
     createdAt: 'createdAt'
   };
 
@@ -9982,6 +10000,7 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     nickname?: StringFilter<"User"> | string
     pointAmount?: IntFilter<"User"> | number
+    createCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     notification?: NotificationListRelationFilter
     userPhotoCard?: UserPhotoCardListRelationFilter
@@ -9995,6 +10014,7 @@ export namespace Prisma {
     password?: SortOrder
     nickname?: SortOrder
     pointAmount?: SortOrder
+    createCount?: SortOrder
     createdAt?: SortOrder
     notification?: NotificationOrderByRelationAggregateInput
     userPhotoCard?: UserPhotoCardOrderByRelationAggregateInput
@@ -10011,6 +10031,7 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     nickname?: StringFilter<"User"> | string
     pointAmount?: IntFilter<"User"> | number
+    createCount?: IntFilter<"User"> | number
     createdAt?: DateTimeFilter<"User"> | Date | string
     notification?: NotificationListRelationFilter
     userPhotoCard?: UserPhotoCardListRelationFilter
@@ -10024,6 +10045,7 @@ export namespace Prisma {
     password?: SortOrder
     nickname?: SortOrder
     pointAmount?: SortOrder
+    createCount?: SortOrder
     createdAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
@@ -10041,6 +10063,7 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     nickname?: StringWithAggregatesFilter<"User"> | string
     pointAmount?: IntWithAggregatesFilter<"User"> | number
+    createCount?: IntWithAggregatesFilter<"User"> | number
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
@@ -10488,6 +10511,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
@@ -10501,6 +10525,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
@@ -10514,6 +10539,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
@@ -10527,6 +10553,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
@@ -10540,6 +10567,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
   }
 
@@ -10549,6 +10577,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10558,6 +10587,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -11092,11 +11122,13 @@ export namespace Prisma {
     password?: SortOrder
     nickname?: SortOrder
     pointAmount?: SortOrder
+    createCount?: SortOrder
     createdAt?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
     pointAmount?: SortOrder
+    createCount?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -11105,6 +11137,7 @@ export namespace Prisma {
     password?: SortOrder
     nickname?: SortOrder
     pointAmount?: SortOrder
+    createCount?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -11114,11 +11147,13 @@ export namespace Prisma {
     password?: SortOrder
     nickname?: SortOrder
     pointAmount?: SortOrder
+    createCount?: SortOrder
     createdAt?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
     pointAmount?: SortOrder
+    createCount?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -12530,6 +12565,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
     order?: OrderCreateNestedManyWithoutSellerInput
@@ -12542,6 +12578,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
     order?: OrderUncheckedCreateNestedManyWithoutSellerInput
@@ -12570,6 +12607,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
     order?: OrderUpdateManyWithoutSellerNestedInput
@@ -12582,6 +12620,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
     order?: OrderUncheckedUpdateManyWithoutSellerNestedInput
@@ -12594,6 +12633,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
@@ -12606,6 +12646,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
@@ -12698,6 +12739,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
@@ -12710,6 +12752,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput
@@ -12754,6 +12797,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationCreateNestedManyWithoutUserInput
     order?: OrderCreateNestedManyWithoutSellerInput
@@ -12766,6 +12810,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     order?: OrderUncheckedCreateNestedManyWithoutSellerInput
@@ -12941,6 +12986,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUpdateManyWithoutUserNestedInput
     order?: OrderUpdateManyWithoutSellerNestedInput
@@ -12953,6 +12999,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     order?: OrderUncheckedUpdateManyWithoutSellerNestedInput
@@ -13187,6 +13234,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardCreateNestedManyWithoutUserInput
@@ -13199,6 +13247,7 @@ export namespace Prisma {
     password: string
     nickname: string
     pointAmount: number
+    createCount?: number
     createdAt?: Date | string
     notification?: NotificationUncheckedCreateNestedManyWithoutUserInput
     userPhotoCard?: UserPhotoCardUncheckedCreateNestedManyWithoutUserInput
@@ -13293,6 +13342,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUpdateManyWithoutUserNestedInput
@@ -13305,6 +13355,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     nickname?: StringFieldUpdateOperationsInput | string
     pointAmount?: IntFieldUpdateOperationsInput | number
+    createCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     notification?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     userPhotoCard?: UserPhotoCardUncheckedUpdateManyWithoutUserNestedInput

@@ -14,6 +14,7 @@ model User {
   password    String
   nickname    String
   pointAmount Int
+  createCount Int      @default(0) //포토카드 생성횟수수
   createdAt   DateTime @default(now())
 
   notification  Notification[]

@@ -1,16 +1,26 @@
 import prisma from "../db/prisma/prisma.js";
 
 async function getByFilter() {
-  const photocard = await prisma.cardArticle.findMany({});
-  return photocard;
+  return await prisma.cardArticle.findMany({});
 }
 
 async function getById(id) {
-  const photocard = await prisma.cardArticle.findUnique({ where: { id } });
-  return photocard;
+  return await prisma.cardArticle.findUnique({ where: { id } });
+}
+
+async function getByCard(cardId) {
+  return await prisma.cardArticle.findFirst({
+    where: { userPhotoCardId: cardId },
+  });
+}
+
+async function create(data) {
+  return await prisma.cardArticle.create({ data });
 }
 
 export default {
   getByFilter,
   getById,
+  getByCard,
+  create,
 };

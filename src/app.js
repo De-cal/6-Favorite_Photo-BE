@@ -5,7 +5,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5050;
 
 // 1. 서버 객체 생성
 const app = express();

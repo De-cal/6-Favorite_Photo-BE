@@ -132,10 +132,14 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.NotificationScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  isRead: 'isRead',
   message: 'message',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.UserNotificationScalarFieldEnum = {
+  userId: 'userId',
+  notificationId: 'notificationId',
+  isRead: 'isRead'
 };
 
 exports.Prisma.PhotoCardScalarFieldEnum = {
@@ -233,6 +237,7 @@ exports.ExchangeStatus = exports.$Enums.ExchangeStatus = {
 exports.Prisma.ModelName = {
   User: 'User',
   Notification: 'Notification',
+  UserNotification: 'UserNotification',
   PhotoCard: 'PhotoCard',
   UserPhotoCard: 'UserPhotoCard',
   CardArticle: 'CardArticle',

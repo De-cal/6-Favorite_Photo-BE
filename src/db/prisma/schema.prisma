@@ -14,10 +14,10 @@ model User {
   password    String
   nickname    String
   pointAmount Int
-  createCount Int      @default(0) //포토카드 생성횟수수
+  createCount Int      @default(0)
   createdAt   DateTime @default(now())
 
-  notification  Notification[]
+  notifications UserNotification[]
   userPhotoCard UserPhotoCard[]
   order         Order[]
   photoCard     PhotoCard[]
@@ -25,12 +25,21 @@ model User {
 
 model Notification {
   id        String   @id @default(uuid())
-  userId    String
-  isRead    Boolean
   message   String
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  users UserNotification[]
+}
+
+model UserNotification {
+  userId         String
+  notificationId String
+  isRead         Boolean @default(false)
+
+  user         User         @relation(fields: [userId], references: [id])
+  notification Notification @relation(fields: [notificationId], references: [id])
+
+  @@id([userId, notificationId])
 }
 
 model PhotoCard {
@@ -43,7 +52,6 @@ model PhotoCard {
   imgUrl      String
   creatorId   String
   creator     User     @relation(fields: [creatorId], references: [id])
-  //퀀티티티
   createdAt   DateTime @default(now())
 
   userPhotoCard UserPhotoCard[]
@@ -92,7 +100,6 @@ enum UserPhotocardStatus {
 
 model CardArticle {
   id                String   @id @default(uuid())
-  title             String
   price             Int
   totalQuantity     Int
   remainingQuantity Int

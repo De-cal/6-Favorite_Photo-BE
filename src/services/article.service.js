@@ -12,24 +12,30 @@ async function getById(id) {
 
 async function postArticle(data) {
   return await prisma.$transaction(async (tx) => {
-    const card = await cardRepository.getById(data.userPhotoCardId);
+    const card = await cardRepository.getById(tx, data.userPhotoCardId);
     if (!card) {
       throw new Error("해당 포토카드가 존재하지 않습니다.");
     }
     if (card.quantity < data.totalQuantity) {
       throw new Error("포토카드 수량이 부족합니다.");
     }
-    const article = await articleRepository.getByCard(data.userPhotoCardId);
+    const article = await articleRepository.getByCard(tx, data.userPhotoCardId);
     if (article) {
-      throw new Error("해당 포토카드를 이미 팔고 있습니다. ");
+      throw new Error("이미 등록된 판매 글이 존재합니다.");
     }
-    await cardRepository.decreaseCard(data.userPhotoCardId, data.totalQuantity);
-    const newCard = await cardRepository.create({
-      ...updatedCard,
+    await cardRepository.decreaseCard(
+      tx,
+      data.userPhotoCardId,
+      data.totalQuantity
+    );
+    const newCard = await cardRepository.create(tx, {
+      photoCardId: card.photoCardId,
+      userId: card.userId,
       status: "SELLING",
       quantity: data.totalQuantity,
+      price: data.price,
     });
-    const newArticle = await articleRepository.create({
+    return await articleRepository.create(tx, {
       ...data,
       userPhotoCardId: newCard.id,
     });

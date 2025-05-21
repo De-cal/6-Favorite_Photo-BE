@@ -1,21 +1,19 @@
-import prisma from "../db/prisma/prisma.js";
-
-async function getByFilter() {
-  return await prisma.cardArticle.findMany({});
+async function getByFilter(tx) {
+  return await tx.cardArticle.findMany({});
 }
 
-async function getById(id) {
-  return await prisma.cardArticle.findUnique({ where: { id } });
+async function getById(tx, id) {
+  return await tx.cardArticle.findUnique({ where: { id } });
 }
 
-async function getByCard(cardId) {
-  return await prisma.cardArticle.findFirst({
+async function getByCard(tx, cardId) {
+  return await tx.cardArticle.findFirst({
     where: { userPhotoCardId: cardId },
   });
 }
 
-async function create(data) {
-  return await prisma.cardArticle.create({ data });
+async function create(tx, data) {
+  return await tx.cardArticle.create({ data });
 }
 
 export default {

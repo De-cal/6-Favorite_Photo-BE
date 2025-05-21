@@ -364,8 +364,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.7.0
-   * Query Engine version: 3cff47a7f5d65c3ea74883f1d736e41d68ce91ed
+   * Prisma Client JS version: 6.8.1
+   * Query Engine version: 2060c79ba17c6bb9f5823312b6f6b7f4a845738e
    */
   export type PrismaVersion = {
     client: string
@@ -10574,7 +10574,7 @@ export namespace Prisma {
 
   export type NotificationCreateInput = {
     id?: string
-    isRead: boolean
+    isRead?: boolean
     message: string
     createdAt?: Date | string
     user: UserCreateNestedOneWithoutNotificationInput
@@ -10583,7 +10583,7 @@ export namespace Prisma {
   export type NotificationUncheckedCreateInput = {
     id?: string
     userId: string
-    isRead: boolean
+    isRead?: boolean
     message: string
     createdAt?: Date | string
   }
@@ -10607,7 +10607,7 @@ export namespace Prisma {
   export type NotificationCreateManyInput = {
     id?: string
     userId: string
-    isRead: boolean
+    isRead?: boolean
     message: string
     createdAt?: Date | string
   }
@@ -12292,14 +12292,14 @@ export namespace Prisma {
 
   export type NotificationCreateWithoutUserInput = {
     id?: string
-    isRead: boolean
+    isRead?: boolean
     message: string
     createdAt?: Date | string
   }
 
   export type NotificationUncheckedCreateWithoutUserInput = {
     id?: string
-    isRead: boolean
+    isRead?: boolean
     message: string
     createdAt?: Date | string
   }
@@ -13497,7 +13497,7 @@ export namespace Prisma {
 
   export type NotificationCreateManyUserInput = {
     id?: string
-    isRead: boolean
+    isRead?: boolean
     message: string
     createdAt?: Date | string
   }

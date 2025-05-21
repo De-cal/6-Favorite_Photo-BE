@@ -6,7 +6,7 @@ const articleController = express.Router();
 articleController.get("/", async (req, res, next) => {
   try {
     const articles = await articleService.getByFilter();
-    res.status(200).json(photocards);
+    res.status(200).json(articles);
   } catch (error) {
     next(error);
   }
@@ -16,7 +16,7 @@ articleController.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const articles = await articleService.getById(id);
-    res.status(200).json(photocards);
+    res.status(200).json(articles);
   } catch (error) {
     next(error);
   }
@@ -24,9 +24,8 @@ articleController.get("/:id", async (req, res, next) => {
 
 articleController.post("/", async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
+    // const userId = req.auth.userId;
     const {
-      title,
       price,
       totalQuantity,
       exchangeText,
@@ -35,14 +34,12 @@ articleController.post("/", async (req, res, next) => {
       userPhotoCardId,
     } = req.body;
     const article = await articleService.postArticle({
-      title,
       price,
       totalQuantity,
       exchangeText,
       exchangeRank,
       exchangeGenre,
       userPhotoCardId,
-      userId,
     });
     res.status(201).json(article);
   } catch (error) {

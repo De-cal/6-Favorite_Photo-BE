@@ -1,5 +1,5 @@
-import express from 'express';
-import pointController from '../controllers/pointController';
+import express from "express";
+import pointController from "../controllers/pointController.js";
 
 const pointRouter = express.Router();
 

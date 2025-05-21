@@ -1,5 +1,4 @@
-import pointService from "../services/pointService";
-
+import pointService from "../services/pointService.js";
 
 const pointController = {
   addPoint: async (req, res, next) => {
@@ -7,12 +6,12 @@ const pointController = {
       const { userId } = req.auth;
       const { pointsToAdd } = req.body;
       const updateUser = await pointService.addPoint(userId, pointsToAdd);
-      
+
       return res.status(200).json(updateUser);
     } catch (error) {
       next(error);
     }
- },
-}
+  },
+};
 
 export default pointController;

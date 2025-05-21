@@ -26,7 +26,6 @@ articleController.post("/", async (req, res, next) => {
   try {
     const userId = req.auth.userId;
     const {
-      title,
       price,
       totalQuantity,
       exchangeText,
@@ -35,7 +34,6 @@ articleController.post("/", async (req, res, next) => {
       userPhotoCardId,
     } = req.body;
     const article = await articleService.postArticle({
-      title,
       price,
       totalQuantity,
       exchangeText,

@@ -1,18 +1,20 @@
-async function getByFilter(tx) {
+import prisma from "../db/prisma/prisma.js";
+
+async function getByFilter(tx = prisma) {
   return await tx.cardArticle.findMany({});
 }
 
-async function getById(tx, id) {
+async function getById(id, tx = prisma) {
   return await tx.cardArticle.findUnique({ where: { id } });
 }
 
-async function getByCard(tx, cardId) {
+async function getByCard(cardId, tx = prisma) {
   return await tx.cardArticle.findFirst({
     where: { userPhotoCardId: cardId },
   });
 }
 
-async function create(tx, data) {
+async function create(data, tx = prisma) {
   return await tx.cardArticle.create({ data });
 }
 

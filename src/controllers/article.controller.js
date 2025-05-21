@@ -24,7 +24,7 @@ articleController.get("/:id", async (req, res, next) => {
 
 articleController.post("/", async (req, res, next) => {
   try {
-    const userId = req.auth.userId;
+    // const userId = req.auth.userId;
     const {
       price,
       totalQuantity,
@@ -40,7 +40,6 @@ articleController.post("/", async (req, res, next) => {
       exchangeRank,
       exchangeGenre,
       userPhotoCardId,
-      userId,
     });
     res.status(201).json(article);
   } catch (error) {

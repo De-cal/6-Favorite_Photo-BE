@@ -1,15 +1,18 @@
-import notificationService from "../services/notificationService";
+import notificationService from "../services/notificationService.js";
 
 const notificationController = {
   getMyNotifications: async (req, res, next) => {
     try {
       let { page = 1, limit = 10 } = req.query;
-      page = parseInt(page)
-      limit = parseInt(limit)
-      
+      page = parseInt(page);
+      limit = parseInt(limit);
 
-      const { userId } = req.auth; 
-      const notifications = await notificationService.getMyNotifications(userId, page, limit);
+      const { userId } = req.auth;
+      const notifications = await notificationService.getMyNotifications(
+        userId,
+        page,
+        limit
+      );
       return res.status(200).json(notifications);
     } catch (error) {
       next(error);
@@ -19,8 +22,11 @@ const notificationController = {
   readNotification: async (req, res, next) => {
     try {
       const { notificationId } = req.params;
-      const { userId } = req.auth; 
-      const updatedNotification = await notificationService.readNotification(userId, notificationId);
+      const { userId } = req.auth;
+      const updatedNotification = await notificationService.readNotification(
+        userId,
+        notificationId
+      );
       return res.status(200).json(updatedNotification);
     } catch (error) {
       next(error);
@@ -31,7 +37,9 @@ const notificationController = {
     try {
       const { userId } = req.auth;
       const result = await notificationService.readAllNotifications(userId);
-      return res.status(200).json({ message: `${result.count}개의 알림이 읽음 처리되었습니다.` });
+      return res
+        .status(200)
+        .json({ message: `${result.count}개의 알림이 읽음 처리되었습니다.` });
     } catch (error) {
       next(error);
     }

@@ -1,4 +1,4 @@
-import prisma from "../db/prisma/prisma"
+import prisma from "../db/prisma/prisma.js";
 
 const pointRepository = {
   async addPoint(userId, pointsToAdd) {
@@ -7,12 +7,12 @@ const pointRepository = {
         id: userId,
       },
       data: {
-          pointAmount: {
-            increment: pointsToAdd,
-          },
+        pointAmount: {
+          increment: pointsToAdd,
+        },
       },
-    })
+    });
   },
-}
+};
 
 export default pointRepository;

@@ -11,7 +11,7 @@ async function getById(id) {
 }
 
 async function postArticle(data) {
-  const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
+  // const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
   return await prisma.$transaction(async (tx) => {
     const card = await cardRepository.getById(data.userPhotoCardId, tx);
     if (!card) {
@@ -25,9 +25,9 @@ async function postArticle(data) {
       throw new Error("이미 등록된 판매 글이 존재합니다.");
     }
     await cardRepository.decreaseCard(
-      tx,
       data.userPhotoCardId,
-      data.totalQuantity
+      data.totalQuantity,
+      tx
     );
     const newCard = await cardRepository.create(
       {
@@ -43,6 +43,7 @@ async function postArticle(data) {
       {
         ...data,
         userPhotoCardId: newCard.id,
+        remainingQuantity: data.totalQuantity,
       },
       tx
     );

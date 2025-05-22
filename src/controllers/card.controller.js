@@ -22,4 +22,24 @@ cardController.get("/:id", async (req, res, next) => {
   }
 });
 
+cardController.get("/my-gallery", async (req, res, next) => {
+  try {
+    const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13"; //req.auth.userId; 변경해야함
+    const { page, pageSize, rank, genre, keyword } = req.query;
+
+    const result = await cardService.findMyGallerySellingCards({
+      page,
+      pageSize,
+      rank,
+      genre,
+      keyword,
+      userId, //나중에 변경
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default cardController;

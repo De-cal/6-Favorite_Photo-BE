@@ -47,4 +47,27 @@ articleController.post("/", async (req, res, next) => {
   }
 });
 
+articleController.get("/my-sell", async (req, res, next) => {
+  try {
+    const userId = req.user.id; // 로그인 사용자 ID
+    const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
+      req.query;
+
+    const result = await cardService.findMyCardArticles({
+      userId,
+      page,
+      pageSize,
+      rank,
+      genre,
+      keyword,
+      sellingType,
+      soldOut,
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default articleController;

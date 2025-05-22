@@ -7,7 +7,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: 300,
     imgUrl: "https://example.com/card11.jpg",
-    creatorIndex: 4,
+    creatorId: 1,
   },
   {
     title: "고양이 낮잠",
@@ -17,7 +17,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: 200,
     imgUrl: "https://example.com/card12.jpg",
-    creatorIndex: 5,
+    creatorId: 1,
   },
   {
     title: "앵무새",
@@ -27,7 +27,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: 200,
     imgUrl: "https://example.com/card13.jpg",
-    creatorIndex: 6,
+    creatorId: 1,
   },
   {
     title: "판다",
@@ -37,7 +37,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: 100,
     imgUrl: "https://example.com/card14.jpg",
-    creatorIndex: 7,
+    creatorId: 2,
   },
   {
     title: "사막여우",
@@ -47,7 +47,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: 100,
     imgUrl: "https://example.com/card15.jpg",
-    creatorIndex: 1,
+    creatorId: 2,
   },
   {
     title: "남자 모델",
@@ -57,7 +57,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: 200,
     imgUrl: "https://example.com/card16.jpg",
-    creatorIndex: 2,
+    creatorId: 2,
   },
   {
     title: "여자 댄서",
@@ -67,7 +67,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: 100,
     imgUrl: "https://example.com/card17.jpg",
-    creatorIndex: 3,
+    creatorId: 3,
   },
   {
     title: "아이돌",
@@ -77,7 +77,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: 300,
     imgUrl: "https://example.com/card18.jpg",
-    creatorIndex: 4,
+    creatorId: 3,
   },
   {
     title: "스냅사진",
@@ -87,7 +87,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: 100,
     imgUrl: "https://example.com/card19.jpg",
-    creatorIndex: 5,
+    creatorId: 3,
   },
   {
     title: "셀카",
@@ -97,7 +97,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: 300,
     imgUrl: "https://example.com/card20.jpg",
-    creatorIndex: 6,
+    creatorId: 4,
   },
   {
     title: "빈티지 카메라",
@@ -107,7 +107,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: 200,
     imgUrl: "https://example.com/card21.jpg",
-    creatorIndex: 1,
+    creatorId: 4,
   },
   {
     title: "시계",
@@ -117,7 +117,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: 100,
     imgUrl: "https://example.com/card22.jpg",
-    creatorIndex: 2,
+    creatorId: 4,
   },
   {
     title: "책상 위 노트북",
@@ -127,7 +127,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: 300,
     imgUrl: "https://example.com/card23.jpg",
-    creatorIndex: 3,
+    creatorId: 5,
   },
   {
     title: "헤드폰",
@@ -137,7 +137,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: 300,
     imgUrl: "https://example.com/card24.jpg",
-    creatorIndex: 4,
+    creatorId: 5,
   },
   {
     title: "전구",
@@ -147,7 +147,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: 300,
     imgUrl: "https://example.com/card25.jpg",
-    creatorIndex: 5,
+    creatorId: 5,
   },
   {
     title: "하트 이모티콘",
@@ -157,7 +157,7 @@ export const PhotoCardMocks = [
     genre: "ETC",
     price: 200,
     imgUrl: "https://example.com/card26.jpg",
-    creatorIndex: 6,
+    creatorId: 6,
   },
   {
     title: "웃는 얼굴",
@@ -167,7 +167,7 @@ export const PhotoCardMocks = [
     genre: "ETC",
     price: 200,
     imgUrl: "https://example.com/card27.jpg",
-    creatorIndex: 7,
+    creatorId: 6,
   },
   {
     title: "별똥별",
@@ -177,7 +177,7 @@ export const PhotoCardMocks = [
     genre: "ETC",
     price: 100,
     imgUrl: "https://example.com/card28.jpg",
-    creatorIndex: 1,
+    creatorId: 6,
   },
   {
     title: "무지개",
@@ -187,7 +187,7 @@ export const PhotoCardMocks = [
     genre: "ETC",
     price: 200,
     imgUrl: "https://example.com/card29.jpg",
-    creatorIndex: 2,
+    creatorId: 7,
   },
   {
     title: "눈사람",
@@ -197,6 +197,16 @@ export const PhotoCardMocks = [
     genre: "ETC",
     price: 100,
     imgUrl: "https://example.com/card30.jpg",
-    creatorIndex: 3,
+    creatorId: 7,
+  },
+  {
+    title: "떡갈비",
+    description:
+      "내돈내산 노릇노릇 맛있게 구워진 떡갈비. 한팩에 3개가 들어있고 존맛탱!",
+    rank: "RARE",
+    genre: "FOOD",
+    price: 100,
+    imgUrl: "https://example.com/card30.jpg",
+    creatorId: 7,
   },
 ];

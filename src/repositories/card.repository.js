@@ -81,7 +81,7 @@ export const findMyGallerySellingCards = async ({
   return {
     totalCount,
     list,
-    rankCounts, // { COMMON: 4, RARE: 6, LEGENDARY: 2, ... }
+    rankCounts, // { COMMON: 4, RARE: 6, LEGENDARY: 2, ... }예상.
   };
 };
 

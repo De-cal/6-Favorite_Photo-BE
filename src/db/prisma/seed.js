@@ -67,7 +67,7 @@ async function main() {
   console.log("🖼️ Creating photo cards...");
   const createdPhotoCards = [];
   for (const card of PhotoCardMocks) {
-    const creator = createdUsers[card.creatorIndex - 1]; // creatorIndex는 1부터 시작
+    const creator = createdUsers[card.creatorId - 1]; // creatorIndex는 1부터 시작
     const created = await prisma.photoCard.create({
       data: {
         title: card.title,

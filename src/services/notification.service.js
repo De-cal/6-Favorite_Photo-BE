@@ -1,4 +1,4 @@
-import notificationRepository from "../repositories/notificationRepository.js";
+import notificationRepository from "../repositories/notification.repository.js";
 
 const notificationService = {
   // 포토 카드 교환 성사 알림 생성 (구매자 대상)

@@ -3,14 +3,14 @@ import articleService from "../services/article.service.js";
 
 const articleController = express.Router();
 
-articleController.get("/", async (req, res, next) => {
-  try {
-    const articles = await articleService.getByFilter();
-    res.status(200).json(articles);
-  } catch (error) {
-    next(error);
-  }
-});
+// articleController.get("/", async (req, res, next) => {
+//   try {
+//     const articles = await articleService.getByFilter();
+//     res.status(200).json(articles);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 articleController.get("/:id", async (req, res, next) => {
   try {
@@ -44,6 +44,29 @@ articleController.post("/", async (req, res, next) => {
     res.status(201).json(article);
   } catch (error) {
     next(error);
+  }
+});
+
+articleController.get("/", async (req, res, next) => {
+  try {
+    const userId = req.user.id; // 로그인 사용자 ID
+    const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
+      req.query;
+
+    const result = await cardService.findMyCardArticles({
+      userId,
+      page,
+      pageSize,
+      rank,
+      genre,
+      keyword,
+      sellingType,
+      soldOut,
+    });
+
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
   }
 });
 

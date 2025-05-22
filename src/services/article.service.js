@@ -50,8 +50,44 @@ async function postArticle(data) {
   });
 }
 
+export async function findMyCardArticles({
+  userId,
+  page = 1,
+  pageSize = 15,
+  rank,
+  genre,
+  keyword,
+  sellingType,
+  soldOut,
+}) {
+  const pageNum = Number(page);
+  const pageSizeNum = Number(pageSize);
+  const parsedSoldOut =
+    soldOut === "true" ? true : soldOut === "false" ? false : undefined;
+
+  if (isNaN(pageNum) || pageNum < 1) {
+    throw new Error("유효하지 않은 page 값입니다.");
+  }
+
+  if (isNaN(pageSizeNum) || pageSizeNum < 1 || pageSizeNum > 100) {
+    throw new Error("유효하지 않은 pageSize 값입니다.");
+  }
+
+  return await cardRepository.findMyCardArticles({
+    userId,
+    page: pageNum,
+    pageSize: pageSizeNum,
+    rank,
+    genre,
+    sellingType,
+    soldOut: parsedSoldOut,
+    keyword,
+  });
+}
+
 export default {
   getByFilter,
   getById,
   postArticle,
+  findMyCardArticles,
 };

@@ -10,6 +10,9 @@ async function getById(id) {
   return await articleRepository.getById(id);
 }
 
+async function getAll() {
+  return await articleRepository.getAll();
+}
 async function postArticle(data) {
   // const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
   return await prisma.$transaction(async (tx) => {
@@ -88,6 +91,7 @@ export async function findMyCardArticles({
 export default {
   getByFilter,
   getById,
+  getAll,
   postArticle,
   findMyCardArticles,
 };

@@ -132,6 +132,10 @@ async function getByCard(cardId, tx = prisma) {
   });
 }
 
+async function getAll() {
+  return await prisma.cardArticle.findMany();
+}
+
 async function create(data, tx = prisma) {
   return await tx.cardArticle.create({ data });
 }
@@ -139,6 +143,7 @@ async function create(data, tx = prisma) {
 export default {
   getByFilter,
   getById,
+  getAll,
   getByCard,
   create,
   findMyCardArticles,

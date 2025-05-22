@@ -22,6 +22,15 @@ articleController.get("/:id", async (req, res, next) => {
   }
 });
 
+articleController.get("/", async (req, res, next) => {
+  try {
+    const articles = await articleService.getAll();
+    res.status(200).json(articles);
+  } catch (error) {
+    next(error);
+  }
+});
+
 articleController.post("/", async (req, res, next) => {
   try {
     // const userId = req.auth.userId;

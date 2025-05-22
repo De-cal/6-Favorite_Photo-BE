@@ -1,4 +1,4 @@
-import pointService from "../services/pointService.js";
+import pointService from "../services/point.service.js";
 
 const pointController = {
   addPoint: async (req, res, next) => {

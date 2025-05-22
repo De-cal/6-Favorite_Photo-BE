@@ -1,6 +1,6 @@
 import express from "express";
-import pointRouter from "./pointRouter.js";
-import notificationRouter from "./notificationRouter.js";
+import pointRouter from "./point.router.js";
+import notificationRouter from "./notification.router.js";
 import cardController from "../controllers/card.controller.js";
 import articleController from "../controllers/article.controller.js";
 

@@ -6,7 +6,14 @@ async function getById(id, tx = prisma) {
 
 async function getByUser(userId, tx = prisma) {
   return await tx.userPhotoCard.findMany({
-    where: { userId },
+    where: { userId, status: "OWNED", quantity: { not: 0 } },
+    include: {
+      photoCard: {
+        include: {
+          creator: true,
+        },
+      },
+    },
   });
 }
 

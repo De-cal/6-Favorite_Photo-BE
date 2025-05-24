@@ -1,16 +1,39 @@
 import prisma from "../db/prisma/prisma.js";
+//마켓플레이스에서 SELLING 인것만 다 가져오기
+export const getSellingCardsAll = async ({ keyword }) => {
+  const whereClause = {
+    status: {
+      in: ["SELLING", "SOLDOUT"]
+    }
+  };
+
+  if (keyword) {
+    whereClause.photoCard = {
+      title: {
+        contains: keyword,
+        mode: "insensitive"
+      }
+    };
+  }
+
+  const result = await prisma.userPhotoCard.findMany({
+    where: whereClause,
+    include: {
+      photoCard: true,
+      user: {
+        select: {
+          id: true,
+          nickname: true
+        }
+      }
+    }
+  });
+
+  return result;
+};
 
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
-export const findMyCardArticles = async ({
-  userId,
-  page,
-  pageSize,
-  rank,
-  genre,
-  sellingType,
-  soldOut,
-  keyword,
-}) => {
+export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, sellingType, soldOut, keyword }) => {
   const skip = (page - 1) * pageSize;
 
   // 공통 조건
@@ -24,19 +47,19 @@ export const findMyCardArticles = async ({
         ...(keyword && {
           title: {
             contains: keyword,
-            mode: "insensitive",
-          },
-        }),
-      },
+            mode: "insensitive"
+          }
+        })
+      }
     },
     ...(soldOut === true && { remainingQuantity: 0 }),
-    ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
+    ...(soldOut === false && { remainingQuantity: { gt: 0 } })
   };
 
   const [totalCount, list, rankCounts] = await Promise.all([
     // 1. 전체 개수
     prisma.cardArticle.count({
-      where: whereClause,
+      where: whereClause
     }),
 
     // 2. 현재 페이지 데이터
@@ -45,7 +68,7 @@ export const findMyCardArticles = async ({
       skip,
       take: pageSize,
       orderBy: {
-        createdAt: "desc",
+        createdAt: "desc"
       },
       include: {
         userPhotoCard: {
@@ -54,12 +77,12 @@ export const findMyCardArticles = async ({
             user: {
               select: {
                 id: true,
-                nickname: true,
-              },
-            },
-          },
-        },
-      },
+                nickname: true
+              }
+            }
+          }
+        }
+      }
     }),
 
     // 3. 등급별 개수 집계
@@ -75,26 +98,26 @@ export const findMyCardArticles = async ({
               ...(keyword && {
                 title: {
                   contains: keyword,
-                  mode: "insensitive",
-                },
-              }),
-            },
+                  mode: "insensitive"
+                }
+              })
+            }
           },
           ...(soldOut === true && { remainingQuantity: 0 }),
-          ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
-        },
+          ...(soldOut === false && { remainingQuantity: { gt: 0 } })
+        }
       })
       .then(async (grouped) => {
         const userPhotoCardIds = grouped.map((g) => g.userPhotoCardId);
         const cards = await prisma.userPhotoCard.findMany({
           where: {
-            id: { in: userPhotoCardIds },
+            id: { in: userPhotoCardIds }
           },
           include: {
             photoCard: {
-              select: { rank: true },
-            },
-          },
+              select: { rank: true }
+            }
+          }
         });
 
         const counts = {};
@@ -104,19 +127,15 @@ export const findMyCardArticles = async ({
         }
 
         return counts;
-      }),
+      })
   ]);
 
   return {
     totalCount,
     list,
-    rankCounts,
+    rankCounts
   };
 };
-
-async function getByFilter(tx = prisma) {
-  return await tx.cardArticle.findMany({});
-}
 
 async function getByFilter(tx = prisma) {
   return await tx.cardArticle.findMany({});
@@ -128,12 +147,8 @@ async function getById(id, tx = prisma) {
 
 async function getByCard(cardId, tx = prisma) {
   return await tx.cardArticle.findFirst({
-    where: { userPhotoCardId: cardId },
+    where: { userPhotoCardId: cardId }
   });
-}
-
-async function getAll() {
-  return await prisma.cardArticle.findMany();
 }
 
 async function create(data, tx = prisma) {
@@ -143,8 +158,8 @@ async function create(data, tx = prisma) {
 export default {
   getByFilter,
   getById,
-  getAll,
+  getSellingCardsAll,
   getByCard,
   create,
-  findMyCardArticles,
+  findMyCardArticles
 };

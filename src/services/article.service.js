@@ -10,9 +10,10 @@ async function getById(id) {
   return await articleRepository.getById(id);
 }
 
-async function getAll() {
-  return await articleRepository.getAll();
+async function getSellingCardsAll(keyword) {
+  return await articleRepository.getSellingCardsAll({ keyword });
 }
+
 async function postArticle(data) {
   // const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
   return await prisma.$transaction(async (tx) => {
@@ -27,18 +28,14 @@ async function postArticle(data) {
     if (article) {
       throw new Error("이미 등록된 판매 글이 존재합니다.");
     }
-    await cardRepository.decreaseCard(
-      data.userPhotoCardId,
-      data.totalQuantity,
-      tx
-    );
+    await cardRepository.decreaseCard(data.userPhotoCardId, data.totalQuantity, tx);
     const newCard = await cardRepository.create(
       {
         photoCardId: card.photoCardId,
         userId: card.userId,
         status: "SELLING",
         quantity: data.totalQuantity,
-        price: data.price,
+        price: data.price
       },
       tx
     );
@@ -46,7 +43,7 @@ async function postArticle(data) {
       {
         ...data,
         userPhotoCardId: newCard.id,
-        remainingQuantity: data.totalQuantity,
+        remainingQuantity: data.totalQuantity
       },
       tx
     );
@@ -61,12 +58,11 @@ export async function findMyCardArticles({
   genre,
   keyword,
   sellingType,
-  soldOut,
+  soldOut
 }) {
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
-  const parsedSoldOut =
-    soldOut === "true" ? true : soldOut === "false" ? false : undefined;
+  const parsedSoldOut = soldOut === "true" ? true : soldOut === "false" ? false : undefined;
 
   if (isNaN(pageNum) || pageNum < 1) {
     throw new Error("유효하지 않은 page 값입니다.");
@@ -84,14 +80,14 @@ export async function findMyCardArticles({
     genre,
     sellingType,
     soldOut: parsedSoldOut,
-    keyword,
+    keyword
   });
 }
 
 export default {
   getByFilter,
   getById,
-  getAll,
+  getSellingCardsAll,
   postArticle,
-  findMyCardArticles,
+  findMyCardArticles
 };

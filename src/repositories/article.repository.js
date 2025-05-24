@@ -3,16 +3,16 @@ import prisma from "../db/prisma/prisma.js";
 export const getSellingCardsAll = async ({ keyword }) => {
   const whereClause = {
     status: {
-      in: ["SELLING", "SOLDOUT"]
-    }
+      in: ["SELLING", "SOLDOUT"],
+    },
   };
 
   if (keyword) {
     whereClause.photoCard = {
       title: {
         contains: keyword,
-        mode: "insensitive"
-      }
+        mode: "insensitive",
+      },
     };
   }
 
@@ -23,10 +23,10 @@ export const getSellingCardsAll = async ({ keyword }) => {
       user: {
         select: {
           id: true,
-          nickname: true
-        }
-      }
-    }
+          nickname: true,
+        },
+      },
+    },
   });
 
   return result;
@@ -47,19 +47,19 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
         ...(keyword && {
           title: {
             contains: keyword,
-            mode: "insensitive"
-          }
-        })
-      }
+            mode: "insensitive",
+          },
+        }),
+      },
     },
     ...(soldOut === true && { remainingQuantity: 0 }),
-    ...(soldOut === false && { remainingQuantity: { gt: 0 } })
+    ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
   };
 
   const [totalCount, list, rankCounts] = await Promise.all([
     // 1. 전체 개수
     prisma.cardArticle.count({
-      where: whereClause
+      where: whereClause,
     }),
 
     // 2. 현재 페이지 데이터
@@ -68,7 +68,7 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
       skip,
       take: pageSize,
       orderBy: {
-        createdAt: "desc"
+        createdAt: "desc",
       },
       include: {
         userPhotoCard: {
@@ -77,12 +77,12 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
             user: {
               select: {
                 id: true,
-                nickname: true
-              }
-            }
-          }
-        }
-      }
+                nickname: true,
+              },
+            },
+          },
+        },
+      },
     }),
 
     // 3. 등급별 개수 집계
@@ -98,26 +98,26 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
               ...(keyword && {
                 title: {
                   contains: keyword,
-                  mode: "insensitive"
-                }
-              })
-            }
+                  mode: "insensitive",
+                },
+              }),
+            },
           },
           ...(soldOut === true && { remainingQuantity: 0 }),
-          ...(soldOut === false && { remainingQuantity: { gt: 0 } })
-        }
+          ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
+        },
       })
       .then(async (grouped) => {
         const userPhotoCardIds = grouped.map((g) => g.userPhotoCardId);
         const cards = await prisma.userPhotoCard.findMany({
           where: {
-            id: { in: userPhotoCardIds }
+            id: { in: userPhotoCardIds },
           },
           include: {
             photoCard: {
-              select: { rank: true }
-            }
-          }
+              select: { rank: true },
+            },
+          },
         });
 
         const counts = {};
@@ -127,13 +127,13 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
         }
 
         return counts;
-      })
+      }),
   ]);
 
   return {
     totalCount,
     list,
-    rankCounts
+    rankCounts,
   };
 };
 
@@ -147,7 +147,7 @@ async function getById(id, tx = prisma) {
 
 async function getByCard(cardId, tx = prisma) {
   return await tx.cardArticle.findFirst({
-    where: { userPhotoCardId: cardId }
+    where: { userPhotoCardId: cardId },
   });
 }
 
@@ -161,5 +161,5 @@ export default {
   getSellingCardsAll,
   getByCard,
   create,
-  findMyCardArticles
+  findMyCardArticles,
 };

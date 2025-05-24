@@ -35,17 +35,17 @@ async function postArticle(data) {
         userId: card.userId,
         status: "SELLING",
         quantity: data.totalQuantity,
-        price: data.price
+        price: data.price,
       },
-      tx
+      tx,
     );
     return await articleRepository.create(
       {
         ...data,
         userPhotoCardId: newCard.id,
-        remainingQuantity: data.totalQuantity
+        remainingQuantity: data.totalQuantity,
       },
-      tx
+      tx,
     );
   });
 }
@@ -58,7 +58,7 @@ export async function findMyCardArticles({
   genre,
   keyword,
   sellingType,
-  soldOut
+  soldOut,
 }) {
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
@@ -80,7 +80,7 @@ export async function findMyCardArticles({
     genre,
     sellingType,
     soldOut: parsedSoldOut,
-    keyword
+    keyword,
   });
 }
 
@@ -89,5 +89,5 @@ export default {
   getById,
   getSellingCardsAll,
   postArticle,
-  findMyCardArticles
+  findMyCardArticles,
 };

@@ -43,7 +43,7 @@ articleController.post("/", async (req, res, next) => {
       exchangeText,
       exchangeRank,
       exchangeGenre,
-      userPhotoCardId
+      userPhotoCardId,
     });
     res.status(201).json(article);
   } catch (error) {
@@ -64,7 +64,7 @@ articleController.get("/", async (req, res, next) => {
       genre,
       keyword,
       sellingType,
-      soldOut
+      soldOut,
     });
 
     res.status(200).json(result);

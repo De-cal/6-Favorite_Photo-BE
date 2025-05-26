@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { authRepository } from "../repositories/auth.repository.js";
 
-export const validateToken = async (req, res, next) => {
+export const validateAccessToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {

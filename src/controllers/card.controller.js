@@ -25,14 +25,15 @@ cardController.get("/:id", async (req, res, next) => {
 cardController.get("/", async (req, res, next) => {
   try {
     const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13"; //req.auth.userId; 변경해야함
-    const { page, pageSize, rank, genre, keyword } = req.query;
+    const { page, pageSize, rank, genre, keyword, status } = req.query;
 
-    const result = await cardService.findMyGallerySellingCards({
+    const result = await cardService.findManyAtMygallery({
       page,
       pageSize,
       rank,
       genre,
       keyword,
+      status,
       userId, //나중에 변경
     });
 

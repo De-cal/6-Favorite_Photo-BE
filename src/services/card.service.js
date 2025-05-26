@@ -8,14 +8,7 @@ async function getByUser(userId) {
   return await cardRepository.getByUser(userId);
 }
 
-async function findManyAtMygallery({
-  userId,
-  page = 1,
-  pageSize = 15,
-  rank,
-  genre,
-  keyword,
-}) {
+async function findManyAtMygallery({ userId, page = 1, pageSize = 15, rank, genre, keyword, status = "SELLING" }) {
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
 
@@ -27,13 +20,14 @@ async function findManyAtMygallery({
     throw new Error("유효하지 않은 pageSize 값입니다.");
   }
 
-  return await cardRepository.findManyAtMygallery({
+  return await cardRepository.findMyGallerySellingCards({
     userId,
     page: pageNum,
     pageSize: pageSizeNum,
     rank,
     genre,
     keyword,
+    status,
   });
 }
 

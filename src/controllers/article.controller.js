@@ -51,12 +51,12 @@ articleController.post("/", async (req, res, next) => {
   }
 });
 
-articleController.get("/", async (req, res, next) => {
+articleController.get("/user", async (req, res, next) => {
   try {
     const userId = req.user.id; // 로그인 사용자 ID
     const { page, pageSize, rank, genre, keyword, sellingType, soldOut } = req.query;
 
-    const result = await cardService.findMyCardArticles({
+    const result = await articleService.findMyCardArticles({
       userId,
       page,
       pageSize,

@@ -13,7 +13,6 @@
   },
   "license": "ISC",
   "author": "",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./src/app.js",
@@ -36,6 +35,7 @@
     "express-jwt": "^8.5.1",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.2",
+    "superstruct": "^2.0.2",
     "uuid": "^11.1.0"
   },
   "prisma": {

@@ -3,16 +3,6 @@ import articleService from "../services/article.service.js";
 
 const articleController = express.Router();
 
-// articleController.get("/", async (req, res, next) => {
-//   try {
-//     const articles = await articleService.getByFilter();
-//     console.log("articles", articles);
-//     res.status(200).json(articles);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
 articleController.get("/:id", async (req, res, next) => {
   try {
     const id = req.params.id;

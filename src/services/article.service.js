@@ -2,10 +2,6 @@ import prisma from "../db/prisma/prisma.js";
 import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
 
-async function getByFilter() {
-  return await articleRepository.getByFilter();
-}
-
 async function getById(id) {
   return await articleRepository.getById(id);
 }
@@ -85,7 +81,6 @@ export async function findMyCardArticles({
 }
 
 export default {
-  getByFilter,
   getById,
   getSellingCardsAll,
   postArticle,

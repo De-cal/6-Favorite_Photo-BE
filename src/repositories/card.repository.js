@@ -109,10 +109,15 @@ async function decreaseCard(id, quantity, tx = prisma) {
 async function create(data, tx = prisma) {
   return await tx.userPhotoCard.create({ data });
 }
+
+async function remove(id, tx = prisma) {
+  return await tx.userPhotoCard.delete({ where: id });
+}
 export default {
   getById,
   getByUser,
   decreaseCard,
   create,
   findMyGallerySellingCards,
+  remove,
 };

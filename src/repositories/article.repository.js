@@ -118,9 +118,6 @@ async function getByFilter(tx = prisma) {
   return await tx.cardArticle.findMany({});
 }
 
-async function getByFilter(tx = prisma) {
-  return await tx.cardArticle.findMany({});
-}
 
 async function getById(id, tx = prisma) {
   return await tx.cardArticle.findUnique({ where: { id } });

@@ -228,7 +228,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\tnqls\\OneDrive\\바탕 화면\\team1\\BE\\src\\db\\generated\\prisma",
+      "value": "/home/sumin/Favorite-Photo-Team1/6-Favorite_Photo-BE/src/db/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -237,17 +237,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\tnqls\\OneDrive\\바탕 화면\\team1\\BE\\src\\db\\prisma\\schema.prisma",
+    "sourceFilePath": "/home/sumin/Favorite-Photo-Team1/6-Favorite_Photo-BE/src/db/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../prisma",
   "clientVersion": "6.8.1",
@@ -256,6 +255,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -304,8 +304,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "query_engine-windows.dll.node");
-path.join(process.cwd(), "src/db/generated/prisma/query_engine-windows.dll.node")
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "src/db/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/db/generated/prisma/schema.prisma")

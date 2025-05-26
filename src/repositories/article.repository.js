@@ -1,16 +1,39 @@
 import prisma from "../db/prisma/prisma.js";
+//마켓플레이스에서 SELLING 인것만 다 가져오기
+export const getSellingCardsAll = async ({ keyword }) => {
+  const whereClause = {
+    status: {
+      in: ["SELLING", "SOLDOUT"],
+    },
+  };
+
+  if (keyword) {
+    whereClause.photoCard = {
+      title: {
+        contains: keyword,
+        mode: "insensitive",
+      },
+    };
+  }
+
+  const result = await prisma.userPhotoCard.findMany({
+    where: whereClause,
+    include: {
+      photoCard: true,
+      user: {
+        select: {
+          id: true,
+          nickname: true,
+        },
+      },
+    },
+  });
+
+  return result;
+};
 
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
-export const findMyCardArticles = async ({
-  userId,
-  page,
-  pageSize,
-  rank,
-  genre,
-  sellingType,
-  soldOut,
-  keyword,
-}) => {
+export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, sellingType, soldOut, keyword }) => {
   const skip = (page - 1) * pageSize;
 
   // 공통 조건
@@ -118,10 +141,6 @@ async function getByFilter(tx = prisma) {
   return await tx.cardArticle.findMany({});
 }
 
-async function getByFilter(tx = prisma) {
-  return await tx.cardArticle.findMany({});
-}
-
 async function getById(id, tx = prisma) {
   return await tx.cardArticle.findUnique({ where: { id } });
 }
@@ -132,10 +151,6 @@ async function getByCard(cardId, tx = prisma) {
   });
 }
 
-async function getAll() {
-  return await prisma.cardArticle.findMany();
-}
-
 async function create(data, tx = prisma) {
   return await tx.cardArticle.create({ data });
 }
@@ -143,7 +158,7 @@ async function create(data, tx = prisma) {
 export default {
   getByFilter,
   getById,
-  getAll,
+  getSellingCardsAll,
   getByCard,
   create,
   findMyCardArticles,

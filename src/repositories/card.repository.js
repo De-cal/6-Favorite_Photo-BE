@@ -1,7 +1,15 @@
 import prisma from "../db/prisma/prisma.js";
 
 // 마이페이지에서 쓸 API - 목록 가져오기
-export const findMyGallerySellingCards = async ({ userId, page, pageSize, rank, genre, keyword, status }) => {
+export const findMyGallerySellingCards = async ({
+  userId,
+  page,
+  pageSize,
+  rank,
+  genre,
+  keyword,
+  status,
+}) => {
   const skip = (page - 1) * pageSize;
 
   const whereClause = {
@@ -30,9 +38,9 @@ export const findMyGallerySellingCards = async ({ userId, page, pageSize, rank, 
       where: whereClause,
       skip,
       take: pageSize,
-      // orderBy: {
-      //   createdAt: "desc",
-      // },
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         photoCard: {
           include: {

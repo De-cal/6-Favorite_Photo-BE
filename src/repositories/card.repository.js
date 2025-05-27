@@ -91,6 +91,7 @@ export const findMyGallerySellingCards = async ({
 };
 
 async function getById(id, tx = prisma) {
+  console.log('id:::', id)
   return await tx.userPhotoCard.findUnique({ where: { id } });
 }
 
@@ -115,6 +116,7 @@ async function decreaseCard(id, quantity, tx = prisma) {
 }
 
 async function create(data, tx = prisma) {
+  console.log('data::', data)
   return await tx.userPhotoCard.create({ data });
 }
 

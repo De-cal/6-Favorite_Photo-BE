@@ -80,7 +80,7 @@ model UserPhotoCard {
   photoCardId String
   quantity    Int
   price       Int //실제판매가격            
-  status      UserPhotocardStatus
+  status      UserPhotoCardStatus @default(OWNED)
   createdAt   DateTime            @default(now())
 
   user      User      @relation(fields: [userId], references: [id])
@@ -92,9 +92,9 @@ model UserPhotoCard {
   taker       Exchange[]    @relation("ExchangeTaker")
 }
 
-enum UserPhotocardStatus {
-  OWNED // 보유중  ->마이갤러리
-  SELLING // 판매중   => 핀메중
+enum UserPhotoCardStatus {
+  OWNED // 보유중  => 마이갤러리
+  SELLING // 판매중   => 판매중
   EXCHANGE_REQUESTED // 교환 요청  ->교환제시 대기중 
   SOLDOUT // 품절
 }
@@ -133,7 +133,7 @@ model Exchange {
   giverCardId String
   takerCardId String
   description String
-  status      ExchangeStatus
+  status      ExchangeStatus @default(PENDING)
   createdAt   DateTime       @default(now())
 
   giverCard UserPhotoCard @relation("ExchangeGiver", fields: [giverCardId], references: [id])

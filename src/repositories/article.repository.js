@@ -1,5 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
-//마켓플레이스에서 SELLING 인것만 다 가져오기
+//마켓플레이스에서 SELLING과 SOLDOUT 다 가져오기
+
 export const getSellingCardsAll = async ({ keyword }) => {
   const whereClause = {
     status: {
@@ -137,11 +138,6 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
   };
 };
 
-async function getByFilter(tx = prisma) {
-  return await tx.cardArticle.findMany({});
-}
-
-
 async function getById(id, tx = prisma) {
   return await tx.cardArticle.findUnique({ where: { id } });
 }
@@ -157,7 +153,6 @@ async function create(data, tx = prisma) {
 }
 
 export default {
-  getByFilter,
   getById,
   getSellingCardsAll,
   getByCard,

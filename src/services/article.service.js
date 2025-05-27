@@ -2,10 +2,6 @@ import prisma from "../db/prisma/prisma.js";
 import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
 
-async function getByFilter() {
-  return await articleRepository.getByFilter();
-}
-
 async function getById(id) {
   return await articleRepository.getById(id);
 }
@@ -28,7 +24,11 @@ async function postArticle(data) {
     if (article) {
       throw new Error("이미 등록된 판매 글이 존재합니다.");
     }
-    await cardRepository.decreaseCard(data.userPhotoCardId, data.totalQuantity, tx);
+    const updatedCard = await cardRepository.decreaseCard(data.userPhotoCardId, data.totalQuantity, tx);
+    if (updatedCard.quantity === 0) {
+      //삭제할지말지 (OR where quantity !== 0)
+      await cardRepository.remove(updatedCard.id);
+    }
     const newCard = await cardRepository.create(
       {
         photoCardId: card.photoCardId,
@@ -85,7 +85,6 @@ export async function findMyCardArticles({
 }
 
 export default {
-  getByFilter,
   getById,
   getSellingCardsAll,
   postArticle,

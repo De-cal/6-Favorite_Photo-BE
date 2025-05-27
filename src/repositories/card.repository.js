@@ -8,12 +8,13 @@ export const findMyGallerySellingCards = async ({
   rank,
   genre,
   keyword,
+  status,
 }) => {
   const skip = (page - 1) * pageSize;
 
   const whereClause = {
     userId,
-    status: "SELLING",
+    status,
     photoCard: {
       ...(keyword && {
         title: {
@@ -41,7 +42,11 @@ export const findMyGallerySellingCards = async ({
         createdAt: "desc",
       },
       include: {
-        photoCard: true,
+        photoCard: {
+          include: {
+            creator: true,
+          },
+        },
         user: {
           select: {
             id: true,
@@ -91,7 +96,14 @@ async function getById(id, tx = prisma) {
 
 async function getByUser(userId, tx = prisma) {
   return await tx.userPhotoCard.findMany({
-    where: { userId },
+    where: { userId, status: "OWNED", quantity: { not: 0 } },
+    include: {
+      photoCard: {
+        include: {
+          creator: true,
+        },
+      },
+    },
   });
 }
 
@@ -105,10 +117,15 @@ async function decreaseCard(id, quantity, tx = prisma) {
 async function create(data, tx = prisma) {
   return await tx.userPhotoCard.create({ data });
 }
+
+async function remove(id, tx = prisma) {
+  return await tx.userPhotoCard.delete({ where: id });
+}
 export default {
   getById,
   getByUser,
   decreaseCard,
   create,
   findMyGallerySellingCards,
+  remove,
 };

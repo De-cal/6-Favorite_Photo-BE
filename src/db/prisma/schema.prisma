@@ -19,7 +19,6 @@ model User {
 
   notifications UserNotification[]
   userPhotoCard UserPhotoCard[]
-  order         Order[]
   photoCard     PhotoCard[]
 }
 
@@ -55,7 +54,6 @@ model PhotoCard {
   createdAt   DateTime @default(now())
 
   userPhotoCard UserPhotoCard[]
-  order         Order[]
 }
 
 enum RankList {
@@ -79,27 +77,27 @@ model UserPhotoCard {
   userId      String
   photoCardId String
   quantity    Int
-  price       Int //실제판매가격격            
-  status      UserPhotocardStatus
+  price       Int //실제판매가격            
+  status      UserPhotoCardStatus @default(OWNED)
+  createdAt   DateTime            @default(now())
 
   user      User      @relation(fields: [userId], references: [id])
   photoCard PhotoCard @relation(fields: [photoCardId], references: [id])
 
   cardArticle CardArticle[]
-  order       Order[]
   giver       Exchange[]    @relation("ExchangeGiver")
   taker       Exchange[]    @relation("ExchangeTaker")
 }
 
-enum UserPhotocardStatus {
-  OWNED // 보유중  ->마이갤러리
-  SELLING // 판매중   => 핀메중
+enum UserPhotoCardStatus {
+  OWNED // 보유중  => 마이갤러리 
+  SELLING // 판매중   => 판매중
   EXCHANGE_REQUESTED // 교환 요청  ->교환제시 대기중 
-  SOLDOUT // 품절
+  SOLDOUT // 품절 
 }
 
 model CardArticle {
-  id                String   @id @default(uuid())
+  id                String        @id @default(uuid())
   price             Int
   totalQuantity     Int
   remainingQuantity Int
@@ -107,41 +105,17 @@ model CardArticle {
   exchangeRank      RankList
   exchangeGenre     Genre
   userPhotoCardId   String
-  createdAt         DateTime @default(now())
-
-  userPhotoCard UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
-}
-
-model Order {
-  id              String   @id @default(uuid())
-  quantity        Int
-  price           Int
-  totalPrice      Int
-  userPhotoCardId String
-  userId          String
-  photoCardId     String
-  createdAt       DateTime @default(now())
-
-  buyer     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
-  seller    User          @relation(fields: [userId], references: [id])
-  photocard PhotoCard     @relation(fields: [photoCardId], references: [id])
+  createdAt         DateTime      @default(now())
+  userPhotoCard     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
 }
 
 model Exchange {
-  id          String         @id @default(uuid())
-  giverCardId String
-  takerCardId String
-  description String
-  status      ExchangeStatus
-  createdAt   DateTime       @default(now())
+  id              String   @id @default(uuid())
+  requesterCardId String //카드 교환 신청 건 사람 카드 id
+  recipientCardId String //카드 교환 신청 받은 사람 카드 id
+  description     String
+  createdAt       DateTime @default(now())
 
-  giverCard UserPhotoCard @relation("ExchangeGiver", fields: [giverCardId], references: [id])
-  takerCard UserPhotoCard @relation("ExchangeTaker", fields: [takerCardId], references: [id])
-}
-
-enum ExchangeStatus {
-  PENDING // 교환 중
-  ACCEPTED // 교환 확정
-  REJECTED // 교환 거절  
-  CANCELED // 교환 취소
+  requesterCard UserPhotoCard @relation("ExchangeGiver", fields: [requesterCardId], references: [id])
+  recipientCard UserPhotoCard @relation("ExchangeTaker", fields: [recipientCardId], references: [id])
 }

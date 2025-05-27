@@ -19,7 +19,6 @@ model User {
 
   notifications UserNotification[]
   userPhotoCard UserPhotoCard[]
-  order         Order[]
   photoCard     PhotoCard[]
 }
 
@@ -55,7 +54,6 @@ model PhotoCard {
   createdAt   DateTime @default(now())
 
   userPhotoCard UserPhotoCard[]
-  order         Order[]
 }
 
 enum RankList {
@@ -87,7 +85,6 @@ model UserPhotoCard {
   photoCard PhotoCard @relation(fields: [photoCardId], references: [id])
 
   cardArticle CardArticle[]
-  order       Order[]
   giver       Exchange[]    @relation("ExchangeGiver")
   taker       Exchange[]    @relation("ExchangeTaker")
 }
@@ -100,7 +97,7 @@ enum UserPhotoCardStatus {
 }
 
 model CardArticle {
-  id                String   @id @default(uuid())
+  id                String        @id @default(uuid())
   price             Int
   totalQuantity     Int
   remainingQuantity Int
@@ -108,24 +105,8 @@ model CardArticle {
   exchangeRank      RankList
   exchangeGenre     Genre
   userPhotoCardId   String
-  createdAt         DateTime @default(now())
-
-  userPhotoCard UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
-}
-
-model Order {
-  id              String   @id @default(uuid())
-  quantity        Int
-  price           Int
-  totalPrice      Int
-  userPhotoCardId String
-  userId          String
-  photoCardId     String
-  createdAt       DateTime @default(now())
-
-  buyer     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
-  seller    User          @relation(fields: [userId], references: [id])
-  photocard PhotoCard     @relation(fields: [photoCardId], references: [id])
+  createdAt         DateTime      @default(now())
+  userPhotoCard     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
 }
 
 model Exchange {

@@ -1,4 +1,4 @@
-import { signup, login } from "../services/auth.service.js";
+import authService from "../services/auth.service.js";
 
 // 쿠키 설정 함수
 const setAuthCookies = (res, { accessToken, refreshToken }) => {
@@ -21,7 +21,7 @@ const signupController = async (req, res, next) => {
   try {
     const { email, nickname, password, passwordConfirmation } = req.body;
 
-    const result = await signup({
+    const result = await authService.signup({
       email,
       nickname,
       password,
@@ -48,7 +48,8 @@ const loginController = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const result = await login({
+    // authService.login 으로 변경
+    const result = await authService.login({
       email,
       password,
     });

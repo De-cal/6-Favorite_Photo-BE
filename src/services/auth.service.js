@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { authRepository } from "../repositories/auth.repository.js";
+import authRepository from "../repositories/auth.repository.js";
 
 const SALT_ROUNDS = 10;
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;

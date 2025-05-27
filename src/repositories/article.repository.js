@@ -34,7 +34,16 @@ export const getSellingCardsAll = async ({ keyword }) => {
 };
 
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
-export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, sellingType, soldOut, keyword }) => {
+export const findMyCardArticles = async ({
+  userId,
+  page,
+  pageSize,
+  rank,
+  genre,
+  sellingType,
+  soldOut,
+  keyword,
+}) => {
   const skip = (page - 1) * pageSize;
 
   // 공통 조건
@@ -138,18 +147,24 @@ export const findMyCardArticles = async ({ userId, page, pageSize, rank, genre, 
   };
 };
 
-async function getById(id, tx = prisma) {
-  return await tx.cardArticle.findUnique({ where: { id } });
+async function getById(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.cardArticle.findUnique({ where: { id } });
 }
 
-async function getByCard(cardId, tx = prisma) {
-  return await tx.cardArticle.findFirst({
+async function getByCard(cardId, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.cardArticle.findFirst({
     where: { userPhotoCardId: cardId },
   });
 }
 
-async function create(data, tx = prisma) {
-  return await tx.cardArticle.create({ data });
+async function create(data, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.cardArticle.create({ data });
 }
 
 export default {

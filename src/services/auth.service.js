@@ -10,8 +10,8 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
     {
-      userId: user.getId(),
-      email: user.getEmail(),
+      userId: user.id,
+      email: user.email,
     },
     ACCESS_TOKEN_SECRET,
     { expiresIn: "1h" },
@@ -19,8 +19,8 @@ const generateTokens = (user) => {
 
   const refreshToken = jwt.sign(
     {
-      userId: user.getId(),
-      email: user.getEmail(),
+      userId: user.id,
+      email: user.email,
     },
     REFRESH_TOKEN_SECRET,
     { expiresIn: "7d" },
@@ -30,7 +30,12 @@ const generateTokens = (user) => {
 };
 
 // 회원가입
-export const signup = async ({ email, nickname, password, passwordConfirmation }) => {
+export const signup = async ({
+  email,
+  nickname,
+  password,
+  passwordConfirmation,
+}) => {
   // 패스워드와 패스워드 재확인 필드 일치 검사
   if (password !== passwordConfirmation) {
     throw new Error("비밀번호가 일치하지 않습니다.");
@@ -63,9 +68,9 @@ export const signup = async ({ email, nickname, password, passwordConfirmation }
 
   return {
     user: {
-      id: user.getId(),
-      email: user.getEmail(),
-      nickname: user.getNickname(),
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
     },
     accessToken,
     refreshToken,
@@ -91,9 +96,9 @@ export const login = async ({ email, password }) => {
 
   return {
     user: {
-      id: user.getId(),
-      email: user.getEmail(),
-      nickname: user.getNickname(),
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
     },
     accessToken,
     refreshToken,

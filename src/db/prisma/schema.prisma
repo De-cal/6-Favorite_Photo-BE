@@ -90,10 +90,10 @@ model UserPhotoCard {
 }
 
 enum UserPhotoCardStatus {
-  OWNED // 보유중  => 마이갤러리
+  OWNED // 보유중  => 마이갤러리 필터
   SELLING // 판매중   => 판매중
   EXCHANGE_REQUESTED // 교환 요청  ->교환제시 대기중 
-  SOLDOUT // 품절
+  SOLDOUT // 품절 
 }
 
 model CardArticle {

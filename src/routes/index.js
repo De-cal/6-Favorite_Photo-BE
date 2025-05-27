@@ -1,6 +1,6 @@
 import express from "express";
-import pointRouter from "./point.router.js";
-import notificationRouter from "./notification.router.js";
+import pointRouter from "./point.route.js";
+import notificationRouter from "./notification.route.js";
 import cardRouter from "./card.route.js";
 import articleRouter from "./article.route.js";
 

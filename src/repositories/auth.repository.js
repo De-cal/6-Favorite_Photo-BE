@@ -1,5 +1,5 @@
 import { User } from "../models/User.js";
-import { prisma } from "../db/prisma/index.js";
+import prisma from "../db/prisma/prisma.js";
 
 export const authRepository = {
   async findByEmail(email) {

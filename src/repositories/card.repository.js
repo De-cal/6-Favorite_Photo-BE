@@ -64,7 +64,7 @@ export const findMyGallerySellingCards = async ({
         by: ["photoCardId"], // 중복 방지
         where: whereClause,
       })
-      .then(async (grouped) => {
+      .then(async function (grouped) {
         // 각 photoCardId에 대해 rank 조회
         const cards = await prisma.photoCard.findMany({
           where: {

@@ -79,8 +79,9 @@ model UserPhotoCard {
   userId      String
   photoCardId String
   quantity    Int
-  price       Int //실제판매가격격            
+  price       Int //실제판매가격            
   status      UserPhotocardStatus
+  createdAt   DateTime            @default(now())
 
   user      User      @relation(fields: [userId], references: [id])
   photoCard PhotoCard @relation(fields: [photoCardId], references: [id])

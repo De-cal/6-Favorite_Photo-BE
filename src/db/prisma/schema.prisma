@@ -90,7 +90,7 @@ model UserPhotoCard {
 }
 
 enum UserPhotoCardStatus {
-  OWNED // 보유중  => 마이갤러리 필터
+  OWNED // 보유중  => 마이갤러리 
   SELLING // 판매중   => 판매중
   EXCHANGE_REQUESTED // 교환 요청  ->교환제시 대기중 
   SOLDOUT // 품절 
@@ -110,20 +110,12 @@ model CardArticle {
 }
 
 model Exchange {
-  id          String         @id @default(uuid())
-  giverCardId String
-  takerCardId String
-  description String
-  status      ExchangeStatus @default(PENDING)
-  createdAt   DateTime       @default(now())
+  id              String   @id @default(uuid())
+  requesterCardId String //카드 교환 신청 건 사람 카드 id
+  recipientCardId String //카드 교환 신청 받은 사람 카드 id
+  description     String
+  createdAt       DateTime @default(now())
 
-  giverCard UserPhotoCard @relation("ExchangeGiver", fields: [giverCardId], references: [id])
-  takerCard UserPhotoCard @relation("ExchangeTaker", fields: [takerCardId], references: [id])
-}
-
-enum ExchangeStatus {
-  PENDING // 교환 중
-  ACCEPTED // 교환 확정
-  REJECTED // 교환 거절  
-  CANCELED // 교환 취소
+  requesterCard UserPhotoCard @relation("ExchangeGiver", fields: [requesterCardId], references: [id])
+  recipientCard UserPhotoCard @relation("ExchangeTaker", fields: [recipientCardId], references: [id])
 }

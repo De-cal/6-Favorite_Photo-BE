@@ -46,7 +46,6 @@ export const findMyCardArticles = async ({
 }) => {
   const skip = (page - 1) * pageSize;
 
-  // 공통 조건
   const whereClause = {
     userPhotoCard: {
       userId,
@@ -66,82 +65,65 @@ export const findMyCardArticles = async ({
     ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
   };
 
-  const [totalCount, list, rankCounts] = await Promise.all([
-    // 1. 전체 개수
-    prisma.cardArticle.count({
-      where: whereClause,
-    }),
-
-    // 2. 현재 페이지 데이터
+  const [list, rankCountsRaw, articleCount] = await Promise.all([
+    // 1. 현재 페이지 데이터
     prisma.cardArticle.findMany({
       where: whereClause,
       skip,
       take: pageSize,
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       include: {
         userPhotoCard: {
           include: {
-            photoCard: true,
+            photoCard: {
+              include: { creator: true },
+            },
             user: {
-              select: {
-                id: true,
-                nickname: true,
-              },
+              select: { id: true, nickname: true },
             },
           },
         },
       },
     }),
 
-    // 3. 등급별 개수 집계
-    prisma.cardArticle
-      .groupBy({
-        by: ["userPhotoCardId"], // 중복 방지
-        where: {
-          userPhotoCard: {
-            userId,
-            ...(sellingType && { status: sellingType }),
-            photoCard: {
-              ...(genre && { genre }),
-              ...(keyword && {
-                title: {
-                  contains: keyword,
-                  mode: "insensitive",
-                },
-              }),
-            },
-          },
-          ...(soldOut === true && { remainingQuantity: 0 }),
-          ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
-        },
-      })
-      .then(async (grouped) => {
-        const userPhotoCardIds = grouped.map((g) => g.userPhotoCardId);
-        const cards = await prisma.userPhotoCard.findMany({
-          where: {
-            id: { in: userPhotoCardIds },
-          },
+    // 2. 등급별 remainingQuantity 집계용 전체 목록
+    prisma.cardArticle.findMany({
+      where: whereClause,
+      include: {
+        userPhotoCard: {
           include: {
             photoCard: {
               select: { rank: true },
             },
           },
-        });
+        },
+      },
+    }),
 
-        const counts = {};
-        for (const item of cards) {
-          const rank = item.photoCard.rank;
-          counts[rank] = (counts[rank] || 0) + 1;
-        }
-
-        return counts;
-      }),
+    // 3. 총 게시글 수
+    prisma.cardArticle.count({
+      where: whereClause,
+    }),
   ]);
 
+  // 4. remainingQuantity 총합
+  const totalRemainingQuantity = rankCountsRaw.reduce(
+    (sum, article) => sum + article.remainingQuantity,
+    0,
+  );
+
+  // 5. 등급별 remainingQuantity 합
+  const rankCounts = {};
+  for (const article of rankCountsRaw) {
+    const rank = article.userPhotoCard.photoCard.rank;
+    rankCounts[rank] = (rankCounts[rank] || 0) + article.remainingQuantity;
+  }
+
   return {
-    totalCount,
+    totalCount: {
+      total: totalRemainingQuantity,
+      articleCount, // 아티클 개수
+    },
     list,
     rankCounts,
   };

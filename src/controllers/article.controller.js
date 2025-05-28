@@ -50,7 +50,7 @@ const articleController = {
 
   getMyArticles: async (req, res, next) => {
     try {
-      const userId = req.user.id; // 로그인 사용자 ID
+      const userId = req.user.id;
       const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
         req.query;
 

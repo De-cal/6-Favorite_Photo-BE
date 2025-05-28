@@ -51,7 +51,6 @@ const articleController = {
   getMyArticles: async (req, res, next) => {
     try {
       const userId = req.user.id;
-      console.log("넘어온 유저아이디 컨트롤러에서 출력", userId);
       const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
         req.query;
 

@@ -1,6 +1,5 @@
 import prisma from "../db/prisma/prisma.js";
 
-// 마이페이지에서 쓸 API - 목록 가져오기
 export const findMyGallerySellingCards = async ({
   userId,
   page,
@@ -29,66 +28,51 @@ export const findMyGallerySellingCards = async ({
     },
   };
 
-  const [totalCount, list, rankCounts] = await Promise.all([
-    // 1. 전체 개수
-    prisma.userPhotoCard.count({
-      where: whereClause,
-    }),
+  const [cardCount, list, allForCount] = await Promise.all([
+    // 1. 카드 수량 (userPhotoCard 개수)
+    prisma.userPhotoCard.count({ where: whereClause }),
 
-    // 2. 현재 페이지 데이터
+    // 2. 현재 페이지 목록
     prisma.userPhotoCard.findMany({
       where: whereClause,
       skip,
       take: pageSize,
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
       include: {
-        photoCard: {
-          include: {
-            creator: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-          },
-        },
+        photoCard: { include: { creator: true } },
+        user: { select: { id: true, nickname: true } },
       },
     }),
 
-    // 3. 등급별 개수 집계
-    prisma.userPhotoCard
-      .groupBy({
-        by: ["photoCardId"], // 중복 방지
-        where: whereClause,
-      })
-      .then(async function (grouped) {
-        // 각 photoCardId에 대해 rank 조회
-        const cards = await prisma.photoCard.findMany({
-          where: {
-            id: { in: grouped.map((g) => g.photoCardId) },
-          },
-          select: {
-            id: true,
-            rank: true,
-          },
-        });
-
-        // rank 기준으로 개수 세기
-        const counts = {};
-        for (const card of cards) {
-          counts[card.rank] = (counts[card.rank] || 0) + 1;
-        }
-        return counts;
-      }),
+    // 3. 전체 리스트 (등급별 집계 및 quantity 합산용)
+    prisma.userPhotoCard.findMany({
+      where: whereClause,
+      include: {
+        photoCard: {
+          select: { rank: true },
+        },
+      },
+    }),
   ]);
 
+  // 등급별 quantity 합계 계산
+  const rankCounts = {};
+  let totalRemainingQuantity = 0;
+
+  for (const card of allForCount) {
+    const rank = card.photoCard.rank;
+    const qty = card.quantity;
+    rankCounts[rank] = (rankCounts[rank] || 0) + qty;
+    totalRemainingQuantity += qty;
+  }
+
   return {
-    totalCount,
+    totalCount: {
+      totalCount: totalRemainingQuantity, // 🔢 총 수량
+      cardCount, // 📦 userPhotoCard 수
+    },
     list,
-    rankCounts, // { COMMON: 4, RARE: 6, LEGENDARY: 2, ... }예상.
+    rankCounts,
   };
 };
 

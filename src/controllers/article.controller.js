@@ -1,5 +1,5 @@
 import articleService from "../services/article.service.js";
-//d
+
 const articleController = {
   getById: async (req, res, next) => {
     try {
@@ -50,8 +50,7 @@ const articleController = {
 
   getMyArticles: async (req, res, next) => {
     try {
-      const userId = req.user.id;
-      console.log("넘어온 유저아이디 컨트롤러에서 출력", userId);
+      const userId = req.user.id; // 로그인 사용자 ID
       const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
         req.query;
 
@@ -72,6 +71,24 @@ const articleController = {
     }
   },
 
+  patchExchangePhotoCard: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { articleId, exchangeId } = req.params;
+      const { exchangeText, exchangeGenre, exchangeRank } = req.body;
+      const result = await articleService.updateExchangePhotoCard({
+        userId,
+        articleId,
+        exchangeId,
+        exchangeText,
+        exchangeGenre,
+        exchangeRank,
+      });
+      return res.status(200).json(result);
+    } catch (error) {
+      next(e);
+    }
+  },
   /**
    * @De-cal TODO:
    * 1. 인증/인가 완료되면, buyerId, req.body 주석 해제
@@ -139,6 +156,25 @@ const articleController = {
       next(e);
     }
   },
-};
 
+  //포토카드 승인, 거절
+  putExchangeCard: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { id: articleId, exchangeId } = req.params;
+      const { isApproved } = req.body; // true: 승인, false: 거절
+
+      const result = await articleService.processExchangeDecision({
+        userId,
+        articleId,
+        exchangeId,
+        isApproved,
+      });
+
+      res.status(200).json(result);
+    } catch (e) {
+      next(e);
+    }
+  },
+};
 export default articleController;

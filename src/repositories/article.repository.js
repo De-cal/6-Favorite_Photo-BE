@@ -1,6 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
+
 //마켓플레이스에서 SELLING과 SOLDOUT 다 가져오기
-//d
 export const getSellingCardsAll = async ({ keyword }) => {
   const whereClause = {
     status: {
@@ -49,7 +49,7 @@ export const findMyCardArticles = async ({
   // 공통 조건
   const whereClause = {
     userPhotoCard: {
-      user: { id: userId },
+      userId,
       ...(sellingType && { status: sellingType }),
       photoCard: {
         ...(rank && { rank }),
@@ -262,6 +262,42 @@ const increaseQuantity = async (requesterCardId, options = {}) => {
   return await client.userPhotoCard.update({
     where: { id: requesterCardId },
     data: { quantity: { increment: 1 } },
+  });
+};
+
+export const decreaseUserPhotoCardQuantity = async (
+  cardId,
+  amount = 1,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity: { decrement: amount } },
+  });
+};
+
+export const increaseUserPhotoCardQuantity = async (
+  cardId,
+  amount = 1,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity: { increment: amount } },
+  });
+};
+
+export const updateUserPhotoCardStatus = async (
+  cardId,
+  status,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { status },
   });
 };
 

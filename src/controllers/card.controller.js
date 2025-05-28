@@ -40,7 +40,6 @@ const cardController = {
       const userId = "082edc1b-a5c8-4bd7-8105-1e9e510d2c19"; // req.auth.userId
       console.log('req.body::', req.body)
       const { title, rank, genre, price, totalQuantity, description } = req.body;
-
       const imagePath = req.file?.filename;
 
       if (!imagePath) {

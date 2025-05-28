@@ -1,6 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
 //마켓플레이스에서 SELLING과 SOLDOUT 다 가져오기
-
+//d
 export const getSellingCardsAll = async ({ keyword }) => {
   const whereClause = {
     status: {
@@ -49,7 +49,7 @@ export const findMyCardArticles = async ({
   // 공통 조건
   const whereClause = {
     userPhotoCard: {
-      userId,
+      user: { id: userId },
       ...(sellingType && { status: sellingType }),
       photoCard: {
         ...(rank && { rank }),

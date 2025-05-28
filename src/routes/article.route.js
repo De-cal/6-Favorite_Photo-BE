@@ -1,11 +1,15 @@
 import express from "express";
 import articleController from "../controllers/article.controller.js";
+import { validateAccessToken } from "../middlewares/auth.middleware.js";
 
 const articleRouter = express.Router();
 
-articleRouter.get("/:id", articleController.getById);
-
 articleRouter.get("/", articleController.getAllSelling);
+articleRouter.get(
+  "/user",
+  validateAccessToken,
+  articleController.getMyArticles,
+);
 
 articleRouter.post("/", articleController.postArticle);
 
@@ -22,5 +26,7 @@ articleRouter.delete(
   "/:id/exchange/:exchangeId",
   articleController.cancelExchange,
 );
+
+articleRouter.get("/:id", articleController.getById);
 
 export default articleRouter;

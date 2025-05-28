@@ -12,7 +12,6 @@ const app = express();
 
 // 2. 미들웨어 등록
 app.use(express.json()); // json 데이터를 parsing.
-// app.use(cors());
 app.use(
   cors({
     origin:

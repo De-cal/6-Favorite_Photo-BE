@@ -1,7 +1,8 @@
 import prisma from "../db/prisma/prisma.js";
 import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
-//d
+import authRepository from "../repositories/auth.repository.js";
+
 async function getById(id) {
   return await articleRepository.getById(id);
 }
@@ -96,9 +97,148 @@ export async function findMyCardArticles({
   });
 }
 
+// 포토카드 구매
+const purchaseArticle = async ({
+  buyerId,
+  articleId,
+  purchaseQuantity,
+  totalPrice,
+}) => {
+  const article = await articleRepository.getByIdWithRelations(articleId);
+
+  // 유효성 검사 1 : 보유 포토카드 부족
+  if (article.remainingQuantity < purchaseQuantity) {
+    const error = new Error("포토카드 수량이 부족합니다.");
+    error.code = 400;
+
+    throw error;
+  }
+
+  const buyer = await authRepository.findById(buyerId);
+
+  // 유효성 검사 2 : 구매자 포인트 부족
+  if (buyer.pointAmount < totalPrice) {
+    const error = new Error("보유하고 있는 포인트가 부족합니다.");
+    error.code = 400;
+
+    throw error;
+  }
+
+  /**
+   * @De-cal TODO:
+   * 1. 이미 UserPhotoCard가 있으면 생성하지 못하도록 예외처리
+   * 2. 이미 UserPhotoCard가 있을 때는 update만 되도록 하기(이미 산 사람이 똑같은 카드를 또 샀을 수도 있으니까)
+   */
+  return await prisma.$transaction(async (tx) => {
+    // 1. 새로운 UserPhotoCard 생성
+    const data = {
+      userId: buyerId,
+      photoCardId: article.userPhotoCard.photoCardId,
+      quantity: purchaseQuantity,
+      price: totalPrice,
+    };
+
+    const newArticle = await articleRepository.createUserPhotoCard(data, {
+      tx,
+    });
+
+    // 2. CardArticle에서 수량 감소
+    const remainingQuantity = article.remainingQuantity - purchaseQuantity;
+
+    await articleRepository.decreaseCardArticleQuantity(
+      articleId,
+      remainingQuantity,
+      { tx },
+    );
+
+    // 3. 구매자 Point 차감
+    const buyerPointAmount = buyer.pointAmount - totalPrice;
+
+    await articleRepository.decreaseBuyerPoints(buyerId, buyerPointAmount, {
+      tx,
+    });
+
+    // 4. 판매자 Point 증가
+    const sellerId = article.userPhotoCard.userId;
+    const sellerPointAmount =
+      article.userPhotoCard.user.pointAmount + totalPrice;
+
+    await articleRepository.increaseSellerPoints(sellerId, sellerPointAmount, {
+      tx,
+    });
+
+    return newArticle;
+  });
+};
+
+// 포토카드 교환 요청
+const exchangeArticle = async ({ articleId, requesterCardId, description }) => {
+  return await prisma.$transaction(async (tx) => {
+    // 1. Exchange 생성
+    const article = await articleRepository.getByIdWithRelations(articleId);
+    const data = {
+      requesterCardId,
+      recipientCardId: article.userPhotoCardId,
+      description,
+    };
+
+    const exchange = await articleRepository.createExchange(data, { tx });
+
+    // 2. requester의 UserPhotoCard에서 수량 1개 차감
+    const requesterUserPhotoCard = await articleRepository.decreaseQuantity(
+      requesterCardId,
+      { tx },
+    );
+
+    // 3. requester의 UserPhotoCard에서 "수량: 1, status: EXCHANGE_REQUSET"인 UserPhotoCard 생성
+    const { userId, photoCardId, price } = requesterUserPhotoCard;
+    const forExchangeData = {
+      userId,
+      photoCardId,
+      quantity: 1,
+      price,
+      status: "EXCHANGE_REQUESTED",
+    };
+
+    const userPhotoCard = await articleRepository.createUserPhotoCard(
+      forExchangeData,
+      { tx },
+    );
+
+    return {
+      exchangeInfo: exchange,
+      userPhotoCardForExchange: userPhotoCard,
+    };
+  });
+};
+
+// 포토카드 교환 요청 취소
+const cancelExchange = async ({ exchangeId, requesterCardId }) => {
+  return await prisma.$transaction(async (tx) => {
+    // 유효성 검사 1 : Exchange 존재 여부
+    const exchange = await articleRepository.getExchangeById(exchangeId);
+
+    if (!exchange) {
+      const error = new Error("이미 교환 요청이 취소되었습니다.");
+      error.code = 404;
+
+      throw error;
+    }
+
+    // 포토카드 교환 요청 취소 1 - Exchange 삭제
+    await articleRepository.deleteExchange(exchangeId, { tx });
+
+    // 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 수량 1개 증가
+    await articleRepository.increaseQuantity(requesterCardId, { tx });
+  });
+};
+
 export default {
   getById,
   getSellingCardsAll,
   postArticle,
   findMyCardArticles,
+  purchaseArticle,
+  exchangeArticle,
+  cancelExchange,
 };

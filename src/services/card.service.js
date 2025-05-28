@@ -8,6 +8,10 @@ async function getByUser(userId) {
   return await cardRepository.getByUser(userId);
 }
 
+async function createCard(data) {
+  return await cardRepository.create(data);
+}
+
 async function findManyAtMygallery({
   userId,
   page = 1,
@@ -18,6 +22,7 @@ async function findManyAtMygallery({
   status = "SELLING",
   includeZero = true,
 }) {
+
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
 
@@ -45,4 +50,5 @@ export default {
   getById,
   getByUser,
   findManyAtMygallery,
+  createCard,
 };

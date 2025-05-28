@@ -1,5 +1,5 @@
 import articleService from "../services/article.service.js";
-
+//d
 const articleController = {
   getById: async (req, res, next) => {
     try {
@@ -50,7 +50,8 @@ const articleController = {
 
   getMyArticles: async (req, res, next) => {
     try {
-      const userId = req.user.id; // 로그인 사용자 ID
+      const userId = req.user.id;
+      console.log("넘어온 유저아이디 컨트롤러에서 출력", userId);
       const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
         req.query;
 

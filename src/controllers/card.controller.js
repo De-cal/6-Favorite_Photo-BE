@@ -14,7 +14,7 @@ const cardController = {
 
   getMyGallery: async (req, res, next) => {
     try {
-      const userId = req.user.id; // ✅ 수정된 부분
+      const userId = req.user.id; //
       const { page, pageSize, rank, genre, keyword, status, includeZero } =
         req.query;
 

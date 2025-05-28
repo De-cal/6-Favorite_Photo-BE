@@ -4,17 +4,17 @@ import { validateRequest } from "../middlewares/validateRequest.js";
 import { LoginRequestStruct } from "../structs/auth/loginRequest.struct.js";
 import { SignupRequestStruct } from "../structs/auth/signupRequest.struct.js";
 
-const router = express.Router();
+const authRouter = express.Router();
 
-router.post(
+authRouter.post(
   "/signup",
   validateRequest(SignupRequestStruct),
   authController.signupController,
 );
-router.post(
+authRouter.post(
   "/login",
   validateRequest(LoginRequestStruct),
   authController.loginController,
 );
 
-export default router;
+export default authRouter;

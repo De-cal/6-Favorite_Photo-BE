@@ -1,7 +1,7 @@
 import prisma from "../db/prisma/prisma.js";
 import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
-
+//d
 async function getById(id) {
   return await articleRepository.getById(id);
 }
@@ -84,8 +84,7 @@ export async function findMyCardArticles({
   if (isNaN(pageSizeNum) || pageSizeNum < 1 || pageSizeNum > 100) {
     throw new Error("유효하지 않은 pageSize 값입니다.");
   }
-
-  return await cardRepository.findMyCardArticles({
+  return await articleRepository.findMyCardArticles({
     userId,
     page: pageNum,
     pageSize: pageSizeNum,

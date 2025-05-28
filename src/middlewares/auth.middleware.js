@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { authRepository } from "../repositories/auth.repository.js";
+import { findById } from "../repositories/auth.repository.js";
 
 export const validateAccessToken = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ export const validateAccessToken = async (req, res, next) => {
 
     try {
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-      const user = await authRepository.findById(decoded.userId);
+      const user = await findById(decoded.userId);
 
       if (!user) {
         throw new Error("사용자를 찾지 못했습니다.");
@@ -39,8 +39,11 @@ export const validateRefreshToken = async (req, res, next) => {
     }
 
     try {
-      const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-      const user = await authRepository.findById(decoded.userId);
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+      );
+      const user = await findById(decoded.userId);
 
       if (!user) {
         throw new Error("사용자를 찾지 못했습니다.");

@@ -125,8 +125,51 @@ async function decreaseCard(id, quantity, options = {}) {
 async function create(data, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  return await client.userPhotoCard.create({ data });
+
+  const {
+    title,
+    rank,
+    genre,
+    description,
+    price,
+    totalQuantity,
+    creatorId,
+    imgUrl,
+  } = data;
+
+  return await client.$transaction(async (tx) => {
+    // 1. 포토카드 생성
+    const photoCard = await tx.photoCard.create({
+      data: {
+        title,
+        rank,
+        genre,
+        description,
+        price,
+        imgUrl,
+        creatorId,
+      },
+    });
+
+    // 2. 유저포토카드 여러 개 생성
+    const userPhotoCards = await tx.userPhotoCard.create({
+      data: {
+        userId: creatorId,
+        photoCardId: photoCard.id,
+        price,
+        quantity: totalQuantity, // 한 row에 총 수량
+        status: 'OWNED',         // 상태 추가
+      },
+    });
+
+
+    return {
+      photoCard,
+      userPhotoCards,
+    };
+  });
 }
+
 
 async function remove(id, options = {}) {
   const { tx } = options;

@@ -1,25 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
 
 const notificationRepository = {
-  async createNotification(message, userIds) {
-    const newNotification = await prisma.notification.create({
-      data: {
-        message,
-      },
-    });
-
-    const userNotificationData = userIds.map((userId) => ({
-      userId,
-      notificationId: newNotification.id,
-    }));
-
-    await prisma.userNotification.createMany({
-      data: userNotificationData,
-    });
-
-    return newNotification;
-  },
-
   async getNotificationsByUserId(userId, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
@@ -38,7 +19,7 @@ const notificationRepository = {
     });
   },
 
-  async getCountByUserId(userId) {
+  async getUnReadCountByUserId(userId) {
     return prisma.userNotification.count({
       where: {
         userId,
@@ -71,6 +52,25 @@ const notificationRepository = {
         isRead: true,
       },
     });
+  },
+
+  async createNotification(message, userIds) {
+    const newNotification = await prisma.notification.create({
+      data: {
+        message,
+      },
+    });
+
+    const userNotificationData = userIds.map((userId) => ({
+      userId,
+      notificationId: newNotification.id,
+    }));
+
+    await prisma.userNotification.createMany({
+      data: userNotificationData,
+    });
+
+    return newNotification;
   },
 };
 

@@ -12,7 +12,17 @@ async function createCard(data) {
   return await cardRepository.create(data);
 }
 
-async function findManyAtMygallery({ userId, page = 1, pageSize = 15, rank, genre, keyword, status = "SELLING" }) {
+async function findManyAtMygallery({
+  userId,
+  page = 1,
+  pageSize = 15,
+  rank,
+  genre,
+  keyword,
+  status = "SELLING",
+  includeZero = true,
+}) {
+
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
 
@@ -32,6 +42,7 @@ async function findManyAtMygallery({ userId, page = 1, pageSize = 15, rank, genr
     genre,
     keyword,
     status,
+    includeZero,
   });
 }
 

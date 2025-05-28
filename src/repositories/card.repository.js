@@ -9,12 +9,14 @@ export const findMyGallerySellingCards = async ({
   genre,
   keyword,
   status,
+  includeZero,
 }) => {
   const skip = (page - 1) * pageSize;
 
   const whereClause = {
     userId,
     status,
+    ...(includeZero ? {} : { quantity: { gt: 0 } }),
     photoCard: {
       ...(keyword && {
         title: {
@@ -62,7 +64,7 @@ export const findMyGallerySellingCards = async ({
         by: ["photoCardId"], // 중복 방지
         where: whereClause,
       })
-      .then(async (grouped) => {
+      .then(async function (grouped) {
         // 각 photoCardId에 대해 rank 조회
         const cards = await prisma.photoCard.findMany({
           where: {
@@ -90,13 +92,16 @@ export const findMyGallerySellingCards = async ({
   };
 };
 
-async function getById(id, tx = prisma) {
-  console.log('id:::', id)
-  return await tx.userPhotoCard.findUnique({ where: { id } });
+async function getById(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.findUnique({ where: { id } });
 }
 
-async function getByUser(userId, tx = prisma) {
-  return await tx.userPhotoCard.findMany({
+async function getByUser(userId, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.findMany({
     where: { userId, status: "OWNED", quantity: { not: 0 } },
     include: {
       photoCard: {
@@ -108,20 +113,25 @@ async function getByUser(userId, tx = prisma) {
   });
 }
 
-async function decreaseCard(id, quantity, tx = prisma) {
-  return await tx.userPhotoCard.update({
+async function decreaseCard(id, quantity, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
     where: { id },
     data: { quantity: { decrement: quantity } },
   });
 }
 
-async function create(data, tx = prisma) {
-  console.log('data::', data)
-  return await tx.userPhotoCard.create({ data });
+async function create(data, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.create({ data });
 }
 
-async function remove(id, tx = prisma) {
-  return await tx.userPhotoCard.delete({ where: id });
+async function remove(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.delete({ where: id });
 }
 export default {
   getById,

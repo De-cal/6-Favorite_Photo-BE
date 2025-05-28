@@ -1,38 +1,38 @@
-import { User } from "../models/User.js";
-import { prisma } from "../db/prisma/index.js";
+import prisma from "../db/prisma/prisma.js";
 
-export const authRepository = {
-  async findByEmail(email) {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-    return user ? new User(user) : null;
-  },
+const findByEmail = async (email) => {
+  return await prisma.user.findUnique({
+    where: { email },
+  });
+};
 
-  async findByNickname(nickname) {
-    const user = await prisma.user.findUnique({
-      where: { nickname },
-    });
-    return user ? new User(user) : null;
-  },
+const findByNickname = async (nickname) => {
+  return await prisma.user.findFirst({
+    where: { nickname },
+  });
+};
 
-  async create({ email, nickname, password }) {
-    const user = await prisma.user.create({
-      data: {
-        email,
-        nickname,
-        password,
-        pointAmount: 0,
-        createCount: 0,
-      },
-    });
-    return new User(user);
-  },
+const create = async ({ email, nickname, password }) => {
+  return await prisma.user.create({
+    data: {
+      email,
+      nickname,
+      password,
+      pointAmount: 0,
+      createCount: 0,
+    },
+  });
+};
 
-  async findById(id) {
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
-    return user ? new User(user) : null;
-  },
+const findById = async (id) => {
+  return await prisma.user.findUnique({
+    where: { id },
+  });
+};
+
+export default {
+  findByEmail,
+  findByNickname,
+  create,
+  findById,
 };

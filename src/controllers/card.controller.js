@@ -16,7 +16,8 @@ const cardController = {
   getMyGallery: async (req, res, next) => {
     try {
       const userId = "01fe8f03-ab92-4616-a8ba-4cd9f5655112"; //req.auth.userId
-      const { page, pageSize, rank, genre, keyword, status } = req.query;
+      const { page, pageSize, rank, genre, keyword, status, includeZero } =
+        req.query;
 
       const result = await cardService.findManyAtMygallery({
         page,
@@ -26,6 +27,7 @@ const cardController = {
         keyword,
         status,
         userId,
+        includeZero: includeZero === "false" ? false : true,
       });
 
       return res.status(200).json(result);

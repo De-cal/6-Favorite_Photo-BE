@@ -29,4 +29,10 @@ articleRouter.delete(
 
 articleRouter.get("/:id", articleController.getById);
 
+//포토카드 교환 승인, 거절
+articleRouter.put(
+  "/:id/exchange/exchangeId",
+  articleController.putExchangeCard,
+);
+
 export default articleRouter;

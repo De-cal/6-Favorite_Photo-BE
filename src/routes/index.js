@@ -8,7 +8,7 @@ import authRouter from "./auth.route.js";
 const router = express.Router();
 
 router.use("/auth", authRouter);
-router.use("/point", pointRouter);
+router.use("/points", pointRouter);
 router.use("/notification", notificationRouter);
 router.use("/cards", cardRouter);
 router.use("/articles", articleRouter);

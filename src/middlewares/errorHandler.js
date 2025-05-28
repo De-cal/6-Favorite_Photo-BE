@@ -1,5 +1,5 @@
 export default function errorHandler(err, req, res, next) {
-  const status = err.code ?? 500;
+  const status = Number(err.code) || 500;
 
   if (err.name === "UnauthorizedError") {
     res.status(401).send("invalid token...");

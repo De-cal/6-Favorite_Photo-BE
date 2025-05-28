@@ -11,11 +11,20 @@ const articleController = {
     }
   },
 
+  // articleController.js
   getAllSelling: async (req, res, next) => {
     try {
-      const { keyword } = req.query;
-      const articles = await articleService.getSellingCardsAll(keyword);
-      return res.status(200).json(articles);
+      const { keyword = "", page = 1, limit = 12 } = req.query;
+      const parsedPage = parseInt(page, 10);
+      const parsedLimit = parseInt(limit, 10);
+
+      const data = await articleService.getSellingCardsAll({
+        keyword,
+        page: parsedPage,
+        limit: parsedLimit,
+      });
+
+      return res.status(200).json(data);
     } catch (error) {
       next(error);
     }

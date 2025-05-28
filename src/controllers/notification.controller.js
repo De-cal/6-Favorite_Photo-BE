@@ -7,7 +7,7 @@ const notificationController = {
       page = parseInt(page);
       limit = parseInt(limit);
 
-      const { userId } = req.auth;
+      const { userId } = req.user;
       const notifications = await notificationService.getMyNotifications(
         userId,
         page,
@@ -22,7 +22,7 @@ const notificationController = {
   readNotification: async (req, res, next) => {
     try {
       const { notificationId } = req.params;
-      const { userId } = req.auth;
+      const { userId } = req.user;
       const updatedNotification = await notificationService.readNotification(
         userId,
         notificationId
@@ -35,7 +35,7 @@ const notificationController = {
 
   readAllNotifications: async (req, res, next) => {
     try {
-      const { userId } = req.auth;
+      const { userId } = req.user;
       const result = await notificationService.readAllNotifications(userId);
       return res
         .status(200)

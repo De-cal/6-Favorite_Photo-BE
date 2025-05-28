@@ -1,14 +1,14 @@
 import prisma from "../db/prisma/prisma.js";
 
 const pointRepository = {
-  async addPoint(userId, pointsToAdd) {
+  async addPoint(userId, rewardPoints) {
     return prisma.user.update({
       where: {
         id: userId,
       },
       data: {
         pointAmount: {
-          increment: pointsToAdd,
+          increment: rewardPoints,
         },
       },
     });

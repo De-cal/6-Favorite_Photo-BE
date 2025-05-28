@@ -12,7 +12,15 @@ const app = express();
 
 // 2. 미들웨어 등록
 app.use(express.json()); // json 데이터를 parsing.
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? process.env.FRONTEND_URL
+        : "http://localhost:3000",
+    credentials: true, // 쿠키 전송을 위해 필요
+  }),
+);
 app.use(cookieParser());
 app.use("/images", express.static("uploads"));
 

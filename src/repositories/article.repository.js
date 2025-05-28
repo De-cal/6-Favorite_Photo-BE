@@ -1,6 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
 //마켓플레이스에서 SELLING과 SOLDOUT 다 가져오기
-
+//d
 export const getSellingCardsAll = async ({ keyword }) => {
   const whereClause = {
     status: {
@@ -49,7 +49,7 @@ export const findMyCardArticles = async ({
   // 공통 조건
   const whereClause = {
     userPhotoCard: {
-      userId,
+      user: { id: userId },
       ...(sellingType && { status: sellingType }),
       photoCard: {
         ...(rank && { rank }),
@@ -153,6 +153,13 @@ async function getById(id, options = {}) {
   return await client.cardArticle.findUnique({ where: { id } });
 }
 
+const getByIdWithRelations = async (id) => {
+  return await prisma.cardArticle.findUnique({
+    where: { id },
+    include: { userPhotoCard: { include: { user: true } } },
+  });
+};
+
 async function getByCard(cardId, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -167,10 +174,111 @@ async function create(data, options = {}) {
   return await client.cardArticle.create({ data });
 }
 
+// 포토카드 구매 1 or 포토카드 교환 요청 3 - UserPhotoCard 생성
+const createUserPhotoCard = async (data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.userPhotoCard.create({ data });
+};
+
+// 포토카드 구매 2 - CardArticle 잔여수량 감소
+const decreaseCardArticleQuantity = async (
+  articleId,
+  remainingQuantity,
+  options = {},
+) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.cardArticle.update({
+    where: { id: articleId },
+    data: { remainingQuantity },
+  });
+};
+
+// 포토카드 구매 3 - 구매자 point 차감
+const decreaseBuyerPoints = async (buyerId, pointAmount, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.user.update({
+    where: { id: buyerId },
+    data: { pointAmount },
+  });
+};
+
+// 포토카드 구매 4 - 판매자 point 증가
+const increaseSellerPoints = async (sellerId, pointAmount, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.user.update({
+    where: { id: sellerId },
+    data: { pointAmount },
+  });
+};
+
+// 포토카드 교환 요청 1 - Exchange 생성
+const createExchange = async (data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.exchange.create({ data });
+};
+
+// 포토카드 교환 요청 2 - requester의 UserPhotoCard에서 수량 1개 차감
+const decreaseQuantity = async (requesterCardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.userPhotoCard.update({
+    where: { id: requesterCardId },
+    data: { quantity: { decrement: 1 } },
+  });
+};
+
+// 포토카드 교환 요청 취소 유효성 검사 1 - Exchange 존재 여부
+const getExchangeById = async (exchangeId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.exchange.findUnique({ where: { id: exchangeId } });
+};
+
+// 포토카드 교환 요청 취소 1 - Exchange 삭제
+const deleteExchange = async (exchangeId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.exchange.delete({ where: { id: exchangeId } });
+};
+
+// 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 수량 1개 증가
+const increaseQuantity = async (requesterCardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.userPhotoCard.update({
+    where: { id: requesterCardId },
+    data: { quantity: { increment: 1 } },
+  });
+};
+
 export default {
   getById,
+  getByIdWithRelations,
   getSellingCardsAll,
   getByCard,
   create,
   findMyCardArticles,
+  createUserPhotoCard,
+  decreaseCardArticleQuantity,
+  decreaseBuyerPoints,
+  increaseSellerPoints,
+  createExchange,
+  decreaseQuantity,
+  getExchangeById,
+  deleteExchange,
+  increaseQuantity,
 };

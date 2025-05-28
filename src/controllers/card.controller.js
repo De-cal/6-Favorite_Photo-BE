@@ -1,11 +1,10 @@
 import cardService from "../services/card.service.js";
 
-
 const cardController = {
   getCardById: async (req, res, next) => {
     try {
       const { id } = req.params;
-      console.log('id', id)
+      console.log("id", id);
       const photocard = await cardService.getById(id);
       return res.status(200).json(photocard);
     } catch (error) {
@@ -15,7 +14,7 @@ const cardController = {
 
   getMyGallery: async (req, res, next) => {
     try {
-      const userId = "01fe8f03-ab92-4616-a8ba-4cd9f5655112"; //req.auth.userId
+      const userId = req.user.id; //
       const { page, pageSize, rank, genre, keyword, status, includeZero } =
         req.query;
 
@@ -35,12 +34,13 @@ const cardController = {
       next(error);
     }
   },
-  
+
   createCard: async (req, res, next) => {
     try {
       const userId = "082edc1b-a5c8-4bd7-8105-1e9e510d2c19"; // req.auth.userId
       console.log('req.body::', req.body)
       const { title, rank, genre, price, totalQuantity, description } = req.body;
+
       const imagePath = req.file?.filename;
 
       if (!imagePath) {

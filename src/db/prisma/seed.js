@@ -34,7 +34,7 @@ const exchangeTextTemplates = {
 
 function getRandomExchangeInfo(currentGenre) {
   const genres = Object.keys(exchangeTextTemplates).filter(
-    (g) => g !== currentGenre
+    (g) => g !== currentGenre,
   );
   const genre = genres[Math.floor(Math.random() * genres.length)];
   const texts = exchangeTextTemplates[genre];
@@ -44,6 +44,7 @@ function getRandomExchangeInfo(currentGenre) {
 
 async function main() {
   console.log("🧹 Clearing old data...");
+  await prisma.exchange.deleteMany();
   await prisma.cardArticle.deleteMany();
   await prisma.userPhotoCard.deleteMany();
   await prisma.photoCard.deleteMany();
@@ -67,7 +68,7 @@ async function main() {
   console.log("🖼️ Creating photo cards...");
   const createdPhotoCards = [];
   for (const card of PhotoCardMocks) {
-    const creator = createdUsers[card.creatorId - 1]; // creatorIndex는 1부터 시작
+    const creator = createdUsers[card.creatorId - 1];
     const created = await prisma.photoCard.create({
       data: {
         title: card.title,
@@ -83,54 +84,70 @@ async function main() {
   }
 
   console.log("📦 Creating user cards & articles...");
-  for (let i = 0; i < createdUsers.length; i++) {
-    const user = createdUsers[i];
-    const selectedCards = [
-      createdPhotoCards[i % createdPhotoCards.length],
-      createdPhotoCards[(i + 1) % createdPhotoCards.length],
-    ];
+  for (const user of createdUsers) {
+    for (const card of createdPhotoCards) {
+      // 판매용 카드 3장
+      const sellingCard = await prisma.userPhotoCard.create({
+        data: {
+          userId: user.id,
+          photoCardId: card.id,
+          quantity: 3,
+          price: card.price,
+          status: "SELLING",
+        },
+      });
 
-    for (const card of selectedCards) {
-      // 2장 판매 등록
-      for (let j = 0; j < 2; j++) {
-        const sellingCard = await prisma.userPhotoCard.create({
-          data: {
-            userId: user.id,
-            photoCardId: card.id,
-            quantity: 1,
-            price: card.price,
-            status: "SELLING",
-          },
-        });
+      const { genre: exchangeGenre, text: exchangeText } =
+        getRandomExchangeInfo(card.genre);
 
-        const { genre: exchangeGenre, text: exchangeText } =
-          getRandomExchangeInfo(card.genre);
+      await prisma.cardArticle.create({
+        data: {
+          price: sellingCard.price,
+          totalQuantity: 3,
+          remainingQuantity: 3,
+          exchangeText,
+          exchangeRank: card.rank,
+          exchangeGenre,
+          userPhotoCardId: sellingCard.id,
+        },
+      });
 
-        await prisma.cardArticle.create({
-          data: {
-            price: sellingCard.price,
-            totalQuantity: 2,
-            remainingQuantity: 2,
-            exchangeText,
-            exchangeRank: card.rank,
-            exchangeGenre,
-            userPhotoCardId: sellingCard.id,
-          },
-        });
-      }
+      // 보유용 카드 2장
+      await prisma.userPhotoCard.create({
+        data: {
+          userId: user.id,
+          photoCardId: card.id,
+          quantity: 2,
+          price: card.price,
+          status: "OWNED",
+        },
+      });
+    }
+  }
 
-      // 2장 보유 상태
-      for (let j = 0; j < 2; j++) {
-        await prisma.userPhotoCard.create({
-          data: {
-            userId: user.id,
-            photoCardId: card.id,
-            quantity: 1,
-            price: card.price,
-            status: "OWNED",
-          },
-        });
-      }
+  console.log("💤 Marking 5 random SELLING cards as sold out per user...");
+  for (const user of createdUsers) {
+    const sellingCards = await prisma.userPhotoCard.findMany({
+      where: {
+        userId: user.id,
+        status: "SELLING",
+      },
+      select: { id: true },
+    });
+
+    const shuffled = sellingCards.sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 5);
+
+    for (const card of selected) {
+      await prisma.userPhotoCard.update({
+        where: { id: card.id },
+        data: { quantity: 0 },
+      });
+
+      await prisma.cardArticle.updateMany({
+        where: { userPhotoCardId: card.id },
+        data: { remainingQuantity: 0 },
+      });
     }
   }
 

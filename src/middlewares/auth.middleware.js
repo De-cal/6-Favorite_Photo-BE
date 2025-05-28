@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import authRepository from "../repositories/auth.repository.js";
 
 export const validateAccessToken = async (req, res, next) => {
-  console.log("✅ validateAccessToken 미들웨어 실행됨"); //
   try {
     const token = req.cookies?.accessToken; // ✅ 쿠키에서 꺼냄
 

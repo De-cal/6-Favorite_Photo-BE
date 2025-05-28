@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { authRepository } from "../repositories/auth.repository.js";
+import authRepository from "../repositories/auth.repository.js";
 
 export const validateAccessToken = async (req, res, next) => {
   try {
@@ -39,7 +39,10 @@ export const validateRefreshToken = async (req, res, next) => {
     }
 
     try {
-      const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET,
+      );
       const user = await authRepository.findById(decoded.userId);
 
       if (!user) {

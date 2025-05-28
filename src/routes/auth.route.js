@@ -6,12 +6,12 @@ import { SignupRequestStruct } from "../structs/auth/signupRequest.struct.js";
 
 const authRouter = express.Router();
 
-router.post(
+authRouter.post(
   "/signup",
   validateRequest(SignupRequestStruct),
   authController.signupController,
 );
-router.post(
+authRouter.post(
   "/login",
   validateRequest(LoginRequestStruct),
   authController.loginController,

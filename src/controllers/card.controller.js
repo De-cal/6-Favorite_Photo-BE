@@ -38,7 +38,7 @@ const cardController = {
   
   createCard: async (req, res, next) => {
     try {
-      const userId = "01fe8f03-ab92-4616-a8ba-4cd9f5655112"; // 실제 프로젝트에서는 req.auth.userId 사용
+      const userId = "082edc1b-a5c8-4bd7-8105-1e9e510d2c19"; // req.auth.userId
       console.log('req.body::', req.body)
       const { title, rank, genre, price, totalQuantity, description } = req.body;
       const imagePath = req.file?.filename;

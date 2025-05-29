@@ -63,10 +63,10 @@ export const findMyGallerySellingCards = async ({
     }),
   ]);
 
-  // 🔢 현재 필터 조건에 해당하는 quantity 총합
-  const cardCount = filteredList.reduce((sum, item) => sum + item.quantity, 0);
+  //  현재 필터 조건에 해당하는 quantity 총합
+  const cardCount = filteredList.length;
 
-  // 🔢 등급별 quantity 집계 (status: OWNED 기준)
+  //  등급별 quantity 집계 (status: OWNED 기준)
   const rankCounts = {};
   let totalRemainingQuantity = 0;
   for (const card of ownedList) {

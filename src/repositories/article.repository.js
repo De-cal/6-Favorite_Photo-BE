@@ -308,6 +308,12 @@ export const updateUserPhotoCardStatus = async (
   });
 };
 
+export const updateArticle = async (articleId, data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.cardArticle.update({ where: { id: articleId }, data });
+};
+
 export default {
   getById,
   getByIdWithRelations,
@@ -324,4 +330,5 @@ export default {
   getExchangeById,
   deleteExchange,
   increaseQuantity,
+  updateArticle,
 };

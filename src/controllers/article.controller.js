@@ -185,5 +185,28 @@ const articleController = {
       next(e);
     }
   },
+
+  patchArticle: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { id: articleId } = req.params;
+      const {
+        price,
+        totalQuantity,
+        exchangeText,
+        exchangeRank,
+        exchangeGenre,
+      } = req.body;
+      const article = await articleService.patchArticle(articleId, userId, {
+        price,
+        totalQuantity,
+        exchangeText,
+        exchangeRank,
+        exchangeGenre,
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
 };
 export default articleController;

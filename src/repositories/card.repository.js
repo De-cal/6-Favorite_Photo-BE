@@ -171,6 +171,24 @@ async function remove(id, options = {}) {
   const client = tx || prisma;
   return await client.userPhotoCard.delete({ where: id });
 }
+
+export const findByUserAndCard = async (userId, cardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.findFirst({
+    where: { userId, photoCardId: cardId, status: "OWNED" },
+  });
+};
+
+export const updateQuantity = async (cardId, quantity, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity },
+  });
+};
+
 export default {
   getById,
   getByUser,
@@ -178,4 +196,6 @@ export default {
   create,
   findMyGallerySellingCards,
   remove,
+  findByUserAndCard,
+  updateQuantity,
 };

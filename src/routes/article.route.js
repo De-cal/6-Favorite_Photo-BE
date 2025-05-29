@@ -19,6 +19,13 @@ articleRouter.get("/user", articleController.getMyArticles);
 // 포토카드 구매
 articleRouter.post("/:id", articleController.purchaseArticle);
 
+// 아티클 수정
+articleRouter.patch(
+  "/:id",
+  validateAccessToken,
+  articleController.patchArticle,
+);
+
 // 포토카드 교환 요청
 articleRouter.post("/:id/exchange", articleController.exchangeArticle);
 

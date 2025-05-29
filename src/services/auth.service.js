@@ -38,14 +38,14 @@ const signup = async ({ email, nickname, password, passwordConfirmation }) => {
   const existingUserByEmail = await authRepository.findByEmail(email);
   if (existingUserByEmail) {
     const error = new Error("이미 존재하는 이메일 입니다.");
-    error.code = 409; // Conflict
+    error.code = 409;
     throw error;
   }
 
   const existingUserByNickname = await authRepository.findByNickname(nickname);
   if (existingUserByNickname) {
     const error = new Error("이미 존재하는 닉네임 입니다.");
-    error.code = 409; // Conflict
+    error.code = 409;
     throw error;
   }
 
@@ -98,7 +98,31 @@ const login = async ({ email, password }) => {
   };
 };
 
+const refreshTokenService = async (refreshToken) => {
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const user = await authRepository.findById(decoded.userId);
+
+    if (!user) {
+      throw new Error("존재하지 않는 사용자입니다");
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+    };
+  } catch (error) {
+    const err = new Error("Refresh token이 유효하지 않거나 만료되었습니다");
+    err.status = 401;
+    throw err;
+  }
+};
+
 export default {
   signup,
   login,
+  refreshTokenService,
 };

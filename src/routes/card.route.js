@@ -10,6 +10,6 @@ cardRouter.get("/:id", cardController.getCardById);
 cardRouter.get("/", validateAccessToken, cardController.getMyGallery);
 
 // 카드 생성
-cardRouter.post("/", upload.single("file"), cardController.createCard);
+cardRouter.post("/", validateAccessToken, upload.single("file"), cardController.createCard);
 
 export default cardRouter;

@@ -86,8 +86,7 @@ model UserPhotoCard {
   photoCard PhotoCard @relation(fields: [photoCardId], references: [id])
 
   cardArticle CardArticle[]
-  giver       Exchange[]    @relation("ExchangeGiver")
-  taker       Exchange[]    @relation("ExchangeTaker")
+  requester   Exchange[]    @relation("Exchangerequester")
 }
 
 enum UserPhotoCardStatus {
@@ -110,6 +109,18 @@ model CardArticle {
   userPhotoCardId   String
   createdAt         DateTime      @default(now())
   userPhotoCard     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
+  recipient         Exchange[]    @relation("Exchangerecipient")
+}
+
+model Exchange {
+  id                 String   @id @default(uuid())
+  requesterCardId    String //카드 교환 신청 건 사람 카드 id
+  recipientArticleId String //카드 교환 신청 받은 사람 카드 id
+  description        String
+  createdAt          DateTime @default(now())
+
+  requesterCard    UserPhotoCard @relation("Exchangerequester", fields: [requesterCardId], references: [id])
+  recipientArticle CardArticle   @relation("Exchangerecipient", fields: [recipientArticleId], references: [id])
 }
 
 // 유저포토테이블  ->   
@@ -263,14 +274,3 @@ model CardArticle {
 //
 //
 //
-
-model Exchange {
-  id              String   @id @default(uuid())
-  requesterCardId String //카드 교환 신청 건 사람 카드 id
-  recipientCardId String //카드 교환 신청 받은 사람 카드 id
-  description     String
-  createdAt       DateTime @default(now())
-
-  requesterCard UserPhotoCard @relation("ExchangeGiver", fields: [requesterCardId], references: [id])
-  recipientCard UserPhotoCard @relation("ExchangeTaker", fields: [recipientCardId], references: [id])
-}

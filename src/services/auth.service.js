@@ -38,14 +38,14 @@ const signup = async ({ email, nickname, password, passwordConfirmation }) => {
   const existingUserByEmail = await authRepository.findByEmail(email);
   if (existingUserByEmail) {
     const error = new Error("이미 존재하는 이메일 입니다.");
-    error.code = 409; // Conflict
+    error.code = 409; 
     throw error;
   }
 
   const existingUserByNickname = await authRepository.findByNickname(nickname);
   if (existingUserByNickname) {
     const error = new Error("이미 존재하는 닉네임 입니다.");
-    error.code = 409; // Conflict
+    error.code = 409; 
     throw error;
   }
 

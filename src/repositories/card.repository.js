@@ -163,9 +163,9 @@ async function create(data, options = {}) {
         photoCardId: photoCard.id,
         price,
         quantity: totalQuantity, // 한 row에 총 수량
-        status: "OWNED", // 상태 추가
       },
     });
+
 
     return {
       photoCard,
@@ -173,6 +173,7 @@ async function create(data, options = {}) {
     };
   });
 }
+
 
 async function remove(id, options = {}) {
   const { tx } = options;

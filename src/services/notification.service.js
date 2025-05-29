@@ -45,7 +45,7 @@ const notificationService = {
 
 
 
-  // 포토 카드 교환 성사 알림 생성 (구매자 대상)
+  // 포토 카드 교환 성사 알림 생성 (구매자 대상) -> 교환 수락시 발생.(판매자 입장) -> 세빈님
   createExchangeSuccessNotification: async (
     requesterUserId,
     recipientNickname,
@@ -61,7 +61,7 @@ const notificationService = {
     }
   },
 
-  // 포토 카드 교환 불발 알림 생성 (구매자 대상)
+  // 포토 카드 교환 불발 알림 생성 (구매자 대상) -> 교환 거절시 발생.(판매자 입장) -> 세빈님
   createExchangeFailureNotification: async (
     requesterUserId,
     recipientNickname,
@@ -77,7 +77,7 @@ const notificationService = {
     }
   },
 
-  // 포토 카드 교환 제안 알림 생성 (판매자 대상)
+  // 포토 카드 교환 제안 알림 생성 (판매자 대상) -> 교환 제안시 발생.(요청자 입장) -> 태빈님
   createExchangeOfferNotification: async (
     recipientUserId,
     requesterNickname,
@@ -93,7 +93,7 @@ const notificationService = {
     }
   },
 
-  // 포토 카드 판매 성사 알림 생성 (판매자 대상)
+  // 포토 카드 판매 성사 알림 생성 (판매자 대상) -> 구매 요청시 발생.(구매자 입장.) -> 태빈님
   createSaleSuccessNotification: async (
     sellerUserId,
     rank,
@@ -109,7 +109,14 @@ const notificationService = {
     }
   },
 
+
+
+  // 판매 취소시 구매 요청자들에게 가는 알림 +a 사항.
+
+
+
   // 포토 카드 품절 알림 생성 (관심 목록 등록 유저들 또는 판매자 대상). 여러명에게
+  // 수량이 0이 되었을때 발생. 마지막카드 구매, 교환수락, 판매 취소. 
   createSoldOutNotification: async (requesterUserIds, rank, title) => {
     const message = `[${rank} | ${title}] 이/가 품절 되었습니다.`;
     try {

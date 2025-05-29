@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.use("/auth", authRouter);
 router.use("/points", pointRouter);
-router.use("/notification", notificationRouter);
+router.use("/notifications", notificationRouter);
 router.use("/cards", cardRouter);
 router.use("/articles", articleRouter);
 

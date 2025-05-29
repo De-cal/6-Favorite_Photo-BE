@@ -15,8 +15,9 @@ const cardController = {
   getMyGallery: async (req, res, next) => {
     try {
       const userId = req.user.id;
-      const { page, pageSize, rank, genre, keyword, status, includeZero } =
-        req.query;
+
+      const { page, pageSize, rank, genre, keyword, status } = req.query;
+
 
       const result = await cardService.findManyAtMygallery({
         page,
@@ -24,9 +25,7 @@ const cardController = {
         rank,
         genre,
         keyword,
-        status,
         userId,
-        includeZero: includeZero === "false" ? false : true,
       });
 
       return res.status(200).json(result);
@@ -38,8 +37,8 @@ const cardController = {
   createCard: async (req, res, next) => {
     try {
       const userId = req.user.id;
-      // console.log('req.body::', req.body)
       const { title, rank, genre, price, totalQuantity, description } = req.body;
+
       const imagePath = req.file?.filename;
 
       // 사용자 인증 확인

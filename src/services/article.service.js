@@ -12,27 +12,30 @@ async function getSellingCardsAll({ keyword, page, limit }) {
 }
 
 async function postArticle(data) {
-  // const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
   return await prisma.$transaction(async (tx) => {
     const card = await cardRepository.getById(data.userPhotoCardId, { tx });
+    //유효성 검사 1: 포토카드 있는지 확인
     if (!card) {
       const error = new Error("해당 포토카드가 존재하지 않습니다.");
       error.code = 404;
       throw error;
     }
+    //유효성 검사 2: 포토카드 수량 확인
     if (card.quantity < data.totalQuantity) {
       const error = new Error("포토카드 수량이 부족합니다.");
       error.code = 409;
       throw error;
     }
-    const article = await articleRepository.getByCard(data.userPhotoCardId, {
-      tx,
-    });
+    // const article = await articleRepository.getByCard(data.userPhotoCardId, {
+    //   tx,
+    // });
     // if (article) {
     //   const error = new Error("이미 등록된 판매 글이 존재합니다.");
     //   error.code = 409;
     //   throw error;
     // }
+
+    //판매할 카드 수량만큼 OWNED 카드 수량 감소
     const updatedCard = await cardRepository.decreaseCard(
       data.userPhotoCardId,
       data.totalQuantity,
@@ -42,6 +45,8 @@ async function postArticle(data) {
     //   //삭제할지말지 (OR where quantity !== 0)
     //   await cardRepository.remove(updatedCard.id);
     // }
+
+    //판매용 USERPHOTOCARD 생성
     const newCard = await cardRepository.create(
       {
         photoCardId: card.photoCardId,
@@ -52,6 +57,7 @@ async function postArticle(data) {
       },
       { tx },
     );
+    // CardArticle 생성
     return await articleRepository.create(
       {
         ...data,
@@ -264,6 +270,42 @@ export const putExchangeCard = async (articleId, exchangeId, approve) => {
   });
 };
 
+export const patchArticle = async (articleId, userId, data) => {
+  return await prisma.$transaction(async (tx) => {
+    const article = await articleRepository.getById(articleId, { tx });
+    //유효성 검사 1: 작성자인지 확인
+    if (userId !== article.userId) {
+      const error = new Error("게시글의 작성자가 아닙니다.");
+      error.code = 403;
+      throw error;
+    }
+    // 유효성 검사 2: 수량 충분한지 확인
+    if (article.remainingQuantity < data.totalQuantity) {
+      const error = new Error("포토카드 수량이 부족합니다.");
+      error.code = 400;
+      throw error;
+    }
+    const photoCard = await cardRepository.findByUserAndCard(
+      userId,
+      article.photoCardId,
+      { tx },
+    );
+    //기존 userPhotocard(owned)에 수량 변화 반영
+    await cardRepository.updateQuantity(
+      photoCard.Id,
+      photoCard.quantity + article.remainingQuantity - data.quantity,
+      { tx },
+    );
+    //기존 userPhotocard(selling)에 수량 변화 반영
+    await cardRepository.updateQuantity(article.photoCardId, data.quantity, {
+      tx,
+    });
+
+    //article 업데이트
+    return await articleRepository.updateArticle(article.id, data, { tx });
+  });
+};
+
 export default {
   getById,
   getSellingCardsAll,
@@ -273,4 +315,5 @@ export default {
   exchangeArticle,
   cancelExchange,
   putExchangeCard,
+  patchArticle,
 };

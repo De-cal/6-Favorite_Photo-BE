@@ -4,7 +4,7 @@ const notificationRepository = {
   async getNotificationsByUserId(userId, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
 
-    return await prisma.userNotification.findMany({
+    const userNotifications = await prisma.userNotification.findMany({
       where: {
         userId,
       },
@@ -17,17 +17,27 @@ const notificationRepository = {
       skip,
       take: limit,
     });
+
+    const formattedNotifications = userNotifications.map(item => ({
+      id: item.notification.id,
+      message: item.notification.message,
+      createdAt: item.createdAt,
+      isRead: item.isRead,
+    }));
+
+    return formattedNotifications;
   },
 
   async getUnReadCountByUserId(userId) {
     return prisma.userNotification.count({
       where: {
         userId,
+        isRead: false, 
       },
     });
   },
 
-  async readNotification(userId, notificationId) {
+  async readNotificationByUserId(userId, notificationId) {
     return await prisma.userNotification.update({
       where: {
         userId_notificationId: {

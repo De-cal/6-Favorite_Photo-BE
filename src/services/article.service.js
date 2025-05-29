@@ -7,8 +7,8 @@ async function getById(id) {
   return await articleRepository.getById(id);
 }
 
-async function getSellingCardsAll(keyword) {
-  return await articleRepository.getSellingCardsAll({ keyword });
+async function getSellingCardsAll({ keyword, page, limit }) {
+  return await articleRepository.getSellingCardsAll({ keyword, page, limit });
 }
 
 async function postArticle(data) {

@@ -53,7 +53,7 @@ const loginController = async (req, res, next) => {
   }
 };
 
-const logoutController = async (res) => {
+const logoutController = async (req, res) => {
   authUtils.clearAuthCookies(res);
   res.status(200).json({ success: true });
 };
@@ -73,9 +73,38 @@ const meController = async (req, res) => {
   });
 };
 
+const refreshTokenController = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token이 존재하지 않습니다",
+      });
+    }
+
+    const result = await authService.refreshTokenService(refreshToken);
+
+    // 새 토큰을 쿠키에 다시 설정
+    authUtils.setAuthCookies(res, {
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    });
+    console.log(result.accessToken);
+    res.status(200).json({
+      success: true,
+      message: "Access token이 재발급되었습니다",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   signupController,
   loginController,
   logoutController,
   meController,
+  refreshTokenController,
 };

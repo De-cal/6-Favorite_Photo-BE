@@ -141,7 +141,10 @@ async function main() {
     for (const card of selected) {
       await prisma.userPhotoCard.update({
         where: { id: card.id },
-        data: { quantity: 0 },
+        data: {
+          quantity: 0,
+          status: "SOLDOUT", // ⬅️ 여기 추가
+        },
       });
 
       await prisma.cardArticle.updateMany({

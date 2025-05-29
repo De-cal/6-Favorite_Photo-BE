@@ -56,7 +56,7 @@ export const findMyGallerySellingCards = async ({
     prisma.userPhotoCard.findMany({
       where: ownedClause,
       include: {
-        photoCard: { select: { rank: true } },
+        photoCard: { select: { rank: true, genre: true } },
       },
     }),
   ]);
@@ -64,13 +64,19 @@ export const findMyGallerySellingCards = async ({
   //  현재 필터 조건에 해당하는 quantity 총합
   const cardCount = filteredList.length;
 
-  //  등급별 quantity 집계 (status: OWNED 기준)
+  // 등급별 quantity 집계 (status: OWNED 기준)
   const rankCounts = {};
+  const genreCounts = {};
   let totalRemainingQuantity = 0;
+
   for (const card of ownedList) {
     const rank = card.photoCard.rank;
+    const genre = card.photoCard.genre;
     const qty = card.quantity;
+
     rankCounts[rank] = (rankCounts[rank] || 0) + qty;
+    genreCounts[genre] = (genreCounts[genre] || 0) + qty;
+
     totalRemainingQuantity += qty;
   }
 
@@ -86,6 +92,8 @@ export const findMyGallerySellingCards = async ({
     list,
     rankCounts,
     nextPage,
+    genreCounts,
+
   };
 };
 

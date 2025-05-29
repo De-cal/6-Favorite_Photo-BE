@@ -8,14 +8,12 @@ export const findMyGallerySellingCards = async ({
   genre,
   keyword,
   status,
-  includeZero,
 }) => {
   const skip = (page - 1) * pageSize;
 
   const whereClause = {
     userId,
     status,
-    ...(includeZero ? {} : { quantity: { gt: 0 } }),
     photoCard: {
       ...(keyword && {
         title: {
@@ -66,6 +64,10 @@ export const findMyGallerySellingCards = async ({
     totalRemainingQuantity += qty;
   }
 
+  //무한 스크롤용 다음 페이지
+  const totalPages = Math.ceil(cardCount / pageSize);
+  const nextPage = page < totalPages ? page + 1 : null;
+
   return {
     totalCount: {
       totalCount: totalRemainingQuantity, // 🔢 총 수량
@@ -73,6 +75,7 @@ export const findMyGallerySellingCards = async ({
     },
     list,
     rankCounts,
+    nextPage,
   };
 };
 
@@ -142,10 +145,9 @@ async function create(data, options = {}) {
         photoCardId: photoCard.id,
         price,
         quantity: totalQuantity, // 한 row에 총 수량
-        status: 'OWNED',         // 상태 추가
+        status: "OWNED", // 상태 추가
       },
     });
-
 
     return {
       photoCard,
@@ -153,7 +155,6 @@ async function create(data, options = {}) {
     };
   });
 }
-
 
 async function remove(id, options = {}) {
   const { tx } = options;

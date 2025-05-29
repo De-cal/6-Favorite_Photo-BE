@@ -21,9 +21,9 @@ const articleController = {
     }
   },
 
+  //판매 글 업로드
   postArticle: async (req, res, next) => {
     try {
-      // const userId = req.auth.userId;
       const {
         price,
         totalQuantity,

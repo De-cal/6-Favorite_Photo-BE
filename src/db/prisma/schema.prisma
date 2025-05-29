@@ -96,8 +96,6 @@ enum UserPhotoCardStatus {
   SOLDOUT // 품절 
 }
 
-// 유저 포토카드를 참조하는 다른 테이블 에서도 read 속도 올라감
-// 
 model CardArticle {
   id                String        @id @default(uuid())
   price             Int
@@ -114,15 +112,19 @@ model CardArticle {
 
 model Exchange {
   id                 String   @id @default(uuid())
-  requesterCardId    String //카드 교환 신청 건 사람 카드 id
-  recipientArticleId String //카드 교환 신청 받은 사람 카드 id
+  requesterCardId    String
+  recipientArticleId String
   description        String
   createdAt          DateTime @default(now())
 
   requesterCard    UserPhotoCard @relation("Exchangerequester", fields: [requesterCardId], references: [id])
   recipientArticle CardArticle   @relation("Exchangerecipient", fields: [recipientArticleId], references: [id])
+
+  @@unique([recipientArticleId, requesterCardId])
 }
 
+// 유저 포토카드를 참조하는 다른 테이블 에서도 read 속도 올라감
+// 
 // 유저포토테이블  ->   
 // 유저포토테이블  ->   기존 방식 /////  보유중일때 가격은 사온가격입니다.
 // 유저포토테이블 ->행 하나가 생기는ㄱ걸 post crearte

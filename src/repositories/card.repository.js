@@ -7,16 +7,14 @@ export const findMyGallerySellingCards = async ({
   rank,
   genre,
   keyword,
-  status,
-  includeZero,
 }) => {
   const skip = (page - 1) * pageSize;
 
   // 🔍 현재 페이지 및 필터 적용된 목록용 where
   const whereClause = {
     userId,
-    ...(status && { status }),
-    ...(includeZero ? {} : { quantity: { gt: 0 } }),
+    status: "OWNED",
+    quantity: { gt: 0 },
     photoCard: {
       ...(keyword && {
         title: {
@@ -58,7 +56,7 @@ export const findMyGallerySellingCards = async ({
     prisma.userPhotoCard.findMany({
       where: ownedClause,
       include: {
-        photoCard: { select: { rank: true } },
+        photoCard: { select: { rank: true, genre: true } },
       },
     }),
   ]);
@@ -66,15 +64,25 @@ export const findMyGallerySellingCards = async ({
   //  현재 필터 조건에 해당하는 quantity 총합
   const cardCount = filteredList.length;
 
-  //  등급별 quantity 집계 (status: OWNED 기준)
+  // 등급별 quantity 집계 (status: OWNED 기준)
   const rankCounts = {};
+  const genreCounts = {};
   let totalRemainingQuantity = 0;
+
   for (const card of ownedList) {
     const rank = card.photoCard.rank;
+    const genre = card.photoCard.genre;
     const qty = card.quantity;
+
     rankCounts[rank] = (rankCounts[rank] || 0) + qty;
+    genreCounts[genre] = (genreCounts[genre] || 0) + qty;
+
     totalRemainingQuantity += qty;
   }
+
+  //무한 스크롤용 다음 페이지
+  const totalPages = Math.ceil(cardCount / pageSize);
+  const nextPage = page < totalPages ? page + 1 : null;
 
   return {
     totalCount: {
@@ -83,6 +91,9 @@ export const findMyGallerySellingCards = async ({
     },
     list,
     rankCounts,
+    nextPage,
+    genreCounts,
+
   };
 };
 
@@ -168,6 +179,24 @@ async function remove(id, options = {}) {
   const client = tx || prisma;
   return await client.userPhotoCard.delete({ where: id });
 }
+
+export const findByUserAndCard = async (userId, cardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.findFirst({
+    where: { userId, photoCardId: cardId, status: "OWNED" },
+  });
+};
+
+export const updateQuantity = async (cardId, quantity, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity },
+  });
+};
+
 export default {
   getById,
   getByUser,
@@ -175,4 +204,6 @@ export default {
   create,
   findMyGallerySellingCards,
   remove,
+  findByUserAndCard,
+  updateQuantity,
 };

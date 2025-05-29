@@ -43,7 +43,9 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
         },
       },
     },
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return {
@@ -52,7 +54,6 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
     currentPage: page,
   };
 };
-
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
 export const findMyCardArticles = async ({
   userId,
@@ -66,8 +67,7 @@ export const findMyCardArticles = async ({
 }) => {
   const skip = (page - 1) * pageSize;
 
-  // ✅ 1. 리스트 쿼리 (조건 적용)
-  const listWhereClause = {
+  const whereClause = {
     userPhotoCard: {
       userId,
       ...(sellingType && { status: sellingType }),
@@ -86,17 +86,10 @@ export const findMyCardArticles = async ({
     ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
   };
 
-  // ✅ 2. 통계용 쿼리 (조건 없이 userId만)
-  const statsWhereClause = {
-    userPhotoCard: {
-      userId,
-    },
-  };
-
   const [list, rankCountsRaw, articleCount] = await Promise.all([
-    // 1. 현재 페이지 데이터 (조건 적용)
+    // 1. 현재 페이지 데이터
     prisma.cardArticle.findMany({
-      where: listWhereClause,
+      where: whereClause,
       skip,
       take: pageSize,
       orderBy: { createdAt: "desc" },
@@ -114,46 +107,85 @@ export const findMyCardArticles = async ({
       },
     }),
 
-    // 2. 전체 등급별 remainingQuantity 집계 (userId만 기준)
+    // 2. 등급별 remainingQuantity 집계용 전체 목록
     prisma.cardArticle.findMany({
-      where: statsWhereClause,
+      where: whereClause,
       include: {
         userPhotoCard: {
-          include: {
+          select: {
+            status: true, //
             photoCard: {
-              select: { rank: true },
+              select: {
+                rank: true,
+                genre: true,
+              },
             },
           },
         },
       },
     }),
 
-    // 3. 전체 게시글 개수 (userId만 기준)
+    // 3. 총 게시글 수
     prisma.cardArticle.count({
-      where: statsWhereClause,
+      where: whereClause,
     }),
   ]);
 
-  // 4. 전체 remainingQuantity 합산
+  // 4. remainingQuantity 총합
   const totalRemainingQuantity = rankCountsRaw.reduce(
     (sum, article) => sum + article.remainingQuantity,
     0,
   );
 
-  // 5. 등급별 remainingQuantity 합산
+  // 5. 등급별 remainingQuantity 합
   const rankCounts = {};
+  const genreCounts = {};
+  const sellingTypeCounts = {
+    SELLING: 0,
+    EXCHANGE_REQUESTED: 0,
+  };
+  const soldOutCounts = {
+    SOLDOUT: 0,
+    NOT_SOLDOUT: 0,
+  };
+
   for (const article of rankCountsRaw) {
     const rank = article.userPhotoCard.photoCard.rank;
-    rankCounts[rank] = (rankCounts[rank] || 0) + article.remainingQuantity;
-  }
+    const genre = article.userPhotoCard.photoCard.genre;
+    const status = article.userPhotoCard.status; // ✅ 이 부분 수정
+    const remainingQuantity = article.remainingQuantity;
 
+    // ✅ 등급별 remainingQuantity 합산
+    rankCounts[rank] = (rankCounts[rank] || 0) + remainingQuantity;
+
+    // ✅ 장르별 게시글 수 카운트
+    genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+
+    // ✅ SELLING / SOLDOUT → 판매 상태 카드 수량 합산
+    if (status === "SELLING" || status === "SOLDOUT") {
+      sellingTypeCounts.SELLING += remainingQuantity; // ← 게시글 수가 아니라 수량 합산
+    } else if (status === "EXCHANGE_REQUESTED") {
+      sellingTypeCounts.EXCHANGE_REQUESTED += remainingQuantity;
+    }
+
+    // ✅ OWNED 제외하고 SOLDOUT / 그 외 상태로 soldOutCounts 누적
+    // ✅ SOLDOUT 여부는 remainingQuantity 기준으로 판단
+    if (remainingQuantity === 0) {
+      soldOutCounts.SOLDOUT += 1;
+    } else {
+      soldOutCounts.NOT_SOLDOUT += remainingQuantity;
+    }
+  }
   return {
     totalCount: {
-      total: totalRemainingQuantity,
-      articleCount,
+      totalCount: totalRemainingQuantity,
+      articleCount, // 아티클 개수
     },
     list,
     rankCounts,
+    genreCounts,
+    soldOutCounts,
+    sellingTypeCounts,
   };
 };
 
@@ -311,6 +343,12 @@ export const updateUserPhotoCardStatus = async (
   });
 };
 
+export const updateArticle = async (articleId, data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.cardArticle.update({ where: { id: articleId }, data });
+};
+
 export default {
   getById,
   getByIdWithRelations,
@@ -327,4 +365,5 @@ export default {
   getExchangeById,
   deleteExchange,
   increaseQuantity,
+  updateArticle,
 };

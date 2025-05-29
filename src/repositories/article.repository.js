@@ -3,44 +3,47 @@ import prisma from "../db/prisma/prisma.js";
 //마켓플레이스에서 SELLING과 SOLDOUT 다 가져오기
 export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
   const whereClause = {
-    status: {
-      in: ["SELLING", "SOLDOUT"],
+    userPhotoCard: {
+      status: {
+        in: ["SELLING", "SOLDOUT"],
+      },
+      ...(keyword
+        ? {
+            photoCard: {
+              title: {
+                contains: keyword,
+                mode: "insensitive",
+              },
+            },
+          }
+        : {}),
     },
   };
 
-  if (keyword) {
-    whereClause.photoCard = {
-      title: {
-        contains: keyword,
-        mode: "insensitive",
-      },
-    };
-  }
-  //예: 1페이지면 건너뛸 필요 없음, 2 페이지면 1페이지 12개 건너뛰고 그 다음부터 시작
   const skip = (page - 1) * limit;
 
-  // 전체 아티클개수 구하기
-  const totalCount = await prisma.userPhotoCard.count({
+  const totalCount = await prisma.cardArticle.count({
     where: whereClause,
   });
 
-  // 현재 페이지 데이터 가져오기
-  const articles = await prisma.userPhotoCard.findMany({
+  const articles = await prisma.cardArticle.findMany({
     where: whereClause,
     skip,
     take: limit,
     include: {
-      photoCard: true,
-      user: {
-        select: {
-          id: true,
-          nickname: true,
+      userPhotoCard: {
+        include: {
+          photoCard: true,
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+            },
+          },
         },
       },
     },
-    orderBy: {
-      createdAt: "desc", // 최신순 기본정렬 (필요시 변경)
-    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
   });
 
   return {

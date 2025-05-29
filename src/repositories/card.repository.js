@@ -12,9 +12,10 @@ export const findMyGallerySellingCards = async ({
 }) => {
   const skip = (page - 1) * pageSize;
 
+  // 🔍 현재 페이지 및 필터 적용된 목록용 where
   const whereClause = {
     userId,
-    status,
+    ...(status && { status }),
     ...(includeZero ? {} : { quantity: { gt: 0 } }),
     photoCard: {
       ...(keyword && {
@@ -28,9 +29,18 @@ export const findMyGallerySellingCards = async ({
     },
   };
 
-  const [cardCount, list, allForCount] = await Promise.all([
-    // 1. 카드 수량 (userPhotoCard 개수)
-    prisma.userPhotoCard.count({ where: whereClause }),
+  // ✅ 총합 및 등급별 집계용 where: userId + status: "OWNED"
+  const ownedClause = {
+    userId,
+    status: "OWNED",
+  };
+
+  const [filteredList, list, ownedList] = await Promise.all([
+    // 1. 조건에 맞는 전체 리스트 (quantity 합산용)
+    prisma.userPhotoCard.findMany({
+      where: whereClause,
+      select: { quantity: true },
+    }),
 
     // 2. 현재 페이지 목록
     prisma.userPhotoCard.findMany({
@@ -44,22 +54,22 @@ export const findMyGallerySellingCards = async ({
       },
     }),
 
-    // 3. 전체 리스트 (등급별 집계 및 quantity 합산용)
+    // 3. 전체 등급별 집계용 리스트 (status: OWNED만 사용)
     prisma.userPhotoCard.findMany({
-      where: whereClause,
+      where: ownedClause,
       include: {
-        photoCard: {
-          select: { rank: true },
-        },
+        photoCard: { select: { rank: true } },
       },
     }),
   ]);
 
-  // 등급별 quantity 합계 계산
+  // 🔢 현재 필터 조건에 해당하는 quantity 총합
+  const cardCount = filteredList.reduce((sum, item) => sum + item.quantity, 0);
+
+  // 🔢 등급별 quantity 집계 (status: OWNED 기준)
   const rankCounts = {};
   let totalRemainingQuantity = 0;
-
-  for (const card of allForCount) {
+  for (const card of ownedList) {
     const rank = card.photoCard.rank;
     const qty = card.quantity;
     rankCounts[rank] = (rankCounts[rank] || 0) + qty;
@@ -68,8 +78,8 @@ export const findMyGallerySellingCards = async ({
 
   return {
     totalCount: {
-      totalCount: totalRemainingQuantity, // 🔢 총 수량
-      cardCount, // 📦 userPhotoCard 수
+      totalCount: totalRemainingQuantity, // 🔢 전체 owned 수량 합계
+      cardCount, // 📦 현재 필터에 해당하는 수량 합계
     },
     list,
     rankCounts,
@@ -142,10 +152,9 @@ async function create(data, options = {}) {
         photoCardId: photoCard.id,
         price,
         quantity: totalQuantity, // 한 row에 총 수량
-        status: 'OWNED',         // 상태 추가
+        status: "OWNED", // 상태 추가
       },
     });
-
 
     return {
       photoCard,
@@ -153,7 +162,6 @@ async function create(data, options = {}) {
     };
   });
 }
-
 
 async function remove(id, options = {}) {
   const { tx } = options;

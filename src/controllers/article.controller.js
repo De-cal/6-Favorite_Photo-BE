@@ -15,8 +15,8 @@ const articleController = {
   getAllSelling: async (req, res, next) => {
     try {
       const { keyword = "", page = 1, limit = 12 } = req.query;
-      const parsedPage = parseInt(page, 10);
-      const parsedLimit = parseInt(limit, 10);
+      const parsedPage = parseInt(page, 10); //정수로 세팅
+      const parsedLimit = parseInt(limit, 10); //정수로 세팅
 
       const data = await articleService.getSellingCardsAll({
         keyword,

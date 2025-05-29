@@ -16,10 +16,10 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
       },
     };
   }
-
+  //예: 1페이지면 건너뛸 필요 없음, 2 페이지면 1페이지 12개 건너뛰고 그 다음부터 시작
   const skip = (page - 1) * limit;
 
-  // 전체 개수 구하기
+  // 전체 아티클개수 구하기
   const totalCount = await prisma.userPhotoCard.count({
     where: whereClause,
   });

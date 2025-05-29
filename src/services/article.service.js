@@ -10,6 +10,7 @@ async function getById(id) {
 async function getSellingCardsAll({ keyword, page, limit }) {
   return await articleRepository.getSellingCardsAll({ keyword, page, limit });
 }
+
 async function postArticle(data) {
   // const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
   return await prisma.$transaction(async (tx) => {

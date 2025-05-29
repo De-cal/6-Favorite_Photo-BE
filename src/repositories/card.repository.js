@@ -7,16 +7,14 @@ export const findMyGallerySellingCards = async ({
   rank,
   genre,
   keyword,
-  status,
-  includeZero,
 }) => {
   const skip = (page - 1) * pageSize;
 
   // 🔍 현재 페이지 및 필터 적용된 목록용 where
   const whereClause = {
     userId,
-    ...(status && { status }),
-    ...(includeZero ? {} : { quantity: { gt: 0 } }),
+    status: "OWNED",
+    quantity: { gt: 0 },
     photoCard: {
       ...(keyword && {
         title: {
@@ -82,6 +80,10 @@ export const findMyGallerySellingCards = async ({
     totalRemainingQuantity += qty;
   }
 
+  //무한 스크롤용 다음 페이지
+  const totalPages = Math.ceil(cardCount / pageSize);
+  const nextPage = page < totalPages ? page + 1 : null;
+
   return {
     totalCount: {
       totalCount: totalRemainingQuantity, // 🔢 전체 owned 수량 합계
@@ -89,7 +91,9 @@ export const findMyGallerySellingCards = async ({
     },
     list,
     rankCounts,
+    nextPage,
     genreCounts,
+
   };
 };
 
@@ -175,6 +179,24 @@ async function remove(id, options = {}) {
   const client = tx || prisma;
   return await client.userPhotoCard.delete({ where: id });
 }
+
+export const findByUserAndCard = async (userId, cardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.findFirst({
+    where: { userId, photoCardId: cardId, status: "OWNED" },
+  });
+};
+
+export const updateQuantity = async (cardId, quantity, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity },
+  });
+};
+
 export default {
   getById,
   getByUser,
@@ -182,4 +204,6 @@ export default {
   create,
   findMyGallerySellingCards,
   remove,
+  findByUserAndCard,
+  updateQuantity,
 };

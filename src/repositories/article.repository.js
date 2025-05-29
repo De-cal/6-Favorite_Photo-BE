@@ -46,7 +46,8 @@ export const findMyCardArticles = async ({
 }) => {
   const skip = (page - 1) * pageSize;
 
-  const whereClause = {
+  // ✅ 1. 리스트 쿼리 (조건 적용)
+  const listWhereClause = {
     userPhotoCard: {
       userId,
       ...(sellingType && { status: sellingType }),
@@ -65,10 +66,17 @@ export const findMyCardArticles = async ({
     ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
   };
 
+  // ✅ 2. 통계용 쿼리 (조건 없이 userId만)
+  const statsWhereClause = {
+    userPhotoCard: {
+      userId,
+    },
+  };
+
   const [list, rankCountsRaw, articleCount] = await Promise.all([
-    // 1. 현재 페이지 데이터
+    // 1. 현재 페이지 데이터 (조건 적용)
     prisma.cardArticle.findMany({
-      where: whereClause,
+      where: listWhereClause,
       skip,
       take: pageSize,
       orderBy: { createdAt: "desc" },
@@ -86,9 +94,9 @@ export const findMyCardArticles = async ({
       },
     }),
 
-    // 2. 등급별 remainingQuantity 집계용 전체 목록
+    // 2. 전체 등급별 remainingQuantity 집계 (userId만 기준)
     prisma.cardArticle.findMany({
-      where: whereClause,
+      where: statsWhereClause,
       include: {
         userPhotoCard: {
           include: {
@@ -100,19 +108,19 @@ export const findMyCardArticles = async ({
       },
     }),
 
-    // 3. 총 게시글 수
+    // 3. 전체 게시글 개수 (userId만 기준)
     prisma.cardArticle.count({
-      where: whereClause,
+      where: statsWhereClause,
     }),
   ]);
 
-  // 4. remainingQuantity 총합
+  // 4. 전체 remainingQuantity 합산
   const totalRemainingQuantity = rankCountsRaw.reduce(
     (sum, article) => sum + article.remainingQuantity,
     0,
   );
 
-  // 5. 등급별 remainingQuantity 합
+  // 5. 등급별 remainingQuantity 합산
   const rankCounts = {};
   for (const article of rankCountsRaw) {
     const rank = article.userPhotoCard.photoCard.rank;
@@ -122,7 +130,7 @@ export const findMyCardArticles = async ({
   return {
     totalCount: {
       total: totalRemainingQuantity,
-      articleCount, // 아티클 개수
+      articleCount,
     },
     list,
     rankCounts,

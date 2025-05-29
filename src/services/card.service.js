@@ -19,7 +19,6 @@ async function findManyAtMygallery({
   rank,
   genre,
   keyword,
-  status = "SELLING",
 }) {
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
@@ -39,7 +38,6 @@ async function findManyAtMygallery({
     rank,
     genre,
     keyword,
-    status,
   });
 }
 

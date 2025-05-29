@@ -12,7 +12,7 @@ async function getSellingCardsAll(keyword) {
 }
 
 async function postArticle(data) {
-  // const userId = "6cc2ca4b-d174-4220-b572-56d332da1f13";
+  console.log(prisma);
   return await prisma.$transaction(async (tx) => {
     const card = await cardRepository.getById(data.userPhotoCardId, { tx });
     if (!card) {

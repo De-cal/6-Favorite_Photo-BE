@@ -23,7 +23,6 @@ const cardController = {
         rank,
         genre,
         keyword,
-        status,
         userId,
       });
 

@@ -30,9 +30,9 @@ const articleController = {
     }
   },
 
+  //판매 글 업로드
   postArticle: async (req, res, next) => {
     try {
-      // const userId = req.auth.userId;
       const {
         price,
         totalQuantity,
@@ -181,6 +181,29 @@ const articleController = {
       });
 
       res.status(200).json(result);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  patchArticle: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { id: articleId } = req.params;
+      const {
+        price,
+        totalQuantity,
+        exchangeText,
+        exchangeRank,
+        exchangeGenre,
+      } = req.body;
+      const article = await articleService.patchArticle(articleId, userId, {
+        price,
+        totalQuantity,
+        exchangeText,
+        exchangeRank,
+        exchangeGenre,
+      });
     } catch (e) {
       next(e);
     }

@@ -11,12 +11,20 @@ articleRouter.get(
   articleController.getMyArticles,
 );
 
-articleRouter.post("/", articleController.postArticle);
+//포토카드 판매 글 업로드
+articleRouter.post("/", validateAccessToken, articleController.postArticle);
 
 articleRouter.get("/user", articleController.getMyArticles);
 
 // 포토카드 구매
 articleRouter.post("/:id", articleController.purchaseArticle);
+
+// 아티클 수정
+articleRouter.patch(
+  "/:id",
+  validateAccessToken,
+  articleController.patchArticle,
+);
 
 // 포토카드 교환 요청
 articleRouter.post("/:id/exchange", articleController.exchangeArticle);

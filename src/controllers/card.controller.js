@@ -14,7 +14,7 @@ const cardController = {
 
   getMyGallery: async (req, res, next) => {
     try {
-      const userId = req.user.id; //
+      const userId = req.user.id;
       const { page, pageSize, rank, genre, keyword, status, includeZero } =
         req.query;
 
@@ -37,13 +37,14 @@ const cardController = {
 
   createCard: async (req, res, next) => {
     try {
-      const userId = "082edc1b-a5c8-4bd7-8105-1e9e510d2c19"; // req.auth.userId
-      console.log('req.body::', req.body)
+      const userId = req.user.id;
+      // console.log('req.body::', req.body)
       const { title, rank, genre, price, totalQuantity, description } = req.body;
       const imagePath = req.file?.filename;
 
-      if (!imagePath) {
-        return res.status(400).json({ message: "이미지 파일이 필요합니다." });
+      // 사용자 인증 확인
+      if (!userId) {
+        return res.status(401).json({ message: "로그인이 필요합니다." });
       }
 
       const newCard = await cardService.createCard({

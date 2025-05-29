@@ -1,22 +1,5 @@
 import authService from "../services/auth.service.js";
-
-// 쿠키 설정 함수
-const setAuthCookies = (res, { accessToken, refreshToken }) => {
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 60 * 60 * 1000, // 1시간
-  });
-
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-  });
-};
-
+import authUtils from "../utils/auth.utils.js";
 const signupController = async (req, res, next) => {
   try {
     const { email, nickname, password, passwordConfirmation } = req.body;
@@ -28,7 +11,8 @@ const signupController = async (req, res, next) => {
       passwordConfirmation,
     });
 
-    setAuthCookies(res, {
+    // res 에 authService에서 리턴해준 result.accessToken & refreshToken 값을 넘겨줌으로서 클라이언트 쿠키에 토큰들을 저장
+    authUtils.setAuthCookies(res, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
     });
@@ -48,13 +32,12 @@ const loginController = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // authService.login 으로 변경
     const result = await authService.login({
       email,
       password,
     });
 
-    setAuthCookies(res, {
+    authUtils.setAuthCookies(res, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
     });
@@ -70,9 +53,8 @@ const loginController = async (req, res, next) => {
   }
 };
 
-const logoutController = async (req, res) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+const logoutController = async (res) => {
+  authUtils.clearAuthCookies(res);
   res.status(200).json({ success: true });
 };
 

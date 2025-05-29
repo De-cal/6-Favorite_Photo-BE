@@ -58,8 +58,24 @@ const logoutController = async (res) => {
   res.status(200).json({ success: true });
 };
 
+const meController = async (req, res) => {
+  const { id, email, nickname, pointAmount, createCount } = req.user;
+
+  res.status(200).json({
+    success: true,
+    data: {
+      id,
+      email,
+      nickname,
+      pointAmount,
+      createCount,
+    },
+  });
+};
+
 export default {
   signupController,
   loginController,
   logoutController,
+  meController,
 };

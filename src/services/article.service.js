@@ -3,6 +3,10 @@ import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
 import authRepository from "../repositories/auth.repository.js";
 
+async function getByIdWithDetails(id) {
+  return await articleRepository.getByIdWithDetails(id);
+}
+
 async function getById(id) {
   return await articleRepository.getById(id);
 }
@@ -71,6 +75,52 @@ async function postArticle(data) {
       },
       { tx },
     );
+  });
+}
+
+// 아티클 삭제 (판매 내리기)
+async function deleteArticle(articleId) {
+  return await prisma.$transaction(async (tx) => {
+    // 1. 아티클 정보 조회 (userPhotoCardId 필요)
+    const article = await tx.cardArticle.findUnique({
+      where: { id: articleId },
+      select: {
+        userPhotoCardId: true,
+        totalQuantity: true
+      }
+    });
+
+    if (!article) {
+      throw new Error('아티클을 찾을 수 없습니다');
+    }
+
+    // 2. 진행 중인 교환이 있는지 확인
+    // repository에서 import한 함수 사용
+    const activeExchanges = await articleRepository.getActiveExchanges(articleId, { tx });
+    if (activeExchanges.length > 0) {
+      throw new Error('진행 중인 교환이 있어 삭제할 수 없습니다');
+    }
+
+    // 3. 먼저 CardArticle 삭제
+    await tx.cardArticle.delete({
+      where: { id: articleId }
+    });
+
+    // 4. UserPhotoCard 수량 복원 (삭제하지 않고 수량만 증가)
+    await tx.userPhotoCard.update({
+      where: { id: article.userPhotoCardId },
+      data: {
+        quantity: {
+          increment: article.totalQuantity
+        },
+        status: 'OWNED' // 상태를 OWNED로 복원
+      }
+    });
+
+    return { 
+      success: true,
+      message: '아티클이 성공적으로 삭제되었습니다'
+    };
   });
 }
 
@@ -313,9 +363,11 @@ export const patchArticle = async (articleId, userId, data) => {
 
 export default {
   getById,
+  getByIdWithDetails,
   getByIdWithRelations,
   getSellingCardsAll,
   postArticle,
+  deleteArticle,
   findMyCardArticles,
   purchaseArticle,
   exchangeArticle,

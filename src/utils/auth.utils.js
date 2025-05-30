@@ -8,7 +8,7 @@ const setAuthCookies = (res, { accessToken, refreshToken }) => {
 
   res.cookie("accessToken", accessToken, {
     ...cookieOptions,
-    maxAge: 60 * 60 * 1000, // 1시간
+    maxAge: 15 * 60 * 1000, // 15분
   });
 
   res.cookie("refreshToken", refreshToken, {

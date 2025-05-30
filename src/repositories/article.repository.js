@@ -33,7 +33,16 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
     include: {
       userPhotoCard: {
         include: {
-          photoCard: true,
+          photoCard: {
+            include: {
+              creator: {
+                select: {
+                  id: true,
+                  nickname: true,
+                },
+              },
+            },
+          },
           user: {
             select: {
               id: true,

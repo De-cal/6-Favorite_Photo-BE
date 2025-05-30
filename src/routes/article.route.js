@@ -17,7 +17,11 @@ articleRouter.post("/", validateAccessToken, articleController.postArticle);
 articleRouter.get("/user", articleController.getMyArticles);
 
 // 포토카드 구매
-articleRouter.post("/:id", articleController.purchaseArticle);
+articleRouter.post(
+  "/:id",
+  validateAccessToken,
+  articleController.purchaseArticle,
+);
 
 // 아티클 수정
 articleRouter.patch(
@@ -27,19 +31,24 @@ articleRouter.patch(
 );
 
 // 포토카드 교환 요청
-articleRouter.post("/:id/exchange", articleController.exchangeArticle);
+articleRouter.post(
+  "/:id/exchange",
+  validateAccessToken,
+  articleController.exchangeArticle,
+);
 
 // 포토카드 교환 요청 취소
 articleRouter.delete(
-  "/:id/exchange/:exchangeId",
+  "/:id/exchange/:exchangeId/:requesterCardId",
   articleController.cancelExchange,
 );
 
-articleRouter.get("/:id", articleController.getById);
+// 포토카드 상세 불러오기
+articleRouter.get("/:id", articleController.getByIdWithRelations);
 
-//포토카드 교환 승인, 거절
+// 포토카드 교환 승인, 거절
 articleRouter.put(
-  "/:id/exchange/exchangeId",
+  "/:id/exchange/:exchangeId",
   articleController.putExchangeCard,
 );
 

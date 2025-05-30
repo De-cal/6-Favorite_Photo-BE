@@ -5,17 +5,14 @@ import { validateAccessToken } from "../middlewares/auth.middleware.js";
 const articleRouter = express.Router();
 
 articleRouter.get("/", articleController.getAllSelling);
-articleRouter.get("/:id", articleController.getById);
 articleRouter.get(
   "/user",
   validateAccessToken,
   articleController.getMyArticles,
 );
-
+articleRouter.get("/:id", articleController.getById);
 //포토카드 판매 글 업로드
 articleRouter.post("/", validateAccessToken, articleController.postArticle);
-
-articleRouter.get("/user", articleController.getMyArticles);
 
 // 포토카드 구매
 articleRouter.post(

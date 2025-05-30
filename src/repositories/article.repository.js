@@ -63,6 +63,34 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
     currentPage: page,
   };
 };
+
+async function getByIdWithDetails(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  return await client.cardArticle.findUnique({
+    where: { id },
+    include: {
+      userPhotoCard: {
+        include: {
+          photoCard: {
+            include: {
+              creator: true
+            }
+          },
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+              pointAmount: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
 export const findMyCardArticles = async ({
   userId,
@@ -401,8 +429,43 @@ export const updateArticle = async (articleId, data, options = {}) => {
   return await client.cardArticle.update({ where: { id: articleId }, data });
 };
 
+// Get active exchanges for an article (for delete validation)
+async function getActiveExchanges(articleId, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  // First get the article to find its userPhotoCardId
+  const article = await client.cardArticle.findUnique({
+    where: { id: articleId },
+    select: { userPhotoCardId: true }
+  });
+  
+  if (!article) {
+    return [];
+  }
+  
+  // Find exchanges where this card is the recipient
+  // Based on your schema, it should be 'recipientArticleId' not 'recipientCardId'
+  return await client.exchange.findMany({
+    where: {
+      recipientArticleId: articleId  // Use articleId directly instead of recipientCardId
+    }
+  });
+}
+
+// Remove article
+async function remove(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  return await client.cardArticle.delete({
+    where: { id }
+  });
+}
+
 export default {
   getById,
+  getByIdWithDetails,
   getByIdWithRelations,
   getSellingCardsAll,
   getByCard,
@@ -418,4 +481,6 @@ export default {
   deleteExchange,
   increaseQuantity,
   updateArticle,
+  getActiveExchanges,
+  remove,
 };

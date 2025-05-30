@@ -5,6 +5,7 @@ import { validateAccessToken } from "../middlewares/auth.middleware.js";
 const articleRouter = express.Router();
 
 articleRouter.get("/", articleController.getAllSelling);
+articleRouter.get("/:id", articleController.getById);
 articleRouter.get(
   "/user",
   validateAccessToken,
@@ -21,6 +22,13 @@ articleRouter.post(
   "/:id",
   validateAccessToken,
   articleController.purchaseArticle,
+);
+
+// 아티클 삭제 (판매 내리기)
+articleRouter.delete(
+  "/:id",
+  validateAccessToken,
+  articleController.deleteArticle,
 );
 
 // 아티클 수정

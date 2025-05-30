@@ -4,7 +4,7 @@ const articleController = {
   getById: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const article = await articleService.getById(id);
+      const article = await articleService.getByIdWithDetails(id);
       return res.status(200).json(article);
     } catch (error) {
       next(error);
@@ -92,6 +92,21 @@ const articleController = {
       });
 
       return res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteArticle: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { id: articleId } = req.params;
+
+      await articleService.deleteArticle(articleId, userId);
+
+      return res.status(200).json({
+        message: "판매글이 성공적으로 삭제되었습니다.",
+      });
     } catch (error) {
       next(error);
     }

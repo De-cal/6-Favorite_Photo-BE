@@ -27,7 +27,7 @@ export const findMyGallerySellingCards = async ({
     },
   };
 
-  // ✅ 총합 및 등급별 집계용 where: userId + status: "OWNED"
+  // 총합 및 등급별 집계용 where: userId + status: "OWNED"
   const ownedClause = {
     userId,
     status: "OWNED",
@@ -126,6 +126,19 @@ async function decreaseCard(id, quantity, options = {}) {
   });
 }
 
+
+async function increaseCard(id, quantity, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id },
+    data: { 
+      quantity: { increment: quantity },
+      status: "OWNED" // 아티클 삭제 시 상태도 OWNED로 복원
+    },
+  });
+}
+
 async function create(data, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -175,7 +188,7 @@ async function create(data, options = {}) {
 async function remove(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  return await client.userPhotoCard.delete({ where: id });
+  return await client.userPhotoCard.delete({ where: { id } });
 }
 
 export const findByUserAndCard = async (userId, cardId, options = {}) => {
@@ -205,6 +218,7 @@ export default {
   getById,
   getByUser,
   decreaseCard,
+  increaseCard,
   create,
   findMyGallerySellingCards,
   remove,
@@ -212,3 +226,4 @@ export default {
   updateQuantity,
   createUserPhotocard,
 };
+

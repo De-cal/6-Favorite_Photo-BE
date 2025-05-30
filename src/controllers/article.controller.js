@@ -79,7 +79,6 @@ const articleController = {
       const userId = req.user.id;
       const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
         req.query;
-
       const result = await articleService.findMyCardArticles({
         userId,
         page,

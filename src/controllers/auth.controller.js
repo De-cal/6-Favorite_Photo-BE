@@ -72,11 +72,12 @@ const meController = async (req, res) => {
     },
   });
 };
-
 const refreshTokenController = async (req, res, next) => {
   try {
+    // 클라이언트의 쿠키에서 리프레쉬토큰 가져옴
     const { refreshToken } = req.cookies;
 
+    // 쿠키에 리프레쉬 토큰이 없는경우
     if (!refreshToken) {
       return res.status(401).json({
         success: false,
@@ -84,14 +85,15 @@ const refreshTokenController = async (req, res, next) => {
       });
     }
 
+    // 현재 유저의 리프레쉬토큰이 유효하므로 서비스 호출하여 access, refresh token 둘다 발급받기
     const result = await authService.refreshTokenService(refreshToken);
 
-    // 새 토큰을 쿠키에 다시 설정
+    // 새로 받은 토큰들 쿠키에 설정
     authUtils.setAuthCookies(res, {
       accessToken: result.accessToken,
       refreshToken: result.refreshToken,
     });
-    console.log(result.accessToken);
+
     res.status(200).json({
       success: true,
       message: "Access token이 재발급되었습니다",

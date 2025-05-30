@@ -5,7 +5,8 @@ import authRepository from "../repositories/auth.repository.js";
 const SALT_ROUNDS = 10;
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
-
+const ACCESS_TOKEN_EXPIRES_IN = "15m";
+const REFRESH_TOKEN_EXPIRES_IN = "7d";
 const generateTokens = (user) => {
   const accessToken = jwt.sign(
     {
@@ -13,7 +14,7 @@ const generateTokens = (user) => {
       email: user.email,
     },
     ACCESS_TOKEN_SECRET,
-    { expiresIn: "1h" },
+    { expiresIn: ACCESS_TOKEN_EXPIRES_IN },
   );
 
   const refreshToken = jwt.sign(
@@ -22,7 +23,7 @@ const generateTokens = (user) => {
       email: user.email,
     },
     REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" },
+    { expiresIn: REFRESH_TOKEN_EXPIRES_IN },
   );
 
   return { accessToken, refreshToken };
@@ -101,7 +102,6 @@ const login = async ({ email, password }) => {
 const refreshTokenService = async (refreshToken) => {
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
     const user = await authRepository.findById(decoded.userId);
 
     if (!user) {

@@ -14,8 +14,7 @@ const articleController = {
   // 포토카드 상세 불러오기
   getByIdWithRelations: async (req, res, next) => {
     try {
-      // const userId = req.user.id;
-      const userId = "4ad8ed1c-dc54-4375-9ac7-fa5bf2d1c18c";
+      const userId = req.user.id;
       const articleId = req.params.id;
       const article = await articleService.getByIdWithRelations(
         articleId,

@@ -10,7 +10,14 @@ articleRouter.get(
   validateAccessToken,
   articleController.getMyArticles,
 );
-articleRouter.get("/:id", articleController.getById);
+
+// 포토카드 판매자 상세 불러오기
+articleRouter.get(
+  "/:id/seller",
+  validateAccessToken,
+  articleController.getById,
+);
+
 //포토카드 판매 글 업로드
 articleRouter.post("/", validateAccessToken, articleController.postArticle);
 
@@ -45,11 +52,16 @@ articleRouter.post(
 // 포토카드 교환 요청 취소
 articleRouter.delete(
   "/:id/exchange/:exchangeId/:requesterCardId",
+  validateAccessToken,
   articleController.cancelExchange,
 );
 
-// 포토카드 상세 불러오기
-articleRouter.get("/:id", articleController.getByIdWithRelations);
+// 포토카드 구매자 상세 불러오기
+articleRouter.get(
+  "/:id/buyer",
+  validateAccessToken,
+  articleController.getByIdWithRelations,
+);
 
 // 포토카드 교환 승인, 거절
 articleRouter.put(

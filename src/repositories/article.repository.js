@@ -251,7 +251,7 @@ const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
           photoCard: true,
         },
       },
-      recipient: {
+      exchange: {
         where: { requesterUserId: userId },
         select: {
           id: true,
@@ -277,7 +277,7 @@ const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
-  return await prisma.userPhotoCard.findFirst({
+  return await client.userPhotoCard.findFirst({
     where: { userId, photoCardId, status: "OWNED" },
   });
 };
@@ -296,7 +296,23 @@ async function create(data, options = {}) {
   return await client.cardArticle.create({ data });
 }
 
-// 포토카드 구매 1 or 포토카드 교환 요청 3 - UserPhotoCard 생성
+// 포토카드 구매 1-1 - UserPhotoCard 업데이트
+const updateUserPhotoCard = async (
+  userPhotoCardId,
+  quantity,
+  price,
+  options = {},
+) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.userPhotoCard.update({
+    where: { id: userPhotoCardId },
+    data: { quantity, price },
+  });
+};
+
+// 포토카드 구매 1-2 or 포토카드 교환 요청 3 - UserPhotoCard 생성
 const createUserPhotoCard = async (data, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
@@ -338,6 +354,25 @@ const increaseSellerPoints = async (sellerId, pointAmount, options = {}) => {
   return await client.user.update({
     where: { id: sellerId },
     data: { pointAmount },
+  });
+};
+
+// 포토카드 교환 요청 유효성 검사 1 - Exchange 존재 여부
+const getExchangeByUniqueConstraint = async (
+  requesterUserId,
+  recipientArticleId,
+  options = {},
+) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.exchange.findUnique({
+    where: {
+      requesterUserId_recipientArticleId: {
+        requesterUserId,
+        recipientArticleId,
+      },
+    },
   });
 };
 
@@ -467,16 +502,19 @@ export default {
   getById,
   getByIdWithDetails,
   getByIdWithRelations,
+  getByUserIdAndPhotoCardId,
   getSellingCardsAll,
   getByCard,
   create,
   findMyCardArticles,
+  updateUserPhotoCard,
   createUserPhotoCard,
   decreaseCardArticleQuantity,
   decreaseBuyerPoints,
   increaseSellerPoints,
   createExchange,
   decreaseQuantity,
+  getExchangeByUniqueConstraint,
   getExchangeById,
   deleteExchange,
   increaseQuantity,

@@ -7,6 +7,11 @@ async function getById(id) {
   return await articleRepository.getById(id);
 }
 
+// 포토카드 상세 불러오기
+const getByIdWithRelations = async (articleId, userId) => {
+  return await articleRepository.getByIdWithRelations(articleId, userId);
+};
+
 async function getSellingCardsAll({ keyword, page, limit }) {
   return await articleRepository.getSellingCardsAll({ keyword, page, limit });
 }
@@ -110,9 +115,12 @@ const purchaseArticle = async ({
   purchaseQuantity,
   totalPrice,
 }) => {
-  const article = await articleRepository.getByIdWithRelations(articleId);
-
   // 유효성 검사 1 : 보유 포토카드 부족
+  const article = await articleRepository.getByIdWithRelations(
+    articleId,
+    buyerId,
+  );
+
   if (article.remainingQuantity < purchaseQuantity) {
     const error = new Error("포토카드 수량이 부족합니다.");
     error.code = 400;
@@ -120,9 +128,9 @@ const purchaseArticle = async ({
     throw error;
   }
 
+  // 유효성 검사 2 : 구매자 포인트 부족
   const buyer = await authRepository.findById(buyerId);
 
-  // 유효성 검사 2 : 구매자 포인트 부족
   if (buyer.pointAmount < totalPrice) {
     const error = new Error("보유하고 있는 포인트가 부족합니다.");
     error.code = 400;
@@ -130,11 +138,9 @@ const purchaseArticle = async ({
     throw error;
   }
 
-  /**
-   * @De-cal TODO:
-   * 1. 이미 UserPhotoCard가 있으면 생성하지 못하도록 예외처리
-   * 2. 이미 UserPhotoCard가 있을 때는 update만 되도록 하기(이미 산 사람이 똑같은 카드를 또 샀을 수도 있으니까)
-   */
+  // 유효성 검사 3 : 이미 보유중인 UserPhotoCard가 있는지 확인
+  const UserPhotoCard = await articleRepository.getById(id);
+
   return await prisma.$transaction(async (tx) => {
     // 1. 새로운 UserPhotoCard 생성
     const data = {
@@ -178,13 +184,18 @@ const purchaseArticle = async ({
 };
 
 // 포토카드 교환 요청
-const exchangeArticle = async ({ articleId, requesterCardId, description }) => {
+const exchangeArticle = async ({
+  requesterUserId,
+  requesterCardId,
+  articleId,
+  description,
+}) => {
   return await prisma.$transaction(async (tx) => {
     // 1. Exchange 생성
-    const article = await articleRepository.getByIdWithRelations(articleId);
     const data = {
+      requesterUserId,
       requesterCardId,
-      recipientCardId: article.userPhotoCardId,
+      recipientArticleId: articleId,
       description,
     };
 
@@ -197,24 +208,18 @@ const exchangeArticle = async ({ articleId, requesterCardId, description }) => {
     );
 
     // 3. requester의 UserPhotoCard에서 "수량: 1, status: EXCHANGE_REQUSET"인 UserPhotoCard 생성
-    const { userId, photoCardId, price } = requesterUserPhotoCard;
+    const { photoCardId, price } = requesterUserPhotoCard;
     const forExchangeData = {
-      userId,
+      userId: requesterUserId,
       photoCardId,
       quantity: 1,
       price,
       status: "EXCHANGE_REQUESTED",
     };
 
-    const userPhotoCard = await articleRepository.createUserPhotoCard(
-      forExchangeData,
-      { tx },
-    );
+    await articleRepository.createUserPhotoCard(forExchangeData, { tx });
 
-    return {
-      exchangeInfo: exchange,
-      userPhotoCardForExchange: userPhotoCard,
-    };
+    return exchange;
   });
 };
 
@@ -308,6 +313,7 @@ export const patchArticle = async (articleId, userId, data) => {
 
 export default {
   getById,
+  getByIdWithRelations,
   getSellingCardsAll,
   postArticle,
   findMyCardArticles,

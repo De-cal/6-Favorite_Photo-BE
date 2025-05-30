@@ -192,20 +192,38 @@ const purchaseArticle = async ({
   }
 
   // 유효성 검사 3 : 이미 보유중인 UserPhotoCard가 있는지 확인
-  const UserPhotoCard = await articleRepository.getById(id);
+  const userPhotoCard = await articleRepository.getByUserIdAndPhotoCardId(
+    buyerId,
+    article.userPhotoCard.photoCardId,
+  );
 
   return await prisma.$transaction(async (tx) => {
-    // 1. 새로운 UserPhotoCard 생성
-    const data = {
-      userId: buyerId,
-      photoCardId: article.userPhotoCard.photoCardId,
-      quantity: purchaseQuantity,
-      price: totalPrice,
-    };
+    let newArticle, updatedArticle;
 
-    const newArticle = await articleRepository.createUserPhotoCard(data, {
-      tx,
-    });
+    // 1-1. 이미 UserPhotoCard를 보유 중이라면 업데이트
+    if (userPhotoCard) {
+      const quantity = userPhotoCard.quantity + purchaseQuantity;
+      const price = totalPrice / purchaseQuantity;
+
+      updatedArticle = await articleRepository.updateUserPhotoCard(
+        userPhotoCard.id,
+        quantity,
+        price,
+        { tx },
+      );
+    } else {
+      // 1-2. 보유 중이지 않는다면 새로운 UserPhotoCard 생성
+      const data = {
+        userId: buyerId,
+        photoCardId: article.userPhotoCard.photoCardId,
+        quantity: purchaseQuantity,
+        price: totalPrice / purchaseQuantity,
+      };
+
+      newArticle = await articleRepository.createUserPhotoCard(data, {
+        tx,
+      });
+    }
 
     // 2. CardArticle에서 수량 감소
     const remainingQuantity = article.remainingQuantity - purchaseQuantity;
@@ -232,7 +250,7 @@ const purchaseArticle = async ({
       tx,
     });
 
-    return newArticle;
+    return newArticle || updatedArticle;
   });
 };
 
@@ -244,6 +262,19 @@ const exchangeArticle = async ({
   description,
 }) => {
   return await prisma.$transaction(async (tx) => {
+    // 유효성 검사 1 - Exchange 존재 여부
+    const exchange = await articleRepository.getExchangeByUniqueConstraint(
+      requesterUserId,
+      articleId,
+    );
+
+    if (exchange) {
+      const error = new Error("교환 신청 중인 카드가 이미 존재합니다.");
+      error.code = 400;
+
+      throw error;
+    }
+
     // 1. Exchange 생성
     const data = {
       requesterUserId,
@@ -252,7 +283,7 @@ const exchangeArticle = async ({
       description,
     };
 
-    const exchange = await articleRepository.createExchange(data, { tx });
+    const newExchange = await articleRepository.createExchange(data, { tx });
 
     // 2. requester의 UserPhotoCard에서 수량 1개 차감
     const requesterUserPhotoCard = await articleRepository.decreaseQuantity(
@@ -272,7 +303,7 @@ const exchangeArticle = async ({
 
     await articleRepository.createUserPhotoCard(forExchangeData, { tx });
 
-    return exchange;
+    return newExchange;
   });
 };
 
@@ -314,7 +345,7 @@ export const putExchangeCard = async (articleId, exchangeId, approve) => {
         { tx },
       );
       await exchangeRepo.updateUserPhotoCardStatus(
-        exchange.recipientCardId,
+        exchange.recipientArticleId,
         "SOLDOUT",
         { tx },
       );

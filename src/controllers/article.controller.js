@@ -195,6 +195,7 @@ const articleController = {
     }
   },
 
+  //아티클 수정
   patchArticle: async (req, res, next) => {
     try {
       const userId = req.user.id;
@@ -213,6 +214,7 @@ const articleController = {
         exchangeRank,
         exchangeGenre,
       });
+      res.status(200).json(article);
     } catch (e) {
       next(e);
     }

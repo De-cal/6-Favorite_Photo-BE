@@ -279,7 +279,7 @@ export const patchArticle = async (articleId, userId, data) => {
   return await prisma.$transaction(async (tx) => {
     const article = await articleRepository.getById(articleId, { tx });
     //유효성 검사 1: 작성자인지 확인
-    if (userId !== article.userId) {
+    if (userId !== article.userPhotoCard.userId) {
       const error = new Error("게시글의 작성자가 아닙니다.");
       error.code = 403;
       throw error;
@@ -297,15 +297,18 @@ export const patchArticle = async (articleId, userId, data) => {
     );
     //기존 userPhotocard(owned)에 수량 변화 반영
     await cardRepository.updateQuantity(
-      photoCard.Id,
-      photoCard.quantity + article.remainingQuantity - data.quantity,
+      photoCard.id,
+      photoCard.quantity + article.remainingQuantity - data.totalQuantity,
       { tx },
     );
     //기존 userPhotocard(selling)에 수량 변화 반영
-    await cardRepository.updateQuantity(article.photoCardId, data.quantity, {
-      tx,
-    });
-
+    await cardRepository.updateQuantity(
+      article.userPhotoCardId,
+      data.quantity,
+      {
+        tx,
+      },
+    );
     //article 업데이트
     return await articleRepository.updateArticle(article.id, data, { tx });
   });

@@ -47,7 +47,7 @@ async function postArticle(data) {
     // }
 
     //판매용 USERPHOTOCARD 생성
-    const newCard = await cardRepository.create(
+    const newCard = await cardRepository.createUserPhotocard(
       {
         photoCardId: card.photoCardId,
         userId: card.userId,

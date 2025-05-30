@@ -229,7 +229,12 @@ export const findMyCardArticles = async ({
 async function getById(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  return await client.cardArticle.findUnique({ where: { id } });
+  return await client.cardArticle.findUnique({
+    where: { id },
+    include: {
+      userPhotoCard: true,
+    },
+  });
 }
 
 // 포토카드 상세 불러오기

@@ -33,7 +33,16 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
     include: {
       userPhotoCard: {
         include: {
-          photoCard: true,
+          photoCard: {
+            include: {
+              creator: {
+                select: {
+                  id: true,
+                  nickname: true,
+                },
+              },
+            },
+          },
           user: {
             select: {
               id: true,
@@ -223,10 +232,48 @@ async function getById(id, options = {}) {
   return await client.cardArticle.findUnique({ where: { id } });
 }
 
-const getByIdWithRelations = async (id) => {
-  return await prisma.cardArticle.findUnique({
-    where: { id },
-    include: { userPhotoCard: { include: { user: true } } },
+// 포토카드 상세 불러오기
+const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.cardArticle.findUnique({
+    where: { id: articleId },
+    include: {
+      userPhotoCard: {
+        include: {
+          user: { select: { nickname: true, pointAmount: true } },
+          photoCard: true,
+        },
+      },
+      recipient: {
+        where: { requesterUserId: userId },
+        select: {
+          id: true,
+          description: true,
+          requesterCard: {
+            select: {
+              id: true,
+              price: true,
+              user: { select: { nickname: true } },
+              photoCard: {
+                select: { title: true, rank: true, genre: true, imgUrl: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+// 구매하기 유효성 검사 3 - 보유중인 UserPhotoCard가 있는지 확인
+const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await prisma.userPhotoCard.findFirst({
+    where: { userId, photoCardId, status: "OWNED" },
   });
 };
 

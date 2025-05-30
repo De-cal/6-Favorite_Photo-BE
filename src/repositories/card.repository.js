@@ -208,6 +208,11 @@ export const updateQuantity = async (cardId, quantity, options = {}) => {
   });
 };
 
+export const createUserPhotocard = async (data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.create({ data });
+};
 
 export default {
   getById,
@@ -219,4 +224,6 @@ export default {
   remove,
   findByUserAndCard,
   updateQuantity,
+  createUserPhotocard,
 };
+

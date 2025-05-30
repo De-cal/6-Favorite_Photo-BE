@@ -27,7 +27,7 @@ export const findMyGallerySellingCards = async ({
     },
   };
 
-  // ✅ 총합 및 등급별 집계용 where: userId + status: "OWNED"
+  // 총합 및 등급별 집계용 where: userId + status: "OWNED"
   const ownedClause = {
     userId,
     status: "OWNED",
@@ -93,7 +93,6 @@ export const findMyGallerySellingCards = async ({
     rankCounts,
     nextPage,
     genreCounts,
-
   };
 };
 
@@ -124,6 +123,19 @@ async function decreaseCard(id, quantity, options = {}) {
   return await client.userPhotoCard.update({
     where: { id },
     data: { quantity: { decrement: quantity } },
+  });
+}
+
+
+async function increaseCard(id, quantity, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id },
+    data: { 
+      quantity: { increment: quantity },
+      status: "OWNED" // 아티클 삭제 시 상태도 OWNED로 복원
+    },
   });
 }
 
@@ -166,7 +178,6 @@ async function create(data, options = {}) {
       },
     });
 
-
     return {
       photoCard,
       userPhotoCards,
@@ -174,11 +185,10 @@ async function create(data, options = {}) {
   });
 }
 
-
 async function remove(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  return await client.userPhotoCard.delete({ where: id });
+  return await client.userPhotoCard.delete({ where: { id } });
 }
 
 export const findByUserAndCard = async (userId, cardId, options = {}) => {
@@ -198,13 +208,22 @@ export const updateQuantity = async (cardId, quantity, options = {}) => {
   });
 };
 
+export const createUserPhotocard = async (data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.create({ data });
+};
+
 export default {
   getById,
   getByUser,
   decreaseCard,
+  increaseCard,
   create,
   findMyGallerySellingCards,
   remove,
   findByUserAndCard,
   updateQuantity,
+  createUserPhotocard,
 };
+

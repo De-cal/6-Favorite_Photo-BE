@@ -33,7 +33,16 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
     include: {
       userPhotoCard: {
         include: {
-          photoCard: true,
+          photoCard: {
+            include: {
+              creator: {
+                select: {
+                  id: true,
+                  nickname: true,
+                },
+              },
+            },
+          },
           user: {
             select: {
               id: true,
@@ -54,6 +63,34 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
     currentPage: page,
   };
 };
+
+async function getByIdWithDetails(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  return await client.cardArticle.findUnique({
+    where: { id },
+    include: {
+      userPhotoCard: {
+        include: {
+          photoCard: {
+            include: {
+              creator: true
+            }
+          },
+          user: {
+            select: {
+              id: true,
+              nickname: true,
+              pointAmount: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
 export const findMyCardArticles = async ({
   userId,
@@ -195,10 +232,48 @@ async function getById(id, options = {}) {
   return await client.cardArticle.findUnique({ where: { id } });
 }
 
-const getByIdWithRelations = async (id) => {
-  return await prisma.cardArticle.findUnique({
-    where: { id },
-    include: { userPhotoCard: { include: { user: true } } },
+// 포토카드 상세 불러오기
+const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.cardArticle.findUnique({
+    where: { id: articleId },
+    include: {
+      userPhotoCard: {
+        include: {
+          user: { select: { nickname: true, pointAmount: true } },
+          photoCard: true,
+        },
+      },
+      recipient: {
+        where: { requesterUserId: userId },
+        select: {
+          id: true,
+          description: true,
+          requesterCard: {
+            select: {
+              id: true,
+              price: true,
+              user: { select: { nickname: true } },
+              photoCard: {
+                select: { title: true, rank: true, genre: true, imgUrl: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+// 구매하기 유효성 검사 3 - 보유중인 UserPhotoCard가 있는지 확인
+const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await prisma.userPhotoCard.findFirst({
+    where: { userId, photoCardId, status: "OWNED" },
   });
 };
 
@@ -349,8 +424,43 @@ export const updateArticle = async (articleId, data, options = {}) => {
   return await client.cardArticle.update({ where: { id: articleId }, data });
 };
 
+// Get active exchanges for an article (for delete validation)
+async function getActiveExchanges(articleId, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  // First get the article to find its userPhotoCardId
+  const article = await client.cardArticle.findUnique({
+    where: { id: articleId },
+    select: { userPhotoCardId: true }
+  });
+  
+  if (!article) {
+    return [];
+  }
+  
+  // Find exchanges where this card is the recipient
+  // Based on your schema, it should be 'recipientArticleId' not 'recipientCardId'
+  return await client.exchange.findMany({
+    where: {
+      recipientArticleId: articleId  // Use articleId directly instead of recipientCardId
+    }
+  });
+}
+
+// Remove article
+async function remove(id, options = {}) {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  return await client.cardArticle.delete({
+    where: { id }
+  });
+}
+
 export default {
   getById,
+  getByIdWithDetails,
   getByIdWithRelations,
   getSellingCardsAll,
   getByCard,
@@ -366,4 +476,6 @@ export default {
   deleteExchange,
   increaseQuantity,
   updateArticle,
+  getActiveExchanges,
+  remove,
 };

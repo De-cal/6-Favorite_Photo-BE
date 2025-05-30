@@ -40,7 +40,7 @@ model UserNotification {
   notification Notification @relation(fields: [notificationId], references: [id])
   createdAt    DateTime     @default(now())
 
-  @@id([userId, notificationId])
+  @@id([userId, notificationId]) ///복합유니크 
 }
 
 model PhotoCard {
@@ -108,7 +108,7 @@ model CardArticle {
   userPhotoCardId   String
   createdAt         DateTime      @default(now())
   userPhotoCard     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
-  recipient         Exchange[]    @relation("Exchangerecipient")
+  exchange          Exchange[]    @relation("Exchangerecipient")
 }
 
 model Exchange {
@@ -122,4 +122,6 @@ model Exchange {
   requesterCard    UserPhotoCard @relation("Exchangerequester", fields: [requesterCardId], references: [id])
   recipientArticle CardArticle   @relation("Exchangerecipient", fields: [recipientArticleId], references: [id])
   requesterUser    User          @relation("requesterUser", fields: [requesterUserId], references: [id])
+
+  @@unique([requesterUserId, recipientArticleId])
 }

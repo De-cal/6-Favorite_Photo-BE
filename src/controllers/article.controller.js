@@ -4,8 +4,25 @@ const articleController = {
   getById: async (req, res, next) => {
     try {
       const { id } = req.params;
-      const article = await articleService.getById(id);
+      const article = await articleService.getByIdWithDetails(id);
       return res.status(200).json(article);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // 포토카드 상세 불러오기
+  getByIdWithRelations: async (req, res, next) => {
+    try {
+      // const userId = req.user.id;
+      const userId = "4ad8ed1c-dc54-4375-9ac7-fa5bf2d1c18c";
+      const articleId = req.params.id;
+      const article = await articleService.getByIdWithRelations(
+        articleId,
+        userId,
+      );
+
+      res.status(200).json(article);
     } catch (error) {
       next(error);
     }
@@ -80,6 +97,21 @@ const articleController = {
     }
   },
 
+  deleteArticle: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { id: articleId } = req.params;
+
+      await articleService.deleteArticle(articleId, userId);
+
+      return res.status(200).json({
+        message: "판매글이 성공적으로 삭제되었습니다.",
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   patchExchangePhotoCard: async (req, res, next) => {
     try {
       const userId = req.user.id;
@@ -98,19 +130,13 @@ const articleController = {
       next(e);
     }
   },
-  /**
-   * @De-cal TODO:
-   * 1. 인증/인가 완료되면, buyerId, req.body 주석 해제
-   */
+
   // 포토카드 구매
   purchaseArticle: async (req, res, next) => {
     try {
-      // const buyerId = req.auth.id;
+      const buyerId = req.user.id;
       const articleId = req.params.id;
-      // const { purchaseQuantity, totalPrice } = req.body;
-      const buyerId = "c1c8c599-7770-495d-8820-f400f6a0466e";
-      const purchaseQuantity = 2;
-      const totalPrice = 2;
+      const { purchaseQuantity, totalPrice } = req.body;
 
       const article = await articleService.purchaseArticle({
         buyerId,
@@ -128,15 +154,14 @@ const articleController = {
   // 포토카드 교환 요청
   exchangeArticle: async (req, res, next) => {
     try {
+      const requesterUserId = req.user.id;
       const articleId = req.params.id;
-      // const { requesterCardId, description } = req.body;
-      const requesterCardId = "8e9fd526-5158-4afe-97d2-e9a257cf0945";
-      const description =
-        "교환하고 싶어서 요청 드립니다. 사진이 너무 이쁘네요.";
+      const { requesterCardId, description } = req.body;
 
       const exchange = await articleService.exchangeArticle({
-        articleId,
+        requesterUserId,
         requesterCardId,
+        articleId,
         description,
       });
 
@@ -150,8 +175,7 @@ const articleController = {
   cancelExchange: async (req, res, next) => {
     try {
       const exchangeId = req.params.exchangeId;
-      // const { requesterCardId } = req.body;
-      const requesterCardId = "8e9fd526-5158-4afe-97d2-e9a257cf0945";
+      const requesterCardId = req.params.requesterCardId;
 
       await articleService.cancelExchange({
         exchangeId,
@@ -166,7 +190,7 @@ const articleController = {
     }
   },
 
-  //포토카드 승인, 거절
+  // 포토카드 승인, 거절
   putExchangeCard: async (req, res, next) => {
     try {
       const userId = req.user.id;

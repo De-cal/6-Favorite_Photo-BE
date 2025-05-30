@@ -93,7 +93,6 @@ export const findMyGallerySellingCards = async ({
     rankCounts,
     nextPage,
     genreCounts,
-
   };
 };
 
@@ -166,14 +165,12 @@ async function create(data, options = {}) {
       },
     });
 
-
     return {
       photoCard,
       userPhotoCards,
     };
   });
 }
-
 
 async function remove(id, options = {}) {
   const { tx } = options;
@@ -198,6 +195,12 @@ export const updateQuantity = async (cardId, quantity, options = {}) => {
   });
 };
 
+export const createUserPhotocard = async (data, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.create({ data });
+};
+
 export default {
   getById,
   getByUser,
@@ -207,4 +210,5 @@ export default {
   remove,
   findByUserAndCard,
   updateQuantity,
+  createUserPhotocard,
 };

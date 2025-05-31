@@ -67,7 +67,7 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
 async function getByIdWithDetails(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  
+
   return await client.cardArticle.findUnique({
     where: { id },
     include: {
@@ -75,19 +75,19 @@ async function getByIdWithDetails(id, options = {}) {
         include: {
           photoCard: {
             include: {
-              creator: true
-            }
+              creator: true,
+            },
           },
           user: {
             select: {
               id: true,
               nickname: true,
-              pointAmount: true
-            }
-          }
-        }
-      }
-    }
+              pointAmount: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
@@ -104,6 +104,7 @@ export const findMyCardArticles = async ({
 }) => {
   const skip = (page - 1) * pageSize;
 
+  // 📌 1. 필터 포함된 쿼리 (list, articleCount용)
   const whereClause = {
     userPhotoCard: {
       userId,
@@ -123,8 +124,15 @@ export const findMyCardArticles = async ({
     ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
   };
 
-  const [list, rankCountsRaw, articleCount] = await Promise.all([
-    // 1. 현재 페이지 데이터
+  // 📌 2. 집계용 쿼리 (userId만 반영)
+  const countClause = {
+    userPhotoCard: {
+      userId,
+    },
+  };
+
+  const [list, rankCountsRaw, articleCount, fullCountsRaw] = await Promise.all([
+    // 필터된 리스트
     prisma.cardArticle.findMany({
       where: whereClause,
       skip,
@@ -144,13 +152,13 @@ export const findMyCardArticles = async ({
       },
     }),
 
-    // 2. 등급별 remainingQuantity 집계용 전체 목록
+    // 필터된 등급/장르/remainingQuantity 분석용
     prisma.cardArticle.findMany({
       where: whereClause,
       include: {
         userPhotoCard: {
           select: {
-            status: true, //
+            status: true,
             photoCard: {
               select: {
                 rank: true,
@@ -162,19 +170,38 @@ export const findMyCardArticles = async ({
       },
     }),
 
-    // 3. 총 게시글 수
+    // 필터된 아티클 수
     prisma.cardArticle.count({
       where: whereClause,
     }),
+
+    // 🔥 전체 집계용 (필터 미포함!)
+    prisma.cardArticle.findMany({
+      where: countClause,
+      include: {
+        userPhotoCard: {
+          select: {
+            status: true,
+            quantity: true,
+            photoCard: {
+              select: {
+                rank: true,
+                genre: true,
+              },
+            },
+          },
+        },
+      },
+    }),
   ]);
 
-  // 4. remainingQuantity 총합
-  const totalRemainingQuantity = rankCountsRaw.reduce(
+  // 필터된 수량 총합
+  const filteredRemainingQuantity = rankCountsRaw.reduce(
     (sum, article) => sum + article.remainingQuantity,
     0,
   );
 
-  // 5. 등급별 remainingQuantity 합
+  // 🔥 필터 미적용된 전체 데이터 기반 집계
   const rankCounts = {};
   const genreCounts = {};
   const sellingTypeCounts = {
@@ -186,39 +213,34 @@ export const findMyCardArticles = async ({
     NOT_SOLDOUT: 0,
   };
 
-  for (const article of rankCountsRaw) {
+  for (const article of fullCountsRaw) {
     const rank = article.userPhotoCard.photoCard.rank;
     const genre = article.userPhotoCard.photoCard.genre;
-    const status = article.userPhotoCard.status; // ✅ 이 부분 수정
-    const remainingQuantity = article.remainingQuantity;
+    const status = article.userPhotoCard.status;
+    const quantity = article.userPhotoCard.quantity ?? 0;
 
-    // ✅ 등급별 remainingQuantity 합산
-    rankCounts[rank] = (rankCounts[rank] || 0) + remainingQuantity;
+    rankCounts[rank] = (rankCounts[rank] || 0) + quantity;
+    genreCounts[genre] = (genreCounts[genre] || 0) + quantity;
 
-    // ✅ 장르별 게시글 수 카운트
-    genreCounts[genre] = (genreCounts[genre] || 0) + 1;
-
-    // ✅ SELLING / SOLDOUT → 판매 상태 카드 수량 합산
-    if (status === "SELLING" || status === "SOLDOUT") {
-      sellingTypeCounts.SELLING += remainingQuantity; // ← 게시글 수가 아니라 수량 합산
+    if (status === "SELLING") {
+      sellingTypeCounts.SELLING += quantity;
     } else if (status === "EXCHANGE_REQUESTED") {
-      sellingTypeCounts.EXCHANGE_REQUESTED += remainingQuantity;
+      sellingTypeCounts.EXCHANGE_REQUESTED += quantity;
     }
 
-    // ✅ OWNED 제외하고 SOLDOUT / 그 외 상태로 soldOutCounts 누적
-    // ✅ SOLDOUT 여부는 remainingQuantity 기준으로 판단
-    if (remainingQuantity === 0) {
+    if (article.remainingQuantity === 0) {
       soldOutCounts.SOLDOUT += 1;
     } else {
-      soldOutCounts.NOT_SOLDOUT += remainingQuantity;
+      soldOutCounts.NOT_SOLDOUT += article.remainingQuantity;
     }
   }
+
   return {
     totalCount: {
-      totalCount: totalRemainingQuantity,
-      articleCount, // 아티클 개수
+      totalCount: Object.values(rankCounts).reduce((a, b) => a + b, 0), // 🔥 필터 제외 전체 quantity 합
+      articleCount, // ✅ 필터 적용된 게시글 수
     },
-    list,
+    list, // ✅ 필터 적용된 현재 페이지 목록
     rankCounts,
     genreCounts,
     soldOutCounts,
@@ -468,23 +490,23 @@ export const updateArticle = async (articleId, data, options = {}) => {
 async function getActiveExchanges(articleId, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  
+
   // First get the article to find its userPhotoCardId
   const article = await client.cardArticle.findUnique({
     where: { id: articleId },
-    select: { userPhotoCardId: true }
+    select: { userPhotoCardId: true },
   });
-  
+
   if (!article) {
     return [];
   }
-  
+
   // Find exchanges where this card is the recipient
   // Based on your schema, it should be 'recipientArticleId' not 'recipientCardId'
   return await client.exchange.findMany({
     where: {
-      recipientArticleId: articleId  // Use articleId directly instead of recipientCardId
-    }
+      recipientArticleId: articleId, // Use articleId directly instead of recipientCardId
+    },
   });
 }
 
@@ -492,9 +514,9 @@ async function getActiveExchanges(articleId, options = {}) {
 async function remove(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
-  
+
   return await client.cardArticle.delete({
-    where: { id }
+    where: { id },
   });
 }
 

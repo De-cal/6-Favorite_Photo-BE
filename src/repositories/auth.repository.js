@@ -36,6 +36,19 @@ const findByGoogleId = async (googleId) => {
   });
 };
 
+const createWithGoogle = async ({ email, nickname, googleId }) => {
+  return await prisma.user.create({
+    data: {
+      email,
+      nickname,
+      password: "",
+      googleId,
+      pointAmount: 0,
+      createCount: 0,
+    },
+  });
+};
+
 export default {
   findByEmail,
   findByNickname,

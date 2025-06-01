@@ -264,13 +264,15 @@ const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
-  return await client.cardArticle.findUnique({
+  return await prisma.cardArticle.findUnique({
     where: { id: articleId },
     include: {
       userPhotoCard: {
         include: {
           user: { select: { nickname: true, pointAmount: true } },
-          photoCard: true,
+          photoCard: {
+            include: { creator: { select: { id: true, nickname: true } } },
+          },
         },
       },
       exchange: {

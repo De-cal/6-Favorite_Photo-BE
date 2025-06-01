@@ -30,6 +30,12 @@ const findById = async (id) => {
   });
 };
 
+const findByGoogleId = async (googleId) => {
+  return await prisma.user.findUnique({
+    where: { googleId },
+  });
+};
+
 export default {
   findByEmail,
   findByNickname,

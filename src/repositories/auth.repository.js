@@ -54,4 +54,6 @@ export default {
   findByNickname,
   create,
   findById,
+  createWithGoogle,
+  findByGoogleId,
 };

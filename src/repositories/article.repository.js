@@ -446,6 +446,7 @@ const increaseQuantity = async (requesterCardId, options = {}) => {
   });
 };
 
+//포토카드 승인, 거절
 export const decreaseUserPhotoCardQuantity = async (
   cardId,
   amount = 1,
@@ -520,6 +521,11 @@ async function remove(id, options = {}) {
   return await client.cardArticle.delete({
     where: { id },
   });
+}
+
+export async function getExchange() {
+  const exchanges = prisma.Exchange.findMany();
+  return await exchanges.json();
 }
 
 export default {

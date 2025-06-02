@@ -51,7 +51,7 @@ articleRouter.post(
 
 // 포토카드 교환 요청 취소
 articleRouter.delete(
-  "/:id/exchange/:exchangeId/:requesterCardId",
+  "/:id/exchange/:exchangeId",
   validateAccessToken,
   articleController.cancelExchange,
 );

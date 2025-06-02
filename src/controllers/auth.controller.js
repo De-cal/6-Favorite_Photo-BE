@@ -57,7 +57,6 @@ const googleLoginCallbackController = async (req, res, next) => {
   try {
     // req.user -> passport.js로부터 return 된 done(null, user)에서 넘어온 값
     if (!req.user) {
-      console.log("No user found in request");
       return res
         .status(401)
         .json({ success: false, message: "구글 인증에 실패하였습니다." });
@@ -67,13 +66,11 @@ const googleLoginCallbackController = async (req, res, next) => {
     const { accessToken, refreshToken } = await authService.googleLogin(
       req.user,
     );
-    console.log("Generated tokens:", { accessToken, refreshToken });
 
     // 발급된 토큰 클라이언트의 쿠키에 저장
     authUtils.setAuthCookies(res, { accessToken, refreshToken });
 
     // 프론트엔드의 성공 페이지로 리다이렉트
-    console.log("Redirecting to:", process.env.CLIENT_GOOGLE_CALLBACK_PAGE_URL);
     res.redirect(process.env.CLIENT_GOOGLE_CALLBACK_PAGE_URL);
   } catch (error) {
     console.error("Google Login Callback Error:", error);

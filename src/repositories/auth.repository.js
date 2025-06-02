@@ -7,7 +7,7 @@ const findByEmail = async (email) => {
 };
 
 const findByNickname = async (nickname) => {
-  return await prisma.user.findFirst({
+  return await prisma.user.findUnique({
     where: { nickname },
   });
 };
@@ -32,7 +32,9 @@ const findById = async (id) => {
 
 const findByGoogleId = async (googleId) => {
   return await prisma.user.findUnique({
-    where: { googleId },
+    where: {
+      googleId,
+    },
   });
 };
 

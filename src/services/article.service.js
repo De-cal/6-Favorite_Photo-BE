@@ -3,6 +3,7 @@ import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
 import authRepository from "../repositories/auth.repository.js";
 
+// 포토카드 판매자 상세 불러오기
 async function getByIdWithDetails(id) {
   return await articleRepository.getByIdWithDetails(id);
 }
@@ -11,7 +12,7 @@ async function getById(id) {
   return await articleRepository.getById(id);
 }
 
-// 포토카드 상세 불러오기
+// 포토카드 구매자 상세 불러오기
 const getByIdWithRelations = async (articleId, userId) => {
   return await articleRepository.getByIdWithRelations(articleId, userId);
 };

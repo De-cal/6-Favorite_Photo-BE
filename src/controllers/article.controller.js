@@ -1,6 +1,7 @@
 import articleService from "../services/article.service.js";
 
 const articleController = {
+  // 포토카드 판매자 상세 불러오기
   getById: async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -11,7 +12,7 @@ const articleController = {
     }
   },
 
-  // 포토카드 상세 불러오기
+  // 포토카드 구매자 상세 불러오기
   getByIdWithRelations: async (req, res, next) => {
     try {
       const userId = req.user.id;

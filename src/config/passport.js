@@ -1,7 +1,24 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import authRepository from "../repositories/auth.repository.js";
-import prisma from "../db/prisma/prisma.js"; 
+import prisma from "../db/prisma/prisma.js";
+
+// Google 에서 가져온 유저의 닉네임과 동일한 닉네임이 db에 존재하는 경우 대비하여 만든 헬퍼함수
+async function generateUniqueNickname(baseNickname) {
+  let nickname = baseNickname;
+  let counter = 1;
+
+  while (true) {
+    const existingUser = await authRepository.findByNickname(nickname);
+
+    if (!existingUser) {
+      return nickname;
+    }
+
+    nickname = `${baseNickname}${counter}`;
+    counter++;
+  }
+};
 
 // Google OAuth Strategy 설정
 passport.use(
@@ -43,9 +60,10 @@ passport.use(
             }
           }
           // 신규 사용자인 경우 새로 유저데이터 생성
+          const uniqueNickname = await generateUniqueNickname(nickname);
           user = await authRepository.createWithGoogle({
             email,
-            nickname,
+            nickname: uniqueNickname,
             googleId,
           });
           return done(null, user);

@@ -71,8 +71,9 @@ const googleLoginCallbackController = async (req, res, next) => {
     authUtils.setAuthCookies(res, { accessToken, refreshToken });
 
     // 프론트엔드의 성공 페이지로 리다이렉트
-    res.redirect(process.env.CLIENT_SUCCESS_REDIRECT_URL);
+    res.redirect(process.env.CLIENT_GOOGLE_CALLBACK_PAGE_URL);
   } catch (error) {
+    console.error("Google Login Callback Error:", error);
     next(error);
   }
 };

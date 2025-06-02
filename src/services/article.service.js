@@ -328,30 +328,33 @@ const cancelExchange = async ({ exchangeId, requesterCardId }) => {
   });
 };
 
+//포토카드 승인 거절
 export const putExchangeCard = async (articleId, exchangeId, approve) => {
   return await prisma.$transaction(async (tx) => {
-    const exchange = await exchangeRepo.getExchangeById(exchangeId, { tx });
+    const exchange = await articleRepository.getExchangeById(exchangeId, {
+      tx,
+    });
     if (!exchange) throw new Error("존재하지 않는 교환 요청입니다.");
     // 요청자 카드 수량 감소, 요청자 카드 상태 변경, 수신자 카드 상태 변경, 교환 요청 삭제
     if (approve) {
-      await exchangeRepo.decreaseUserPhotoCardQuantity(
+      await articleRepository.decreaseUserPhotoCardQuantity(
         exchange.requesterCardId,
         1,
         { tx },
       );
-      await exchangeRepo.updateUserPhotoCardStatus(
+      await articleRepository.updateUserPhotoCardStatus(
         exchange.requesterCardId,
         "SOLDOUT",
         { tx },
       );
-      await exchangeRepo.updateUserPhotoCardStatus(
+      await articleRepository.updateUserPhotoCardStatus(
         exchange.recipientArticleId,
         "SOLDOUT",
         { tx },
       );
-      await exchangeRepo.deleteExchange(exchangeId, { tx });
+      await articleRepository.deleteExchange(exchangeId, { tx });
     } else {
-      await exchangeRepo.deleteExchange(exchangeId, { tx });
+      await articleRepository.deleteExchange(exchangeId, { tx });
     }
     return {
       message: approve ? "교환이 승인되었습니다." : "교환이 거절되었습니다.",

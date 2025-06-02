@@ -195,7 +195,7 @@ const articleController = {
       const { id: articleId, exchangeId } = req.params;
       const { isApproved } = req.body; // true: 승인, false: 거절
 
-      const result = await articleService.processExchangeDecision({
+      const result = await articleService.putExchangeCard({
         userId,
         articleId,
         exchangeId,

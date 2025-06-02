@@ -1,6 +1,10 @@
 import prisma from "../db/prisma/prisma.js";
 import articleRepository from "../repositories/article.repository.js";
-import cardRepository from "../repositories/card.repository.js";
+import cardRepository, {
+  createUserPhotocard,
+  findByUserAndCard,
+  updateQuantity,
+} from "../repositories/card.repository.js";
 import authRepository from "../repositories/auth.repository.js";
 
 // 포토카드 판매자 상세 불러오기
@@ -354,31 +358,42 @@ export const putExchangeCard = async ({
       throw error;
     }
     //요청자가 요청한 카드 보유하고 있는지 확인
+    const card = await findByUserAndCard(
+      exchange.requesterUserId,
+      article.userPhotoCard.photoCardId,
+      { tx },
+    );
 
     //보유하고 있다면, quantity += 1
+    if (card) {
+      await cardRepository.increaseCard(card.id, 1, { tx });
+    }
     //보유하지 않고 있다면, 새로운 userPhotocard 생성
+    else {
+      await createUserPhotocard(
+        {
+          photoCardId: article.userPhotoCard.photoCardId,
+          userId: exchange.requesterUserId,
+          status: "OWNED",
+          quantity: 1,
+          price: article.price,
+        },
+        { tx },
+      );
+    }
 
     //요청자의 카드 수량 감소
+    await cardRepository.remove(exchange.requesterCardId);
 
     //article의 quantity 1 감소
+    await articleRepository.decreaseCardArticleQuantity(
+      article.id,
+      article.remainingQuantity - 1,
+      { tx },
+    );
     //userPhotocard quantity 1 감소
+    await articleRepository.decreaseQuantity(article.userPhotoCardId);
     //userPhotocard 0인 경우 soldout으로 변경
-
-    await articleRepository.decreaseUserPhotoCardQuantity(
-      exchange.requesterCardId,
-      1,
-      { tx },
-    );
-    await articleRepository.updateUserPhotoCardStatus(
-      exchange.requesterCardId,
-      "SOLDOUT",
-      { tx },
-    );
-    await articleRepository.updateUserPhotoCardStatus(
-      exchange.recipientArticleId,
-      "SOLDOUT",
-      { tx },
-    );
 
     //요청자의 exchange requested userPhotocard 삭제
 

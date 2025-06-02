@@ -465,19 +465,6 @@ const increaseQuantity = async (requesterCardId, options = {}) => {
   });
 };
 
-//포토카드 승인, 거절
-export const decreaseUserPhotoCardQuantity = async (
-  cardId,
-  amount = 1,
-  options = {},
-) => {
-  const client = options.tx || prisma;
-  return await client.userPhotoCard.update({
-    where: { id: cardId },
-    data: { quantity: { decrement: amount } },
-  });
-};
-
 export const increaseUserPhotoCardQuantity = async (
   cardId,
   amount = 1,
@@ -487,18 +474,6 @@ export const increaseUserPhotoCardQuantity = async (
   return await client.userPhotoCard.update({
     where: { id: cardId },
     data: { quantity: { increment: amount } },
-  });
-};
-
-export const updateUserPhotoCardStatus = async (
-  cardId,
-  status,
-  options = {},
-) => {
-  const client = options.tx || prisma;
-  return await client.userPhotoCard.update({
-    where: { id: cardId },
-    data: { status },
   });
 };
 
@@ -540,11 +515,6 @@ async function remove(id, options = {}) {
   return await client.cardArticle.delete({
     where: { id },
   });
-}
-
-export async function getExchange() {
-  const exchanges = prisma.Exchange.findMany();
-  return await exchanges.json();
 }
 
 export default {

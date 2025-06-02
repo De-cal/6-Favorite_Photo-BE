@@ -4,6 +4,7 @@ import { validateRequest } from "../middlewares/validateRequest.js";
 import { LoginRequestStruct } from "../structs/auth/loginRequest.struct.js";
 import { SignupRequestStruct } from "../structs/auth/signupRequest.struct.js";
 import { validateAccessToken } from "../middlewares/auth.middleware.js";
+import passport from "passport";
 
 const authRouter = express.Router();
 

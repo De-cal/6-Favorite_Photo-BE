@@ -64,6 +64,7 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
   };
 };
 
+// 포토카드 판매자 상세 불러오기
 async function getByIdWithDetails(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -83,6 +84,24 @@ async function getByIdWithDetails(id, options = {}) {
               id: true,
               nickname: true,
               pointAmount: true,
+            },
+          },
+        },
+      },
+      exchange: {
+        where: { recipientArticleId: id },
+        select: {
+          id: true,
+          description: true,
+          recipientArticleId: true,
+          requesterCard: {
+            select: {
+              id: true,
+              price: true,
+              user: { select: { nickname: true } },
+              photoCard: {
+                select: { title: true, rank: true, genre: true, imgUrl: true },
+              },
             },
           },
         },
@@ -259,7 +278,7 @@ async function getById(id, options = {}) {
   });
 }
 
-// 포토카드 상세 불러오기
+// 포토카드 구매자 상세 불러오기
 const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;

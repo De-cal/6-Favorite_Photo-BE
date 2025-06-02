@@ -35,14 +35,6 @@ async function postArticle(data) {
       error.code = 409;
       throw error;
     }
-    // const article = await articleRepository.getByCard(data.userPhotoCardId, {
-    //   tx,
-    // });
-    // if (article) {
-    //   const error = new Error("이미 등록된 판매 글이 존재합니다.");
-    //   error.code = 409;
-    //   throw error;
-    // }
 
     //판매할 카드 수량만큼 OWNED 카드 수량 감소
     const updatedCard = await cardRepository.decreaseCard(
@@ -328,34 +320,69 @@ const cancelExchange = async ({ exchangeId, requesterCardId }) => {
   });
 };
 
-//포토카드 승인 거절
-export const putExchangeCard = async (articleId, exchangeId, approve) => {
+//포토카드 승인
+export const putExchangeCard = async ({
+  userId,
+  articleId,
+  exchangeId,
+  isApproved,
+}) => {
   return await prisma.$transaction(async (tx) => {
+    //유효성 검사 1: 작성자인지 확인
+    const article = await articleRepository.getById(articleId, { tx });
+    if (userId !== article.userPhotoCard.userId) {
+      const error = new Error("게시글의 작성자가 아닙니다.");
+      error.code = 403;
+      throw error;
+    }
+
+    //유효성 검사 2: article의 quantity가 1 이상인지 확인
+    if (article.remainingQuantity < 1) {
+      const error = new Error("포토카드 수량이 부족합니다.");
+      error.code = 400;
+      throw error;
+    }
+
+    //유효성 검사 3: 유효한 교환 요청인지 확인
     const exchange = await articleRepository.getExchangeById(exchangeId, {
       tx,
     });
-    if (!exchange) throw new Error("존재하지 않는 교환 요청입니다.");
-    // 요청자 카드 수량 감소, 요청자 카드 상태 변경, 수신자 카드 상태 변경, 교환 요청 삭제
-    if (approve) {
-      await articleRepository.decreaseUserPhotoCardQuantity(
-        exchange.requesterCardId,
-        1,
-        { tx },
-      );
-      await articleRepository.updateUserPhotoCardStatus(
-        exchange.requesterCardId,
-        "SOLDOUT",
-        { tx },
-      );
-      await articleRepository.updateUserPhotoCardStatus(
-        exchange.recipientArticleId,
-        "SOLDOUT",
-        { tx },
-      );
-      await articleRepository.deleteExchange(exchangeId, { tx });
-    } else {
-      await articleRepository.deleteExchange(exchangeId, { tx });
+    if (!exchange) {
+      const error = new Error("존재하지 않는 교환 요청입니다.");
+      error.code = 404;
+      throw error;
     }
+    //요청자가 요청한 카드 보유하고 있는지 확인
+
+    //보유하고 있다면, quantity += 1
+    //보유하지 않고 있다면, 새로운 userPhotocard 생성
+
+    //요청자의 카드 수량 감소
+
+    //article의 quantity 1 감소
+    //userPhotocard quantity 1 감소
+    //userPhotocard 0인 경우 soldout으로 변경
+
+    await articleRepository.decreaseUserPhotoCardQuantity(
+      exchange.requesterCardId,
+      1,
+      { tx },
+    );
+    await articleRepository.updateUserPhotoCardStatus(
+      exchange.requesterCardId,
+      "SOLDOUT",
+      { tx },
+    );
+    await articleRepository.updateUserPhotoCardStatus(
+      exchange.recipientArticleId,
+      "SOLDOUT",
+      { tx },
+    );
+
+    //요청자의 exchange requested userPhotocard 삭제
+
+    //교환 요청 삭제
+    await articleRepository.deleteExchange(exchangeId, { tx });
     return {
       message: approve ? "교환이 승인되었습니다." : "교환이 거절되었습니다.",
     };
@@ -392,12 +419,14 @@ export const patchArticle = async (articleId, userId, data) => {
     await cardRepository.updateQuantity(
       article.userPhotoCardId,
       data.quantity,
-      {
-        tx,
-      },
+      { tx },
     );
     //article 업데이트
-    return await articleRepository.updateArticle(article.id, data, { tx });
+    return await articleRepository.updateArticle(
+      article.id,
+      { ...data, remainingQuantity: data.totalQuantity },
+      { tx },
+    );
   });
 };
 

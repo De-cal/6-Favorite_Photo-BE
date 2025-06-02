@@ -110,25 +110,6 @@ const articleController = {
     }
   },
 
-  patchExchangePhotoCard: async (req, res, next) => {
-    try {
-      const userId = req.user.id;
-      const { articleId, exchangeId } = req.params;
-      const { exchangeText, exchangeGenre, exchangeRank } = req.body;
-      const result = await articleService.updateExchangePhotoCard({
-        userId,
-        articleId,
-        exchangeId,
-        exchangeText,
-        exchangeGenre,
-        exchangeRank,
-      });
-      return res.status(200).json(result);
-    } catch (error) {
-      next(e);
-    }
-  },
-
   // 포토카드 구매
   purchaseArticle: async (req, res, next) => {
     try {

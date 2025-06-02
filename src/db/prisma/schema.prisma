@@ -13,8 +13,8 @@ model User {
   email       String   @unique
   password    String
   nickname    String   @unique
-  pointAmount Int
-  createCount Int      @default(0)
+  pointAmount Int      @default(100) //가입축하금
+  createCount Int      @default(3) //월간 생성 가능 횟수
   createdAt   DateTime @default(now())
   googleId    String?  @unique
 

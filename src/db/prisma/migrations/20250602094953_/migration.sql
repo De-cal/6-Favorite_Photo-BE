@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "pointAmount" SET DEFAULT 100,
+ALTER COLUMN "createCount" SET DEFAULT 3;

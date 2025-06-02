@@ -121,8 +121,29 @@ const refreshTokenService = async (refreshToken) => {
   }
 };
 
+/**
+ * Google OAuth 인증 후 사용자 정보를 받아 토큰을 발급하는 서비스
+ * @param {object} user - Passport를 통해 인증된 사용자 객체 (req.user)
+ * @returns {object} accessToken, refreshToken
+ */
+const googleLogin = async (user) => {
+  // 여기서는 이미 passport.js에서 사용자가 생성되었거나 찾아진 상태이므로
+  // 해당 user 객체로 토큰을 발행함
+  if (!user) {
+    const error = new Error("Google 인증 사용자 정보가 유효하지 않습니다.");
+    error.code = 400;
+    throw error;
+  }
+
+  const { accessToken, refreshToken } = generateTokens(user);
+
+  return { accessToken, refreshToken };
+};
+
 export default {
   signup,
   login,
   refreshTokenService,
+  generateTokens,
+  googleLogin,
 };

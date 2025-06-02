@@ -2,7 +2,7 @@ const setAuthCookies = (res, { accessToken, refreshToken }) => {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
     path: "/", // 명시적으로 path 설정
   };
 
@@ -21,12 +21,12 @@ const clearAuthCookies = (res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
     path: "/",
   });
 };

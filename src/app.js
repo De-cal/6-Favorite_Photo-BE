@@ -4,6 +4,7 @@ import "dotenv/config";
 import errorHandler from "./middlewares/errorHandler.js";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
+import passport from "passport";
 
 const PORT = process.env.PORT || 5050;
 
@@ -22,6 +23,10 @@ app.use(
   }),
 );
 app.use(cookieParser());
+// 구글 인증을 위한 패스포트 전략 등록하기
+import "./config/passport.js";
+app.use(passport.initialize());
+
 app.use("/images", express.static("uploads"));
 
 // 3. routes 등록

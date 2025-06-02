@@ -53,6 +53,30 @@ const loginController = async (req, res, next) => {
   }
 };
 
+const googleLoginCallbackController = async (req, res, next) => {
+  try {
+    // req.user -> passport.js로부터 return 된 done(null, user)에서 넘어온 값
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "구글 인증에 실패하였습니다." });
+    }
+
+    // 구글에서 성공적으로 사용자 받아옴, 서비스 호출하여 토큰발급 받기
+    const { accessToken, refreshToken } = await authService.googleLogin(
+      req.user,
+    );
+
+    // 발급된 토큰 클라이언트의 쿠키에 저장
+    authUtils.setAuthCookies(res, { accessToken, refreshToken });
+
+    // 프론트엔드의 성공 페이지로 리다이렉트
+    res.redirect(process.env.CLIENT_SUCCESS_REDIRECT_URL);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const logoutController = async (req, res) => {
   authUtils.clearAuthCookies(res);
   res.status(200).json({ success: true });
@@ -109,4 +133,5 @@ export default {
   logoutController,
   meController,
   refreshTokenController,
+  googleLoginCallbackController,
 };

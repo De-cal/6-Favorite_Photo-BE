@@ -473,10 +473,8 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
 
     // 알림 메시지에 필요한 데이터.
     let notificationMessage = "";
-    const notificationData = articleRepository.getExchangeWithPhotocardInfo(
-      exchangeId,
-      { tx },
-    );
+    const notificationData =
+      await articleRepository.getExchangeWithPhotocardInfo(exchangeId, { tx });
     const {
       recipientArticle: {
         userPhotoCard: {

@@ -115,7 +115,7 @@ const createSaleSuccessNotification = async (
 // 포토 카드 품절 알림 생성 (관심 목록 등록 유저들 또는 판매자 대상). 여러명에게
 // 수량이 0이 되었을때 발생. 마지막카드 구매, 교환수락, 판매 취소. 
 const createSoldOutNotification = async (requesterUserIds, rank, title) => {
-  const message = `[${rank} | ${title}] 이/가 품절 되었습니다.`;
+  const message = `[${rank} | ${title}] 포토카드가 품절 되었습니다.`;
   try {
     if (!Array.isArray(requesterUserIds) || requesterUserIds.length === 0) {
       throw { status: 400, message: "알림을 보낼 대상 사용자가 지정되지 않았습니다." };

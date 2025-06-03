@@ -266,7 +266,7 @@ const purchaseArticle = async ({
       const article = await articleRepository.getByIdWithDetails(articleId);
 
       // 10. 판매자 품절 알림 메시지.
-      const soldOutSellerMessage = `[${article.photoCard.rank} | ${article.photoCard.title}] 이/가 품절 되었습니다.`;
+      const soldOutSellerMessage = `[${article.photoCard.rank} | ${article.photoCard.title}] 포토카드가 품절 되었습니다.`;
       // 10. 판매자 품절 알림.
       await notificationRepository.createNotification(
         soldOutSellerMessage,
@@ -274,7 +274,7 @@ const purchaseArticle = async ({
         { tx },
       );
       // 11. 교환 요청자 품절 알림 메시지.
-      const soldOutMessage = `${recipientNickname} 님의 [${article.photoCard.rank} | ${article.photoCard.title}] 이/가 품절 되어 교환이 불발되었습니다.`;
+      const soldOutMessage = `${recipientNickname} 님의 [${article.photoCard.rank} | ${article.photoCard.title}] 포토카드가 품절 되어 교환이 불발되었습니다.`;
 
       if (article.exchange.length !== 0) {
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
@@ -540,7 +540,7 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
         await articleRepository.deleteExchanges(article.id, { tx });
 
         // 교환 요청자 품절 알림 메시지.
-        const message = `${recipientNickname} 님의 [${rank} | ${title}] 이/가 품절 되어 교환이 불발되었습니다.`;
+        const message = `${recipientNickname} 님의 [${rank} | ${title}] 포토카드가 품절 되어 교환이 불발되었습니다.`;
         const requesterUserIds =
           await articleRepository.getRequesterUserIdsByArticleId(article.id, {
             tx,
@@ -580,7 +580,7 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
           }),
         );
         // 판매자 품절 알림 메시지.
-        const sellerMessage = `[${rank} | ${title}] 이/가 품절 되었습니다.`;
+        const sellerMessage = `[${rank} | ${title}] 포토카드가 품절 되었습니다.`;
         // 판매자 품절 알림.
         await notificationRepository.createNotification(
           sellerMessage,

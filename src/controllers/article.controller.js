@@ -101,10 +101,13 @@ const articleController = {
       const userId = req.user.id;
       const { id: articleId } = req.params;
 
-      await articleService.deleteArticle(articleId, userId);
+      // userId를 service에 전달하여 권한 확인
+      const result = await articleService.deleteArticle(articleId, userId);
 
       return res.status(200).json({
+        success: true,
         message: "판매글이 성공적으로 삭제되었습니다.",
+        data: result
       });
     } catch (error) {
       next(error);

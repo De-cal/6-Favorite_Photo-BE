@@ -570,6 +570,16 @@ export async function getExchange() {
   return await exchanges.json();
 }
 
+// UserPhotoCard 삭제
+export const deleteUserPhotoCard = async (cardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  return await client.userPhotoCard.delete({
+    where: { id: cardId }
+  });
+};
+
 export default {
   getById,
   getByIdWithDetails,
@@ -594,4 +604,8 @@ export default {
   updateArticle,
   getActiveExchanges,
   remove,
+  deleteUserPhotoCard,
+  decreaseUserPhotoCardQuantity,
+  increaseUserPhotoCardQuantity,
+  updateUserPhotoCardStatus,
 };

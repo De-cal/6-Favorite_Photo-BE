@@ -122,13 +122,12 @@ async function deleteArticle(articleId) {
       },
     });
 
-    // 5. 품절이면 품절 알림.
-    const message = `[${article.rank} | ${article.title}] 이/가 품절 되었습니다.`;
+    // 5. 교환 제시 대기중 판매 취소 알림.
+    const message = `[${article.rank} | ${article.title}]의 판매가 중단되어 교환이 취소되었습니다.`;
     const requesterUserIds = await articleRepository.getRequesterUserIdsByArticleId(articleId, { 
       tx,
     });
     await notificationRepository.createNotification(message, requesterUserIds, { tx });
-  
 
     return {
       success: true,
@@ -291,12 +290,12 @@ const purchaseArticle = async ({
       }
     }
 
-    // 5. 포토카드 판매자에게 판매 알림.
+    // 9. 포토카드 판매자에게 판매 알림.
     const message = `[${article.rank} | ${article.title}] ${purchaseQuantity}장을 성공적으로 판매했습니다.`;
     await notificationRepository.createNotification(message, [sellerId], { tx });
 
 
-    // 6. 품절이면 품절 알림.
+    // 10. 품절이면 품절 알림.
     if (article.remainingQuantity === purchaseQuantity) {
       const message = `[${article.rank} | ${article.title}] 이/가 품절 되었습니다.`;
       const requesterUserIds = await articleRepository.getRequesterUserIdsByArticleId(articleId, { 

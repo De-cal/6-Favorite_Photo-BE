@@ -98,9 +98,15 @@ async function getByIdWithDetails(id, options = {}) {
             select: {
               id: true,
               price: true,
-              user: { select: { nickname: true } },
+              user: { select: { id: true, nickname: true } },
               photoCard: {
-                select: { title: true, rank: true, genre: true, imgUrl: true },
+                select: {
+                  id: true,
+                  title: true,
+                  rank: true,
+                  genre: true,
+                  imgUrl: true,
+                },
               },
             },
           },
@@ -283,7 +289,7 @@ const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
-  return await prisma.cardArticle.findUnique({
+  return await client.cardArticle.findUnique({
     where: { id: articleId },
     include: {
       userPhotoCard: {
@@ -399,6 +405,20 @@ const increaseSellerPoints = async (sellerId, pointAmount, options = {}) => {
     data: { pointAmount },
   });
 };
+
+// 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
+const deleteExchanges = async (articleId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+
+  return await client.exchange.deleteMany({
+    where: { recipientArticleId: articleId },
+  });
+};
+
+// 포토카드 구매 7. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
+
+// 포토카드 구매 8. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
 
 // 포토카드 교환 요청 유효성 검사 1 - Exchange 존재 여부
 const getExchangeByUniqueConstraint = async (
@@ -564,6 +584,7 @@ export default {
   decreaseCardArticleQuantity,
   decreaseBuyerPoints,
   increaseSellerPoints,
+  deleteExchanges,
   createExchange,
   decreaseQuantity,
   getExchangeByUniqueConstraint,

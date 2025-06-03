@@ -499,6 +499,29 @@ export const increaseUserPhotoCardQuantity = async (
     data: { quantity: { increment: amount } },
   });
 };
+export const decreaseUserPhotoCardQuantity = async (
+  cardId,
+  amount = 1,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity: { decrement: amount } },
+  });
+};
+
+export const updateUserPhotoCardStatus = async (
+  cardId,
+  status,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { status },
+  });
+};
 
 export const updateArticle = async (articleId, data, options = {}) => {
   const { tx } = options;
@@ -596,6 +619,16 @@ export const getRequesterUserIdsByArticleId = async (
   return [...new Set(userIds)];
 };
 
+// UserPhotoCard 삭제
+export const deleteUserPhotoCard = async (cardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  
+  return await client.userPhotoCard.delete({
+    where: { id: cardId }
+  });
+};
+
 export default {
   getById,
   getByIdWithDetails,
@@ -621,4 +654,8 @@ export default {
   remove,
   getExchangeWithPhotocardInfo,
   getRequesterUserIdsByArticleId,
+  deleteUserPhotoCard,
+  decreaseUserPhotoCardQuantity,
+  increaseUserPhotoCardQuantity,
+  updateUserPhotoCardStatus,
 };

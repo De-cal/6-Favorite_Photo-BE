@@ -72,61 +72,91 @@ async function postArticle(data) {
   });
 }
 
-// 아티클 삭제 (판매 내리기)
-async function deleteArticle(articleId) {
+async function deleteArticle(articleId, userId) {
   return await prisma.$transaction(async (tx) => {
-    // 1. 아티클 정보 조회 (userPhotoCardId 필요)
-    const article = await tx.cardArticle.findUnique({
-      where: { id: articleId },
-      select: {
-        userPhotoCardId: true,
-        totalQuantity: true,
-      },
-    });
+    // 1. 아티클 상세 정보 조회 (교환 정보 포함)
+    const article = await articleRepository.getByIdWithDetails(articleId, { tx });
 
     if (!article) {
-      throw new Error("아티클을 찾을 수 없습니다");
+      throw new Error('아티클을 찾을 수 없습니다');
     }
 
-    // 2. 진행 중인 교환이 있는지 확인
-    // repository에서 import한 함수 사용
-    const activeExchanges = await articleRepository.getActiveExchanges(
-      articleId,
-      { tx },
+    // 권한 확인 - 본인의 아티클인지 확인
+    if (article.userPhotoCard.userId !== userId) {
+      throw new Error('삭제 권한이 없습니다');
+    }
+
+    const { userPhotoCard } = article;
+    const { photoCardId, userId: sellerId } = userPhotoCard;
+    const sellingQuantity = article.totalQuantity;
+
+    // 2. 진행 중인 교환이 있는지 확인 (구매 코드의 유효성 검사 4와 동일한 방식)
+    if (article.exchange.length !== 0) {
+      // 교환이 있는 경우 처리 (구매 코드의 포토카드 구매 6, 7, 8과 동일한 로직)
+      
+      // 2-1. 교환 신청 들어온 Exchange 전부 삭제
+      await articleRepository.deleteExchanges(articleId, { tx });
+
+      // 2-2. 각 교환 요청자들의 UserPhotoCard 처리
+      await Promise.all(
+        article.exchange.map(async (ex) => {
+          // 2-3. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
+          const userPhotoCardId = ex.requesterCard.id;
+
+          await cardRepository.remove(userPhotoCardId, { tx });
+
+          // 2-4. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
+          const userId = ex.requesterCard.user.id;
+          const photoCardId = ex.requesterCard.photoCard.id;
+
+          const userPhotoCard = await cardRepository.findByUserAndCard(
+            userId,
+            photoCardId,
+          );
+
+          if (userPhotoCard) {
+            await articleRepository.increaseQuantity(userPhotoCard.id, { tx });
+          }
+        }),
+      );
+    }
+
+    // 3. OWNED 상태의 동일 포토카드 찾기
+    const ownedCard = await articleRepository.getByUserIdAndPhotoCardId(
+      sellerId, 
+      photoCardId, 
+      { tx }
     );
-    if (activeExchanges.length > 0) {
-      throw new Error("진행 중인 교환이 있어 삭제할 수 없습니다");
+
+    // 4. CardArticle 삭제 (외래키 참조 해제)
+    await articleRepository.remove(articleId, { tx });
+
+    if (ownedCard) {
+      // 5-1. OWNED 카드가 이미 있다면 수량 합치기
+      await articleRepository.increaseUserPhotoCardQuantity(
+        ownedCard.id, 
+        sellingQuantity, 
+        { tx }
+      );
+      
+      // 5-2. SELLING 상태의 userPhotoCard 삭제
+      await articleRepository.deleteUserPhotoCard(userPhotoCard.id, { tx });
+    } else {
+      // 5-3. OWNED 카드가 없다면 기존 카드를 OWNED로 변경하고 수량 복원
+      await articleRepository.updateUserPhotoCardStatus(
+        userPhotoCard.id, 
+        'OWNED', 
+        { tx }
+      );
+      await articleRepository.increaseUserPhotoCardQuantity(
+        userPhotoCard.id, 
+        sellingQuantity, 
+        { tx }
+      );
     }
-
-    // 3. 먼저 CardArticle 삭제
-    await tx.cardArticle.delete({
-      where: { id: articleId },
-    });
-
-    // 4. UserPhotoCard 수량 복원 (삭제하지 않고 수량만 증가)
-    await tx.userPhotoCard.update({
-      where: { id: article.userPhotoCardId },
-      data: {
-        quantity: {
-          increment: article.totalQuantity,
-        },
-        status: "OWNED", // 상태를 OWNED로 복원
-      },
-    });
-
-    // 5. 교환 제시 대기중 판매 취소 알림.
-    const message = `[${article.rank} | ${article.title}]의 판매가 중단되어 교환이 취소되었습니다.`;
-    const requesterUserIds =
-      await articleRepository.getRequesterUserIdsByArticleId(articleId, {
-        tx,
-      });
-    await notificationRepository.createNotification(message, requesterUserIds, {
-      tx,
-    });
-
     return {
       success: true,
-      message: "아티클이 성공적으로 삭제되었습니다",
+      message: '아티클이 성공적으로 삭제되었습니다',
     };
   });
 }

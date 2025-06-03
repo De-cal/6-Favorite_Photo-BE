@@ -5,6 +5,12 @@ import errorHandler from "./middlewares/errorHandler.js";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// ESM 환경에서 __dirname 정의
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 5050;
 
@@ -27,7 +33,8 @@ app.use(cookieParser());
 import "./config/passport.js";
 app.use(passport.initialize());
 
-app.use("/images", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 // 3. routes 등록
 app.use(router);
@@ -38,4 +45,5 @@ app.use(errorHandler);
 // 5. 서버 연결
 app.listen(PORT, () => {
   console.log(`Server Started ${PORT}`);
+  console.log(`Uploads directory: ${path.join(__dirname, "uploads")}`);
 });

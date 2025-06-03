@@ -48,7 +48,12 @@ async function main() {
   await prisma.cardArticle.deleteMany();
   await prisma.userPhotoCard.deleteMany();
   await prisma.photoCard.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.userNotification.deleteMany(); // ✅ 먼저 관계 테이블 제거
+  await prisma.notification.deleteMany(); //
+  await prisma.exchange.deleteMany(); //
+  await prisma.user.deleteMany(); // ✅ 이후 user 삭제
+
+  // 이후 시드 데이터 생성...
 
   console.log("👤 Creating users...");
   const createdUsers = [];

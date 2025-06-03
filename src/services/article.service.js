@@ -1,11 +1,7 @@
 import prisma from "../db/prisma/prisma.js";
-import articleRepository, {
-  updateArticle,
-} from "../repositories/article.repository.js";
 import cardRepository, {
   createUserPhotocard,
   findByUserAndCard,
-  updateQuantity,
   updateStatus,
 } from "../repositories/card.repository.js";
 import authRepository from "../repositories/auth.repository.js";
@@ -347,6 +343,16 @@ const cancelExchange = async ({ userId, exchangeId }) => {
       const error = new Error("이미 교환 요청이 취소되었습니다.");
       error.code = 404;
 
+      throw error;
+    }
+
+    //유효성 검사 2: 작성자 또는 요청자 인지 확인
+    if (
+      userId !== exchange.requesterUser.id &&
+      userId !== exchange.recipientArticle.userPhotocard.userId
+    ) {
+      const error = new Error("해당 교환 요청에 대한 권한이 없습니다.");
+      error.code = 403;
       throw error;
     }
 

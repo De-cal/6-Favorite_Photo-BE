@@ -331,14 +331,6 @@ const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
   });
 };
 
-async function getByCard(cardId, options = {}) {
-  const { tx } = options;
-  const client = tx || prisma;
-  return await client.cardArticle.findFirst({
-    where: { userPhotoCardId: cardId },
-  });
-}
-
 async function create(data, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -546,7 +538,6 @@ export default {
   getByIdWithRelations,
   getByUserIdAndPhotoCardId,
   getSellingCardsAll,
-  getByCard,
   create,
   findMyCardArticles,
   updateUserPhotoCard,

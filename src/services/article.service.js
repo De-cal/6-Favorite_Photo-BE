@@ -2,6 +2,7 @@ import prisma from "../db/prisma/prisma.js";
 import articleRepository from "../repositories/article.repository.js";
 import cardRepository from "../repositories/card.repository.js";
 import authRepository from "../repositories/auth.repository.js";
+import notificationRepository from "../repositories/notification.repository.js";
 
 // 포토카드 판매자 상세 불러오기
 async function getByIdWithDetails(id) {
@@ -120,6 +121,13 @@ async function deleteArticle(articleId) {
         status: "OWNED", // 상태를 OWNED로 복원
       },
     });
+
+    // 5. 교환 제시 대기중 판매 취소 알림.
+    const message = `[${article.rank} | ${article.title}]의 판매가 중단되어 교환이 취소되었습니다.`;
+    const requesterUserIds = await articleRepository.getRequesterUserIdsByArticleId(articleId, { 
+      tx,
+    });
+    await notificationRepository.createNotification(message, requesterUserIds, { tx });
 
     return {
       success: true,
@@ -251,10 +259,23 @@ const purchaseArticle = async ({
       tx,
     });
 
+    // 9. 포토카드 판매자에게 판매 알림.
+    const message = `${buyer.nickname}님이 [${article.rank} | ${article.title}]을 ${purchaseQuantity}장 구매했습니다.`;
+    await notificationRepository.createNotification(message, [sellerId], { tx });
+
+
     // 포토카드 구매 5. 만약 구매 수량과 CardArticle의 잔여 수량이 같을 경우(품절)
     if (article.remainingQuantity === purchaseQuantity) {
       // 유효성 검사 4 : Exchange 존재 여부
       const article = await articleRepository.getByIdWithDetails(articleId);
+
+      
+      // 10. 판매자 품절 알림 메시지.
+      const soldOutSellerMessage = `[${article.photoCard.rank} | ${article.photoCard.title}] 이/가 품절 되었습니다.`;
+      // 10. 판매자 품절 알림.
+      await notificationRepository.createNotification(soldOutSellerMessage, [sellerId], { tx });
+      // 11. 교환 요청자 품절 알림 메시지.
+      const soldOutMessage = `${recipientNickname} 님의 [${article.photoCard.rank} | ${article.photoCard.title}] 이/가 품절 되어 교환이 불발되었습니다.`;
 
       if (article.exchange.length !== 0) {
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
@@ -267,6 +288,9 @@ const purchaseArticle = async ({
 
             await cardRepository.remove(userPhotoCardId, { tx });
 
+            // 11. 교환 요청자 품절 알림.
+            await notificationRepository.createNotification(soldOutMessage, [ex.requesterCard.user.id], { tx });
+          
             // 포토카드 구매 8. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
             const userId = ex.requesterCard.user.id;
             const photoCardId = ex.requesterCard.photoCard.id;
@@ -338,6 +362,13 @@ const exchangeArticle = async ({
 
     const newExchange = await articleRepository.createExchange(data, { tx });
 
+    // 4. 포토카드 판매자에게 교환 제안 알림.
+    const photoCard = await cardRepository.getPhotocardById(photoCardId);
+    const requester = await authRepository.findById(requesterUserId)
+
+    const message = `${requester.nickname} 님이 [${photoCard.rank} | ${photoCard.title}]의 포토카드 교환을 제안했습니다.`;
+    await notificationRepository.createNotification(message, [userPhotoCard.userId], { tx });
+
     return newExchange;
   });
 };
@@ -380,13 +411,28 @@ export const putExchangeCard = async (articleId, exchangeId, approve) => {
       tx,
     });
     if (!exchange) throw new Error("존재하지 않는 교환 요청입니다.");
+
+
+    // 알림 메시지에 필요한 데이터.
+    let notificationMessage = ""
+    const notificationData = articleRepository.getExchangeWithPhotocardInfo(exchangeId, { tx });
+    const {
+      recipientArticle: {
+        userPhotoCard: {
+          photoCard: { title, rank },
+          user: { nickname: recipientNickname, id: recipientId },
+        },
+      },
+    } = notificationData;
+
     // 요청자 카드 수량 감소, 요청자 카드 상태 변경, 수신자 카드 상태 변경, 교환 요청 삭제
     if (approve) {
-      await articleRepository.decreaseUserPhotoCardQuantity(
+      const { remainingQuantity } = await articleRepository.decreaseUserPhotoCardQuantity(
         exchange.requesterCardId,
         1,
         { tx },
       );
+
       await articleRepository.updateUserPhotoCardStatus(
         exchange.requesterCardId,
         "SOLDOUT",
@@ -398,9 +444,37 @@ export const putExchangeCard = async (articleId, exchangeId, approve) => {
         { tx },
       );
       await articleRepository.deleteExchange(exchangeId, { tx });
+
+      // 교환 성사 알림 메시지.
+      notificationMessage = `${recipientNickname} 님과의 [${rank} | ${title}] 포토카드 교환이 성사되었습니다.`;
+      await notificationRepository.createNotification(notificationMessage, [exchange.requesterUserId]);
+
+      // 품절이면 품절 알림.
+      if (remainingQuantity === 0) {
+        // 교환 요청자 품절 알림 메시지.
+        const message = `${recipientNickname} 님의 [${rank} | ${title}] 이/가 품절 되어 교환이 불발되었습니다.`;
+        const requesterUserIds = await articleRepository.getRequesterUserIdsByArticleId(articleId, { 
+          tx,
+          excludeUserId: exchange.requesterUserId,
+          includeUserId: recipientId,
+        });
+        // 교환 요청자 품절 알림.
+        await notificationRepository.createNotification(message, requesterUserIds, { tx });
+
+        // 판매자 품절 알림 메시지.
+        const sellerMessage = `[${rank} | ${title}] 이/가 품절 되었습니다.`;
+        // 판매자 품절 알림.
+        await notificationRepository.createNotification(sellerMessage, [recipientId], { tx });
+      }
+
     } else {
       await articleRepository.deleteExchange(exchangeId, { tx });
+
+      // 교환 불발 알림 메시지.
+      notificationMessage = `${recipientNickname} 님과의 [${rank} | ${title}] 포토카드 교환이 불발되었습니다.`;
+      await notificationRepository.createNotification(notificationMessage, [exchange.requesterUserId]);
     }
+    
     return {
       message: approve ? "교환이 승인되었습니다." : "교환이 거절되었습니다.",
     };

@@ -570,6 +570,55 @@ export async function getExchange() {
   return await exchanges.json();
 }
 
+export const getExchangeWithPhotocardInfo = async (exchangeId, options = {}) => {
+  const client = options.tx || prisma;
+
+  return await client.exchange.findUnique({
+    where: { id: exchangeId },
+    include: {
+      recipientArticle: {
+        include: {
+          userPhotoCard: {
+            include: {
+              photoCard: true,
+              user: true, // 판매자
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+export const getRequesterUserIdsByArticleId = async (
+  articleId,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  const { excludeUserId, includeUserId } = options;
+
+  const exchanges = await client.exchange.findMany({
+    where: { recipientArticleId: articleId },
+    select: { requesterUserId: true },
+  });
+
+  let userIds = exchanges.map((e) => e.requesterUserId);
+
+  // 교환, 거래한 사람 제외.
+  if (excludeUserId) {
+    userIds = userIds.filter((id) => id !== excludeUserId);
+  }
+
+  // 판매자 추가.
+  if (includeUserId) {
+    userIds.push(includeUserId);
+  }
+
+  // 같은 사람이 교환요청 또 안되게 해놨지만. 혹시 모르니니 중복 제거.
+  return [...new Set(userIds)];
+};
+
+
 export default {
   getById,
   getByIdWithDetails,
@@ -594,4 +643,6 @@ export default {
   updateArticle,
   getActiveExchanges,
   remove,
+  getExchangeWithPhotocardInfo,
+  getRequesterUserIdsByArticleId,
 };

@@ -184,6 +184,57 @@ async function create(data, options = {}) {
   });
 }
 
+// ✅ 새로운 함수: 카드 생성 + 사용자 createCount 업데이트
+async function createWithUserUpdate(data) {
+  const {
+    title,
+    rank,
+    genre,
+    description,
+    price,
+    totalQuantity,
+    creatorId,
+    imgUrl,
+  } = data;
+
+  return await prisma.$transaction(async (tx) => {
+    // 1. 포토카드 생성
+    const photoCard = await tx.photoCard.create({
+      data: {
+        title,
+        rank,
+        genre,
+        description,
+        price,
+        imgUrl,
+        creatorId,
+      },
+    });
+
+    // 2. 유저포토카드 생성
+    const userPhotoCard = await tx.userPhotoCard.create({
+      data: {
+        userId: creatorId,
+        photoCardId: photoCard.id,
+        price,
+        quantity: totalQuantity,
+        status: 'OWNED'
+      },
+    });
+
+    // 3. 사용자 createCount 차감
+    await tx.user.update({
+      where: { id: creatorId },
+      data: { createCount: { decrement: 1 } }
+    });
+
+    return {
+      photoCard,
+      userPhotoCard,
+    };
+  });
+}
+
 async function remove(id, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -219,6 +270,7 @@ export default {
   decreaseCard,
   increaseCard,
   create,
+  createWithUserUpdate,
   findMyGallerySellingCards,
   remove,
   findByUserAndCard,

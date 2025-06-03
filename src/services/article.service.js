@@ -81,7 +81,7 @@ async function postArticle(data) {
 
 async function deleteArticle(articleId, userId) {
   return await prisma.$transaction(async (tx) => {
-    // 1. 아티클 상세 정보 조회 (userPhotoCard 포함)
+    // 1. 아티클 상세 정보 조회 (교환 정보 포함)
     const article = await articleRepository.getByIdWithDetails(articleId, { tx });
 
     if (!article) {
@@ -93,15 +93,40 @@ async function deleteArticle(articleId, userId) {
       throw new Error('삭제 권한이 없습니다');
     }
 
-    // 2. 진행 중인 교환 확인
-    const activeExchanges = await articleRepository.getActiveExchanges(articleId, { tx });
-    if (activeExchanges.length > 0) {
-      throw new Error('진행 중인 교환이 있어 삭제할 수 없습니다');
-    }
-
     const { userPhotoCard } = article;
     const { photoCardId, userId: sellerId } = userPhotoCard;
     const sellingQuantity = article.totalQuantity;
+
+    // 2. 진행 중인 교환이 있는지 확인 (구매 코드의 유효성 검사 4와 동일한 방식)
+    if (article.exchange.length !== 0) {
+      // 교환이 있는 경우 처리 (구매 코드의 포토카드 구매 6, 7, 8과 동일한 로직)
+      
+      // 2-1. 교환 신청 들어온 Exchange 전부 삭제
+      await articleRepository.deleteExchanges(articleId, { tx });
+
+      // 2-2. 각 교환 요청자들의 UserPhotoCard 처리
+      await Promise.all(
+        article.exchange.map(async (ex) => {
+          // 2-3. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
+          const userPhotoCardId = ex.requesterCard.id;
+
+          await cardRepository.remove(userPhotoCardId, { tx });
+
+          // 2-4. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
+          const userId = ex.requesterCard.user.id;
+          const photoCardId = ex.requesterCard.photoCard.id;
+
+          const userPhotoCard = await cardRepository.findByUserAndCard(
+            userId,
+            photoCardId,
+          );
+
+          if (userPhotoCard) {
+            await articleRepository.increaseQuantity(userPhotoCard.id, { tx });
+          }
+        }),
+      );
+    }
 
     // 3. OWNED 상태의 동일 포토카드 찾기
     const ownedCard = await articleRepository.getByUserIdAndPhotoCardId(
@@ -110,7 +135,7 @@ async function deleteArticle(articleId, userId) {
       { tx }
     );
 
-    // 4. 먼저 CardArticle 삭제 (외래키 참조 해제)
+    // 4. CardArticle 삭제 (외래키 참조 해제)
     await articleRepository.remove(articleId, { tx });
 
     if (ownedCard) {
@@ -121,7 +146,7 @@ async function deleteArticle(articleId, userId) {
         { tx }
       );
       
-      // 5-2. SELLING 상태의 userPhotoCard 삭제 (이제 외래키 참조가 없으므로 안전)
+      // 5-2. SELLING 상태의 userPhotoCard 삭제
       await articleRepository.deleteUserPhotoCard(userPhotoCard.id, { tx });
     } else {
       // 5-3. OWNED 카드가 없다면 기존 카드를 OWNED로 변경하고 수량 복원

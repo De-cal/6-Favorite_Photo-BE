@@ -4,7 +4,7 @@ import notificationRouter from "./notification.route.js";
 import cardRouter from "./card.route.js";
 import articleRouter from "./article.route.js";
 import authRouter from "./auth.route.js";
-import uploadRouter from "./upload.js";
+import uploadRouter from "./upload.route.js";
 
 const router = express.Router();
 

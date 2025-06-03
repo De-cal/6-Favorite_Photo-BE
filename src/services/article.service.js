@@ -342,7 +342,7 @@ const exchangeArticle = async ({
   });
 };
 
-// 포토카드 교환 요청 취소
+// 포토카드 교환 요청 취소 & 거절
 const cancelExchange = async ({ userId, exchangeId }) => {
   return await prisma.$transaction(async (tx) => {
     // 유효성 검사 1 : Exchange 존재 여부
@@ -355,13 +355,13 @@ const cancelExchange = async ({ userId, exchangeId }) => {
       throw error;
     }
 
-    // 포토카드 교환 요청 취소 1 - Exchange 삭제
+    // 포토카드 교환 요청 취소 & 거절 1 - Exchange 삭제
     await articleRepository.deleteExchange(exchangeId, { tx });
 
-    // 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 삭제
+    // 포토카드 교환 요청 취소 & 거절 2 - requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 삭제
     await cardRepository.remove(exchange.requesterCardId, { tx });
 
-    // 포토카드 교환 요청 취소 3 - requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 수량 1개 증가
+    // 포토카드 교환 요청 취소 & 거절 3 - requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 수량 1개 증가
     const { photoCardId } = exchange.requesterCard;
 
     const userPhotoCard = await cardRepository.findByUserAndCard(

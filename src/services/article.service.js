@@ -383,7 +383,10 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
     const { requesterCardId, recipientArticleId, requesterUserId } = exchange;
 
     //유효성 검사 2: 작성자인지 확인
-    const article = await articleRepository.getById(recipientArticleId, { tx });
+    const article = await articleRepository.getByIdWithDetails(
+      recipientArticleId,
+      { tx },
+    );
     if (userId !== article.userPhotoCard.userId) {
       const error = new Error("게시글의 작성자가 아닙니다.");
       error.code = 403;
@@ -440,18 +443,13 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
     if (article.remainingQuantity === 1) {
       await updateStatus(article.userPhotoCardId, "SOLDOUT", { tx });
       // 유효성 검사 4 : Exchange 존재 여부
-      const updated_article = await articleRepository.getByIdWithDetails(
-        article.id,
-      );
-      const exchanges = [...updated_article.exchange];
-
-      if (exchanges.length !== 0) {
+      if (article.exchange.length > 1) {
+        console.log(article.exchange);
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
-        await articleRepository.deleteExchanges(updated_article.id, { tx });
-        console.log(exchanges);
+        await articleRepository.deleteExchanges(article.id, { tx });
 
         await Promise.all(
-          exchanges.map(async (ex) => {
+          article.exchange.map(async (ex) => {
             // 포토카드 구매 7. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
             const userPhotoCardId = ex.requesterCard.id;
             const exchangeCard = await cardRepository.getById(userPhotoCardId, {
@@ -459,19 +457,20 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
             });
             if (exchangeCard) {
               await cardRepository.remove(userPhotoCardId, { tx });
+              // 포토카드 구매 8. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
+              const userId = ex.requesterCard.user.id;
+              const photoCardId = ex.requesterCard.photoCard.id;
+
+              const userPhotoCard = await cardRepository.findByUserAndCard(
+                userId,
+                photoCardId,
+                { tx },
+              );
+
+              await articleRepository.increaseQuantity(userPhotoCard.id, {
+                tx,
+              });
             }
-
-            // 포토카드 구매 8. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
-            const userId = ex.requesterCard.user.id;
-            const photoCardId = ex.requesterCard.photoCard.id;
-
-            const userPhotoCard = await cardRepository.findByUserAndCard(
-              userId,
-              photoCardId,
-              { tx },
-            );
-
-            await articleRepository.increaseQuantity(userPhotoCard.id, { tx });
           }),
         );
       }

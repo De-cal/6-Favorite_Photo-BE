@@ -18,8 +18,8 @@ const create = async ({ email, nickname, password }) => {
       email,
       nickname,
       password,
-      pointAmount: 0,
-      createCount: 0,
+      pointAmount: 100,
+      createCount: 3,
     },
   });
 };

@@ -264,6 +264,21 @@ export const createUserPhotocard = async (data, options = {}) => {
   return await client.userPhotoCard.create({ data });
 };
 
+export const updateStatus = async (cardId, status, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { status },
+  });
+};
+
+export const getPhotocardById = async (cardId, options = {}) => {
+  const { tx } = options;
+  const client = tx || prisma;
+  return await client.photoCard.findUnique({ where: { id: cardId } });
+};
+
 export default {
   getById,
   getByUser,
@@ -276,4 +291,5 @@ export default {
   findByUserAndCard,
   updateQuantity,
   createUserPhotocard,
+  getPhotocardById,
 };

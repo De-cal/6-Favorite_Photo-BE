@@ -16,14 +16,14 @@ export const validateAccessToken = async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       const user = await authRepository.findById(decoded.userId);
-
       if (!user) {
         return res.status(401).json({
           success: false,
           message: "사용자를 찾지 못했습니다.",
         });
       }
-      req.user = user; // req.user로 컨트롤러에서 접근 가능
+      const { password, ...safeUser } = user;
+      req.user = safeUser; // req.user로 컨트롤러에서 접근 가능
       next();
     } catch (error) {
       let message = "유효하지 않은 엑세스 토큰입니다";

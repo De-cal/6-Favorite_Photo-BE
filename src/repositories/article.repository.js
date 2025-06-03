@@ -331,14 +331,6 @@ const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
   });
 };
 
-async function getByCard(cardId, options = {}) {
-  const { tx } = options;
-  const client = tx || prisma;
-  return await client.cardArticle.findFirst({
-    where: { userPhotoCardId: cardId },
-  });
-}
-
 async function create(data, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -465,11 +457,19 @@ const getExchangeById = async (exchangeId, options = {}) => {
 
   return await client.exchange.findUnique({
     where: { id: exchangeId },
-    include: { requesterCard: true },
+    include: {
+      requesterUser: true,
+      recipientArticle: {
+        include: {
+          userPhotoCard: true,
+        },
+      },
+      requesterCard: true,
+    },
   });
 };
 
-// 포토카드 교환 요청 취소 1 - Exchange 삭제
+// 포토카드 교환 요청 취소 & 거절 1 - Exchange 삭제
 const deleteExchange = async (exchangeId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
@@ -477,7 +477,7 @@ const deleteExchange = async (exchangeId, options = {}) => {
   return await client.exchange.delete({ where: { id: exchangeId } });
 };
 
-// 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 수량 1개 증가
+// 포토카드 교환 요청 취소 & 거절 2 - requester의 UserPhotoCard에서 수량 1개 증가
 const increaseQuantity = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
@@ -485,19 +485,6 @@ const increaseQuantity = async (id, options = {}) => {
   return await client.userPhotoCard.update({
     where: { id, status: "OWNED" },
     data: { quantity: { increment: 1 } },
-  });
-};
-
-//포토카드 승인, 거절
-export const decreaseUserPhotoCardQuantity = async (
-  cardId,
-  amount = 1,
-  options = {},
-) => {
-  const client = options.tx || prisma;
-  return await client.userPhotoCard.update({
-    where: { id: cardId },
-    data: { quantity: { decrement: amount } },
   });
 };
 
@@ -510,6 +497,17 @@ export const increaseUserPhotoCardQuantity = async (
   return await client.userPhotoCard.update({
     where: { id: cardId },
     data: { quantity: { increment: amount } },
+  });
+};
+export const decreaseUserPhotoCardQuantity = async (
+  cardId,
+  amount = 1,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  return await client.userPhotoCard.update({
+    where: { id: cardId },
+    data: { quantity: { decrement: amount } },
   });
 };
 
@@ -570,6 +568,57 @@ export async function getExchange() {
   return await exchanges.json();
 }
 
+export const getExchangeWithPhotocardInfo = async (
+  exchangeId,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+
+  return await client.exchange.findUnique({
+    where: { id: exchangeId },
+    include: {
+      recipientArticle: {
+        include: {
+          userPhotoCard: {
+            include: {
+              photoCard: true,
+              user: true, // 판매자
+            },
+          },
+        },
+      },
+    },
+  });
+};
+
+export const getRequesterUserIdsByArticleId = async (
+  articleId,
+  options = {},
+) => {
+  const client = options.tx || prisma;
+  const { excludeUserId, includeUserId } = options;
+
+  const exchanges = await client.exchange.findMany({
+    where: { recipientArticleId: articleId },
+    select: { requesterUserId: true },
+  });
+
+  let userIds = exchanges.map((e) => e.requesterUserId);
+
+  // 교환, 거래한 사람 제외.
+  if (excludeUserId) {
+    userIds = userIds.filter((id) => id !== excludeUserId);
+  }
+
+  // 판매자 추가.
+  if (includeUserId) {
+    userIds.push(includeUserId);
+  }
+
+  // 같은 사람이 교환요청 또 안되게 해놨지만. 혹시 모르니니 중복 제거.
+  return [...new Set(userIds)];
+};
+
 // UserPhotoCard 삭제
 export const deleteUserPhotoCard = async (cardId, options = {}) => {
   const { tx } = options;
@@ -586,7 +635,6 @@ export default {
   getByIdWithRelations,
   getByUserIdAndPhotoCardId,
   getSellingCardsAll,
-  getByCard,
   create,
   findMyCardArticles,
   updateUserPhotoCard,
@@ -604,6 +652,8 @@ export default {
   updateArticle,
   getActiveExchanges,
   remove,
+  getExchangeWithPhotocardInfo,
+  getRequesterUserIdsByArticleId,
   deleteUserPhotoCard,
   decreaseUserPhotoCardQuantity,
   increaseUserPhotoCardQuantity,

@@ -62,12 +62,12 @@ const readAllNotificationsByUserId = async (userId) => {
     },
   });
 };
-  
-const createNotification = async (message, userIds) => {
-  const newNotification = await prisma.notification.create({
-    data: {
-      message,
-    },
+
+export const createNotification = async (message, userIds, options = {}) => {
+  const client = options.tx || prisma;
+
+  const newNotification = await client.notification.create({
+    data: { message },
   });
 
   const userNotificationData = userIds.map((userId) => ({
@@ -75,12 +75,11 @@ const createNotification = async (message, userIds) => {
     notificationId: newNotification.id,
   }));
 
-  await prisma.userNotification.createMany({
+  await client.userNotification.createMany({
     data: userNotificationData,
   });
 
   return newNotification;
 };
-
 
 export default { getNotificationsByUserId, getUnReadCountByUserId, readNotificationByUserId, readAllNotificationsByUserId, createNotification };

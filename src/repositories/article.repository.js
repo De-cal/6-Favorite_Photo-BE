@@ -331,14 +331,6 @@ const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
   });
 };
 
-async function getByCard(cardId, options = {}) {
-  const { tx } = options;
-  const client = tx || prisma;
-  return await client.cardArticle.findFirst({
-    where: { userPhotoCardId: cardId },
-  });
-}
-
 async function create(data, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
@@ -465,7 +457,15 @@ const getExchangeById = async (exchangeId, options = {}) => {
 
   return await client.exchange.findUnique({
     where: { id: exchangeId },
-    include: { requesterCard: true },
+    include: {
+      requesterUser: true,
+      recipientArticle: {
+        include: {
+          userPhotoCard: true,
+        },
+      },
+      requesterCard: true,
+    },
   });
 };
 
@@ -488,19 +488,6 @@ const increaseQuantity = async (id, options = {}) => {
   });
 };
 
-//포토카드 승인, 거절
-export const decreaseUserPhotoCardQuantity = async (
-  cardId,
-  amount = 1,
-  options = {},
-) => {
-  const client = options.tx || prisma;
-  return await client.userPhotoCard.update({
-    where: { id: cardId },
-    data: { quantity: { decrement: amount } },
-  });
-};
-
 export const increaseUserPhotoCardQuantity = async (
   cardId,
   amount = 1,
@@ -510,18 +497,6 @@ export const increaseUserPhotoCardQuantity = async (
   return await client.userPhotoCard.update({
     where: { id: cardId },
     data: { quantity: { increment: amount } },
-  });
-};
-
-export const updateUserPhotoCardStatus = async (
-  cardId,
-  status,
-  options = {},
-) => {
-  const client = options.tx || prisma;
-  return await client.userPhotoCard.update({
-    where: { id: cardId },
-    data: { status },
   });
 };
 
@@ -570,7 +545,10 @@ export async function getExchange() {
   return await exchanges.json();
 }
 
-export const getExchangeWithPhotocardInfo = async (exchangeId, options = {}) => {
+export const getExchangeWithPhotocardInfo = async (
+  exchangeId,
+  options = {},
+) => {
   const client = options.tx || prisma;
 
   return await client.exchange.findUnique({
@@ -618,14 +596,12 @@ export const getRequesterUserIdsByArticleId = async (
   return [...new Set(userIds)];
 };
 
-
 export default {
   getById,
   getByIdWithDetails,
   getByIdWithRelations,
   getByUserIdAndPhotoCardId,
   getSellingCardsAll,
-  getByCard,
   create,
   findMyCardArticles,
   updateUserPhotoCard,

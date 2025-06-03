@@ -63,9 +63,10 @@ articleRouter.get(
   articleController.getByIdWithRelations,
 );
 
-// 포토카드 교환 승인, 거절
+// 포토카드 교환 승인
 articleRouter.put(
   "/:id/exchange/:exchangeId",
+  validateAccessToken,
   articleController.putExchangeCard,
 );
 

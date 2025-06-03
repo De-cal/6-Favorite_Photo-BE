@@ -1,5 +1,7 @@
 import prisma from "../db/prisma/prisma.js";
-import articleRepository from "../repositories/article.repository.js";
+import articleRepository, {
+  updateArticle,
+} from "../repositories/article.repository.js";
 import cardRepository, {
   createUserPhotocard,
   findByUserAndCard,
@@ -326,12 +328,7 @@ const cancelExchange = async ({ exchangeId, requesterCardId }) => {
 };
 
 //포토카드 승인
-export const putExchangeCard = async ({
-  userId,
-  articleId,
-  exchangeId,
-  isApproved,
-}) => {
+export const putExchangeCard = async ({ userId, articleId, exchangeId }) => {
   return await prisma.$transaction(async (tx) => {
     //유효성 검사 1: 작성자인지 확인
     const article = await articleRepository.getById(articleId, { tx });
@@ -382,8 +379,8 @@ export const putExchangeCard = async ({
       );
     }
 
-    //요청자의 카드 수량 감소
-    await cardRepository.remove(exchange.requesterCardId);
+    //요청자의 exchange requested userPhotocard 삭제
+    await cardRepository.remove(exchange.requesterCardId, { tx });
 
     //article의 quantity 1 감소
     await articleRepository.decreaseCardArticleQuantity(
@@ -394,13 +391,14 @@ export const putExchangeCard = async ({
     //userPhotocard quantity 1 감소
     await articleRepository.decreaseQuantity(article.userPhotoCardId);
     //userPhotocard 0인 경우 soldout으로 변경
-
-    //요청자의 exchange requested userPhotocard 삭제
+    if (article.remainingQuantity === 1) {
+      await updateArticle(article.id, { status: "SOLDOUT" }, { tx });
+    }
 
     //교환 요청 삭제
     await articleRepository.deleteExchange(exchangeId, { tx });
     return {
-      message: approve ? "교환이 승인되었습니다." : "교환이 거절되었습니다.",
+      message: "교환이 승인되었습니다.",
     };
   });
 };

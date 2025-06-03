@@ -167,18 +167,14 @@ const articleController = {
     }
   },
 
-  // 포토카드 승인, 거절
+  // 포토카드 승인
   putExchangeCard: async (req, res, next) => {
     try {
       const userId = req.user.id;
-      const { id: articleId, exchangeId } = req.params;
-      const { isApproved } = req.body; // true: 승인, false: 거절
-
+      const { exchangeId } = req.params;
       const result = await articleService.putExchangeCard({
         userId,
-        articleId,
         exchangeId,
-        isApproved,
       });
 
       res.status(200).json(result);

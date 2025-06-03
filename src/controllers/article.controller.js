@@ -170,7 +170,7 @@ const articleController = {
     }
   },
 
-  // 포토카드 교환 요청 취소
+  // 포토카드 교환 요청 취소 & 거절
   cancelExchange: async (req, res, next) => {
     try {
       const userId = req.user.id;

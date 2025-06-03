@@ -461,7 +461,7 @@ const getExchangeById = async (exchangeId, options = {}) => {
   });
 };
 
-// 포토카드 교환 요청 취소 1 - Exchange 삭제
+// 포토카드 교환 요청 취소 & 거절 1 - Exchange 삭제
 const deleteExchange = async (exchangeId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
@@ -469,7 +469,7 @@ const deleteExchange = async (exchangeId, options = {}) => {
   return await client.exchange.delete({ where: { id: exchangeId } });
 };
 
-// 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 수량 1개 증가
+// 포토카드 교환 요청 취소 & 거절 2 - requester의 UserPhotoCard에서 수량 1개 증가
 const increaseQuantity = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;

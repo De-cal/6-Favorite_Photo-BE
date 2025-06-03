@@ -49,7 +49,7 @@ articleRouter.post(
   articleController.exchangeArticle,
 );
 
-// 포토카드 교환 요청 취소
+// 포토카드 교환 요청 취소 & 거절
 articleRouter.delete(
   "/:id/exchange/:exchangeId",
   validateAccessToken,

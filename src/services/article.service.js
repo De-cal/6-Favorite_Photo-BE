@@ -178,7 +178,7 @@ const purchaseArticle = async ({
   purchaseQuantity,
   totalPrice,
 }) => {
-  // 유효성 검사 1 : 보유 포토카드 부족
+  // 유효성 검사 1 : 포토카드 잔여 수량 여부
   const article = await articleRepository.getByIdWithRelations(
     articleId,
     buyerId,
@@ -191,7 +191,7 @@ const purchaseArticle = async ({
     throw error;
   }
 
-  // 유효성 검사 2 : 구매자 포인트 부족
+  // 유효성 검사 2 : 구매자 포인트 여부
   const buyer = await authRepository.findById(buyerId);
 
   if (buyer.pointAmount < totalPrice) {
@@ -210,7 +210,7 @@ const purchaseArticle = async ({
   return await prisma.$transaction(async (tx) => {
     let newArticle, updatedArticle;
 
-    // 1-1. 이미 UserPhotoCard를 보유 중이라면 업데이트
+    // 포토카드 구매 1-1. 이미 UserPhotoCard를 보유 중이라면 업데이트
     if (userPhotoCard) {
       const quantity = userPhotoCard.quantity + purchaseQuantity;
       const price = totalPrice / purchaseQuantity;
@@ -222,7 +222,7 @@ const purchaseArticle = async ({
         { tx },
       );
     } else {
-      // 1-2. 보유 중이지 않는다면 새로운 UserPhotoCard 생성
+      // 포토카드 구매 1-2. 보유 중이지 않는다면 새로운 UserPhotoCard 생성
       const data = {
         userId: buyerId,
         photoCardId: article.userPhotoCard.photoCardId,
@@ -235,7 +235,7 @@ const purchaseArticle = async ({
       });
     }
 
-    // 2. CardArticle에서 수량 감소
+    // 포토카드 구매 2. CardArticle에서 수량 감소
     const remainingQuantity = article.remainingQuantity - purchaseQuantity;
 
     await articleRepository.decreaseCardArticleQuantity(
@@ -244,14 +244,14 @@ const purchaseArticle = async ({
       { tx },
     );
 
-    // 3. 구매자 Point 차감
+    // 포토카드 구매 3. 구매자 Point 차감
     const buyerPointAmount = buyer.pointAmount - totalPrice;
 
     await articleRepository.decreaseBuyerPoints(buyerId, buyerPointAmount, {
       tx,
     });
 
-    // 4. 판매자 Point 증가
+    // 포토카드 구매 4. 판매자 Point 증가
     const sellerId = article.userPhotoCard.userId;
     const sellerPointAmount =
       article.userPhotoCard.user.pointAmount + totalPrice;
@@ -259,6 +259,37 @@ const purchaseArticle = async ({
     await articleRepository.increaseSellerPoints(sellerId, sellerPointAmount, {
       tx,
     });
+
+    // 포토카드 구매 5. 만약 구매 수량과 CardArticle의 잔여 수량이 같을 경우(품절)
+    if (article.remainingQuantity === purchaseQuantity) {
+      // 유효성 검사 4 : Exchange 존재 여부
+      const article = await articleRepository.getByIdWithDetails(articleId);
+
+      if (article.exchange.length !== 0) {
+        // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
+        await articleRepository.deleteExchanges(articleId, { tx });
+
+        await Promise.all(
+          article.exchange.map(async (ex) => {
+            // 포토카드 구매 7. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
+            const userPhotoCardId = ex.requesterCard.id;
+
+            await cardRepository.remove(userPhotoCardId, { tx });
+
+            // 포토카드 구매 8. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
+            const userId = ex.requesterCard.user.id;
+            const photoCardId = ex.requesterCard.photoCard.id;
+
+            const userPhotoCard = await cardRepository.findByUserAndCard(
+              userId,
+              photoCardId,
+            );
+
+            await articleRepository.increaseQuantity(userPhotoCard.id, { tx });
+          }),
+        );
+      }
+    }
 
     // 5. 포토카드 판매자에게 판매 알림.
     const message = `[${article.rank} | ${article.title}] ${purchaseQuantity}장을 성공적으로 판매했습니다.`;
@@ -301,7 +332,7 @@ const exchangeArticle = async ({
       throw error;
     }
 
-    // 1. requester의 UserPhotoCard에서 "수량: 1, status: EXCHANGE_REQUSET"인 UserPhotoCard 생성
+    // 포토카드 교환 요청 1. requester의 UserPhotoCard에서 "수량: 1, status: EXCHANGE_REQUSET"인 UserPhotoCard 생성
     const userPhotoCard = await cardRepository.getById(userPhotoCardId);
 
     const { photoCardId, price } = userPhotoCard;
@@ -319,10 +350,10 @@ const exchangeArticle = async ({
       { tx },
     );
 
-    // 2. requester의 UserPhotoCard에서 수량 1개 차감
+    // 포토카드 교환 요청 2. requester의 UserPhotoCard에서 수량 1개 차감
     await articleRepository.decreaseQuantity(userPhotoCardId, { tx });
 
-    // 3. Exchange 생성
+    // 포토카드 교환 요청 3. Exchange 생성
     const data = {
       requesterUserId,
       requesterCardId: requesterCard.id,
@@ -357,13 +388,13 @@ const cancelExchange = async ({ userId, exchangeId }) => {
     }
 
     // 포토카드 교환 요청 취소 1 - Exchange 삭제
-    const a = await articleRepository.deleteExchange(exchangeId, { tx });
+    await articleRepository.deleteExchange(exchangeId, { tx });
 
     // 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 삭제
-    const b = await cardRepository.remove(exchange.requesterCardId, { tx });
+    await cardRepository.remove(exchange.requesterCardId, { tx });
 
     // 포토카드 교환 요청 취소 3 - requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 수량 1개 증가
-    const { userId, photoCardId } = exchange.requesterCard;
+    const { photoCardId } = exchange.requesterCard;
 
     const userPhotoCard = await cardRepository.findByUserAndCard(
       userId,

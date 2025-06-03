@@ -126,15 +126,14 @@ async function decreaseCard(id, quantity, options = {}) {
   });
 }
 
-
 async function increaseCard(id, quantity, options = {}) {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.update({
     where: { id },
-    data: { 
+    data: {
       quantity: { increment: quantity },
-      status: "OWNED" // 아티클 삭제 시 상태도 OWNED로 복원
+      status: "OWNED", // 아티클 삭제 시 상태도 OWNED로 복원
     },
   });
 }
@@ -226,4 +225,3 @@ export default {
   updateQuantity,
   createUserPhotocard,
 };
-

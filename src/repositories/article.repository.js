@@ -428,12 +428,12 @@ const createExchange = async (data, options = {}) => {
 };
 
 // 포토카드 교환 요청 2 - requester의 UserPhotoCard에서 수량 1개 차감
-const decreaseQuantity = async (requesterCardId, options = {}) => {
+const decreaseQuantity = async (userPhotoCardId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
   return await client.userPhotoCard.update({
-    where: { id: requesterCardId },
+    where: { id: userPhotoCardId },
     data: { quantity: { decrement: 1 } },
   });
 };
@@ -443,7 +443,10 @@ const getExchangeById = async (exchangeId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
-  return await client.exchange.findUnique({ where: { id: exchangeId } });
+  return await client.exchange.findUnique({
+    where: { id: exchangeId },
+    include: { requesterCard: true },
+  });
 };
 
 // 포토카드 교환 요청 취소 1 - Exchange 삭제
@@ -455,12 +458,12 @@ const deleteExchange = async (exchangeId, options = {}) => {
 };
 
 // 포토카드 교환 요청 취소 2 - requester의 UserPhotoCard에서 수량 1개 증가
-const increaseQuantity = async (requesterCardId, options = {}) => {
+const increaseQuantity = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
   return await client.userPhotoCard.update({
-    where: { id: requesterCardId },
+    where: { id, status: "OWNED" },
     data: { quantity: { increment: 1 } },
   });
 };

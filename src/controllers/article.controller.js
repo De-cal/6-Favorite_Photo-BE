@@ -136,11 +136,11 @@ const articleController = {
     try {
       const requesterUserId = req.user.id;
       const articleId = req.params.id;
-      const { requesterCardId, description } = req.body;
+      const { userPhotoCardId, description } = req.body;
 
       const exchange = await articleService.exchangeArticle({
         requesterUserId,
-        requesterCardId,
+        userPhotoCardId,
         articleId,
         description,
       });
@@ -154,13 +154,10 @@ const articleController = {
   // 포토카드 교환 요청 취소
   cancelExchange: async (req, res, next) => {
     try {
+      const userId = req.user.id;
       const exchangeId = req.params.exchangeId;
-      const requesterCardId = req.params.requesterCardId;
 
-      await articleService.cancelExchange({
-        exchangeId,
-        requesterCardId,
-      });
+      await articleService.cancelExchange({ userId, exchangeId });
 
       res.status(200).json({
         message: "교환 요청이 정상적으로 취소되었습니다.",

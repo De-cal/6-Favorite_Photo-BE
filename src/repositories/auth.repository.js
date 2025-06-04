@@ -45,8 +45,8 @@ const createWithGoogle = async ({ email, nickname, googleId }) => {
       nickname,
       password: "",
       googleId,
-      pointAmount: 0,
-      createCount: 0,
+      pointAmount: 100,
+      createCount: 3,
     },
   });
 };

@@ -585,7 +585,6 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
       await updateStatus(article.userPhotoCardId, "SOLDOUT", { tx });
       // 유효성 검사 4 : Exchange 존재 여부
       if (article.exchange.length > 1) {
-        console.log(article.exchange);
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
         await articleRepository.deleteExchanges(article.id, { tx });
 

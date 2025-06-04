@@ -1,3 +1,4 @@
+// notification.controller.js
 import notificationService from "../services/notification.service.js";
 
 // 알림 조회
@@ -34,7 +35,7 @@ const readNotification = async (req, res, next) => {
   }
 };
 
-  // 전체 알림 읽음 처리 -> 당장 필요 없지만 확장성 고려.
+// 전체 알림 읽음 처리 -> 당장 필요 없지만 확장성 고려.
 const readAllNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -47,7 +48,7 @@ const readAllNotifications = async (req, res, next) => {
   }
 };
 
-  // 테스트용 생성 함수.
+// 테스트용 생성 함수.
 const createExchangeSuccessNotification = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -98,5 +99,25 @@ const createSoldOutNotification = async (req, res, next) => {
   }
 };
 
+// 판매 중단 알림 테스트용 함수
+const createSaleCancellationNotification = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    await notificationService.createSaleCancellationNotification([userId], "판매자닉네임", "RARE", "테스트용 카드 제목");
+    return res.status(201).json({ message: '판매 중단 알림이 성공적으로 전송되었습니다.' });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export default { getMyNotifications, readNotification ,readAllNotifications ,createExchangeSuccessNotification,createExchangeFailureNotification, createExchangeOfferNotification , createSaleSuccessNotification, createSoldOutNotification};
+export default { 
+  getMyNotifications, 
+  readNotification, 
+  readAllNotifications, 
+  createExchangeSuccessNotification,
+  createExchangeFailureNotification, 
+  createExchangeOfferNotification, 
+  createSaleSuccessNotification, 
+  createSoldOutNotification,
+  createSaleCancellationNotification
+};

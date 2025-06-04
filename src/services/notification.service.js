@@ -1,3 +1,4 @@
+// notification.service.js
 import notificationRepository from "../repositories/notification.repository.js";
 
 // 알림 조회
@@ -39,8 +40,6 @@ const readAllNotifications = async (userId) => {
   }
   return result;
 };
-
-
 
 // 포토 카드 교환 성사 알림 생성 (구매자 대상) -> 교환 수락시 발생.(판매자 입장) -> 세빈님
 const createExchangeSuccessNotification = async (
@@ -106,11 +105,24 @@ const createSaleSuccessNotification = async (
   }
 };
 
-
-
-// 판매 취소시 구매 요청자들에게 가는 알림 +a 사항.
-
-
+// 포토 카드 판매 중단 알림 생성 (교환 제시자들 대상) -> 판매 내리기시 발생
+const createSaleCancellationNotification = async (
+  requesterUserIds,
+  sellerNickname,
+  rank,
+  title
+) => {
+  const message = `${sellerNickname} 님의 [${rank} | ${title}] 포토카드 판매가 중단되어 교환이 취소되었습니다.`;
+  try {
+    if (!Array.isArray(requesterUserIds) || requesterUserIds.length === 0) {
+      return { status: 200, message: "알림을 보낼 대상 사용자가 없습니다." };
+    }
+    await notificationRepository.createNotification(message, requesterUserIds);
+    return { status: 201, message: "판매 중단 알림이 성공적으로 생성되었습니다." };
+  } catch (error) {
+    throw { status: 500, message: "판매 중단 알림 생성에 실패했습니다." };
+  }
+};
 
 // 포토 카드 품절 알림 생성 (관심 목록 등록 유저들 또는 판매자 대상). 여러명에게
 // 수량이 0이 되었을때 발생. 마지막카드 구매, 교환수락, 판매 취소. 
@@ -130,6 +142,14 @@ const createSoldOutNotification = async (requesterUserIds, rank, title) => {
   }
 };
 
-
-
-export default { getMyNotifications, readNotification, readAllNotifications, createExchangeSuccessNotification, createExchangeFailureNotification, createExchangeOfferNotification, createSaleSuccessNotification, createSoldOutNotification };
+export default { 
+  getMyNotifications, 
+  readNotification, 
+  readAllNotifications, 
+  createExchangeSuccessNotification, 
+  createExchangeFailureNotification, 
+  createExchangeOfferNotification, 
+  createSaleSuccessNotification, 
+  createSaleCancellationNotification,
+  createSoldOutNotification 
+};

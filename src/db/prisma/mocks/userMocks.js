@@ -34,6 +34,7 @@ export const UserMocks = [
     password: "1q2w3e4r@",
     nickname: "김수빈",
     pointAmount: 999999999,
+    createCount: 50,
   },
   {
     email: "user7@codeit.com",

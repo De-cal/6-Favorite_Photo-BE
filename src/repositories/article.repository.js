@@ -129,57 +129,123 @@ export const findMyCardArticles = async ({
 }) => {
   const skip = (page - 1) * pageSize;
 
-  // 📌 1. 필터 포함된 쿼리 (list, articleCount용)
-  const whereClause = {
-    userPhotoCard: {
-      userId,
-      ...(sellingType && { status: sellingType }),
-      photoCard: {
-        ...(rank && { rank }),
-        ...(genre && { genre }),
-        ...(keyword && {
-          title: {
-            contains: keyword,
-            mode: "insensitive",
-          },
-        }),
+  const photoCardFilter = {
+    ...(rank && { rank }),
+    ...(genre && { genre }),
+    ...(keyword && {
+      title: {
+        contains: keyword,
+        mode: "insensitive",
       },
-    },
+    }),
+  };
+
+  const articleSoldOutFilter = {
     ...(soldOut === true && { remainingQuantity: 0 }),
     ...(soldOut === false && { remainingQuantity: { gt: 0 } }),
   };
 
-  // 📌 2. 집계용 쿼리 (userId만 반영)
-  const countClause = {
-    userPhotoCard: {
-      userId,
-    },
-  };
+  let list = [];
+  let articleCount = 0;
 
-  const [list, rankCountsRaw, articleCount, fullCountsRaw] = await Promise.all([
-    // 필터된 리스트
-    prisma.cardArticle.findMany({
-      where: whereClause,
+  // ✅ 1. EXCHANGE_REQUESTED일 경우: userPhotoCard 테이블 기반 조회
+  if (sellingType === "EXCHANGE_REQUESTED") {
+    list = await prisma.userPhotoCard.findMany({
+      where: {
+        userId,
+        status: "EXCHANGE_REQUESTED",
+        photoCard: photoCardFilter,
+      },
+      skip,
+      take: pageSize,
+      orderBy: { createdAt: "desc" },
+      include: {
+        photoCard: { include: { creator: true } },
+        user: { select: { id: true, nickname: true } },
+      },
+    });
+
+    articleCount = await prisma.userPhotoCard.count({
+      where: {
+        userId,
+        status: "EXCHANGE_REQUESTED",
+        photoCard: photoCardFilter,
+      },
+    });
+
+    // list의 형태를 cardArticle와 맞추기 위해 userPhotoCard를 감쌈
+    list = list.map((upc) => ({ userPhotoCard: upc }));
+  } else {
+    // ✅ 2. 기본 또는 SELLING일 경우: cardArticle 기반
+    const baseWhereClause = {
+      userPhotoCard: {
+        userId,
+        ...(sellingType && { status: sellingType }),
+        photoCard: photoCardFilter,
+      },
+      ...articleSoldOutFilter,
+    };
+
+    const baseList = await prisma.cardArticle.findMany({
+      where: baseWhereClause,
       skip,
       take: pageSize,
       orderBy: { createdAt: "desc" },
       include: {
         userPhotoCard: {
           include: {
-            photoCard: {
-              include: { creator: true },
-            },
-            user: {
-              select: { id: true, nickname: true },
-            },
+            photoCard: { include: { creator: true } },
+            user: { select: { id: true, nickname: true } },
           },
         },
       },
-    }),
+    });
 
-    // 필터된 등급/장르/remainingQuantity 분석용
+    articleCount = await prisma.cardArticle.count({ where: baseWhereClause });
+    list = baseList;
+
+    // ✅ 3. 추가로 EXCHANGE_REQUESTED 카드도 포함 (only when sellingType is null)
+    if (!sellingType) {
+      const exchangeCards = await prisma.userPhotoCard.findMany({
+        where: {
+          userId,
+          status: "EXCHANGE_REQUESTED",
+          photoCard: photoCardFilter,
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+          photoCard: { include: { creator: true } },
+          user: { select: { id: true, nickname: true } },
+        },
+      });
+
+      // cardArticle와 형식 맞추기 위해 wrapping
+      const wrappedExchange = exchangeCards.map((upc) => ({
+        userPhotoCard: upc,
+      }));
+
+      list = [...baseList, ...wrappedExchange];
+    }
+  }
+
+  // ✅ 집계용 쿼리 (판매중 카드 기준)
+  const countClause = {
+    userPhotoCard: {
+      userId,
+    },
+  };
+
+  const [rankCountsRaw, fullCountsRaw] = await Promise.all([
+    // 필터된 등급/장르 분석용
     prisma.cardArticle.findMany({
-      where: whereClause,
+      where: {
+        userPhotoCard: {
+          userId,
+          ...(sellingType && { status: sellingType }),
+          photoCard: photoCardFilter,
+        },
+        ...articleSoldOutFilter,
+      },
       include: {
         userPhotoCard: {
           select: {
@@ -195,12 +261,7 @@ export const findMyCardArticles = async ({
       },
     }),
 
-    // 필터된 아티클 수
-    prisma.cardArticle.count({
-      where: whereClause,
-    }),
-
-    // 🔥 전체 집계용 (필터 미포함!)
+    // 전체 집계 (필터 없음)
     prisma.cardArticle.findMany({
       where: countClause,
       include: {
@@ -220,13 +281,6 @@ export const findMyCardArticles = async ({
     }),
   ]);
 
-  // 필터된 수량 총합
-  const filteredRemainingQuantity = rankCountsRaw.reduce(
-    (sum, article) => sum + article.remainingQuantity,
-    0,
-  );
-
-  // 🔥 필터 미적용된 전체 데이터 기반 집계
   const rankCounts = {};
   const genreCounts = {};
   const sellingTypeCounts = {
@@ -239,8 +293,7 @@ export const findMyCardArticles = async ({
   };
 
   for (const article of fullCountsRaw) {
-    const rank = article.userPhotoCard.photoCard.rank;
-    const genre = article.userPhotoCard.photoCard.genre;
+    const { rank, genre } = article.userPhotoCard.photoCard;
     const status = article.userPhotoCard.status;
     const quantity = article.userPhotoCard.quantity ?? 0;
 
@@ -262,10 +315,10 @@ export const findMyCardArticles = async ({
 
   return {
     totalCount: {
-      totalCount: Object.values(rankCounts).reduce((a, b) => a + b, 0), // 🔥 필터 제외 전체 quantity 합
-      articleCount, // ✅ 필터 적용된 게시글 수
+      totalCount: Object.values(rankCounts).reduce((a, b) => a + b, 0),
+      articleCount,
     },
-    list, // ✅ 필터 적용된 현재 페이지 목록
+    list,
     rankCounts,
     genreCounts,
     soldOutCounts,
@@ -623,9 +676,9 @@ export const getRequesterUserIdsByArticleId = async (
 export const deleteUserPhotoCard = async (cardId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
-  
+
   return await client.userPhotoCard.delete({
-    where: { id: cardId }
+    where: { id: cardId },
   });
 };
 

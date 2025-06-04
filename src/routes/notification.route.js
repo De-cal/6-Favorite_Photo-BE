@@ -1,3 +1,4 @@
+// notification.route.js
 import express from "express";
 import notificationController from "../controllers/notification.controller.js";
 import { validateAccessToken } from "../middlewares/auth.middleware.js";
@@ -50,6 +51,12 @@ notificationRouter.get(
   "/create-5",
   validateAccessToken,
   notificationController.createSoldOutNotification
+);
+// 판매 중단 알림 테스트용 엔드포인트 추가
+notificationRouter.get(
+  "/create-6",
+  validateAccessToken,
+  notificationController.createSaleCancellationNotification
 );
 
 export default notificationRouter;

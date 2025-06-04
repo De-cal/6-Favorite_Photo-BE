@@ -90,22 +90,37 @@ async function deleteArticle(articleId, userId) {
     const { photoCardId, userId: sellerId } = userPhotoCard;
     const sellingQuantity = article.totalQuantity;
 
-    // 2. 진행 중인 교환이 있는지 확인 (구매 코드의 유효성 검사 4와 동일한 방식)
+    // 2. 진행 중인 교환이 있는지 확인
     if (article.exchange.length !== 0) {
-      // 교환이 있는 경우 처리 (구매 코드의 포토카드 구매 6, 7, 8과 동일한 로직)
+      // 2-1. 교환 제시자들에게 판매 중단 알림 보내기
+      const sellerNickname = article.userPhotoCard.user.nickname;
+      const rank = article.userPhotoCard.photoCard.rank;
+      const title = article.userPhotoCard.photoCard.title;
       
-      // 2-1. 교환 신청 들어온 Exchange 전부 삭제
+      const cancelMessage = `${sellerNickname} 님의 [${rank} | ${title}] 포토카드 판매가 중단되어 교환이 취소되었습니다.`;
+
+      // 교환 제시자들의 ID 목록 추출
+      const exchangeRequesterIds = article.exchange.map(ex => ex.requesterCard.user.id);
+
+      // 교환 제시자들에게 알림 전송
+      await notificationRepository.createNotification(
+        cancelMessage,
+        exchangeRequesterIds,
+        { tx }
+      );
+      
+      // 2-2. 교환 신청 들어온 Exchange 전부 삭제
       await articleRepository.deleteExchanges(articleId, { tx });
 
-      // 2-2. 각 교환 요청자들의 UserPhotoCard 처리
+      // 2-3. 각 교환 요청자들의 UserPhotoCard 처리
       await Promise.all(
         article.exchange.map(async (ex) => {
-          // 2-3. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
+          // 2-4. requester의 UserPhotoCard에서 status가 EXCHANGE_REQUESTED인 UserPhotoCard 전부 삭제
           const userPhotoCardId = ex.requesterCard.id;
 
           await cardRepository.remove(userPhotoCardId, { tx });
 
-          // 2-4. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
+          // 2-5. requester의 UserPhotoCard에서 status가 OWNED인 UserPhotoCard 전부 수량 1개 증가
           const userId = ex.requesterCard.user.id;
           const photoCardId = ex.requesterCard.photoCard.id;
 
@@ -154,6 +169,7 @@ async function deleteArticle(articleId, userId) {
         { tx }
       );
     }
+    
     return {
       success: true,
       message: '아티클이 성공적으로 삭제되었습니다',

@@ -6,4 +6,4 @@ src/db/generated/
 
 *.http
 
-uploads
+uploads/

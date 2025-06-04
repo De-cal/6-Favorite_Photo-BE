@@ -75,15 +75,17 @@ async function postArticle(data) {
 async function deleteArticle(articleId, userId) {
   return await prisma.$transaction(async (tx) => {
     // 1. 아티클 상세 정보 조회 (교환 정보 포함)
-    const article = await articleRepository.getByIdWithDetails(articleId, { tx });
+    const article = await articleRepository.getByIdWithDetails(articleId, {
+      tx,
+    });
 
     if (!article) {
-      throw new Error('아티클을 찾을 수 없습니다');
+      throw new Error("아티클을 찾을 수 없습니다");
     }
 
     // 권한 확인 - 본인의 아티클인지 확인
     if (article.userPhotoCard.userId !== userId) {
-      throw new Error('삭제 권한이 없습니다');
+      throw new Error("삭제 권한이 없습니다");
     }
 
     const { userPhotoCard } = article;
@@ -96,19 +98,21 @@ async function deleteArticle(articleId, userId) {
       const sellerNickname = article.userPhotoCard.user.nickname;
       const rank = article.userPhotoCard.photoCard.rank;
       const title = article.userPhotoCard.photoCard.title;
-      
+
       const cancelMessage = `${sellerNickname} 님의 [${rank} | ${title}] 포토카드 판매가 중단되어 교환이 취소되었습니다.`;
 
       // 교환 제시자들의 ID 목록 추출
-      const exchangeRequesterIds = article.exchange.map(ex => ex.requesterCard.user.id);
+      const exchangeRequesterIds = article.exchange.map(
+        (ex) => ex.requesterCard.user.id,
+      );
 
       // 교환 제시자들에게 알림 전송
       await notificationRepository.createNotification(
         cancelMessage,
         exchangeRequesterIds,
-        { tx }
+        { tx },
       );
-      
+
       // 2-2. 교환 신청 들어온 Exchange 전부 삭제
       await articleRepository.deleteExchanges(articleId, { tx });
 
@@ -138,9 +142,9 @@ async function deleteArticle(articleId, userId) {
 
     // 3. OWNED 상태의 동일 포토카드 찾기
     const ownedCard = await articleRepository.getByUserIdAndPhotoCardId(
-      sellerId, 
-      photoCardId, 
-      { tx }
+      sellerId,
+      photoCardId,
+      { tx },
     );
 
     // 4. CardArticle 삭제 (외래키 참조 해제)
@@ -149,30 +153,30 @@ async function deleteArticle(articleId, userId) {
     if (ownedCard) {
       // 5-1. OWNED 카드가 이미 있다면 수량 합치기
       await articleRepository.increaseUserPhotoCardQuantity(
-        ownedCard.id, 
-        sellingQuantity, 
-        { tx }
+        ownedCard.id,
+        sellingQuantity,
+        { tx },
       );
-      
+
       // 5-2. SELLING 상태의 userPhotoCard 삭제
       await articleRepository.deleteUserPhotoCard(userPhotoCard.id, { tx });
     } else {
       // 5-3. OWNED 카드가 없다면 기존 카드를 OWNED로 변경하고 수량 복원
       await articleRepository.updateUserPhotoCardStatus(
-        userPhotoCard.id, 
-        'OWNED', 
-        { tx }
+        userPhotoCard.id,
+        "OWNED",
+        { tx },
       );
       await articleRepository.increaseUserPhotoCardQuantity(
-        userPhotoCard.id, 
-        sellingQuantity, 
-        { tx }
+        userPhotoCard.id,
+        sellingQuantity,
+        { tx },
       );
     }
-    
+
     return {
       success: true,
-      message: '아티클이 성공적으로 삭제되었습니다',
+      message: "아티클이 성공적으로 삭제되었습니다",
     };
   });
 }
@@ -301,7 +305,7 @@ const purchaseArticle = async ({
     });
 
     // 9. 포토카드 판매자에게 판매 알림.
-    const message = `${buyer.nickname}님이 [${article.rank} | ${article.title}]을 ${purchaseQuantity}장 구매했습니다.`;
+    const message = `${buyer.nickname}님이 [${article.userPhotoCard.photoCard.rank} | ${article.userPhotoCard.photoCard.title}]을 ${purchaseQuantity}장 구매했습니다.`;
     await notificationRepository.createNotification(message, [sellerId], {
       tx,
     });
@@ -312,7 +316,7 @@ const purchaseArticle = async ({
       const article = await articleRepository.getByIdWithDetails(articleId);
 
       // 10. 판매자 품절 알림 메시지.
-      const soldOutSellerMessage = `[${article.photoCard.rank} | ${article.photoCard.title}] 포토카드가 품절 되었습니다.`;
+      const soldOutSellerMessage = `[${article.userPhotoCard.photoCard.rank} | ${article.userPhotoCard.photoCard.title}] 포토카드가 품절 되었습니다.`;
       // 10. 판매자 품절 알림.
       await notificationRepository.createNotification(
         soldOutSellerMessage,
@@ -320,7 +324,7 @@ const purchaseArticle = async ({
         { tx },
       );
       // 11. 교환 요청자 품절 알림 메시지.
-      const soldOutMessage = `${recipientNickname} 님의 [${article.photoCard.rank} | ${article.photoCard.title}] 포토카드가 품절 되어 교환이 불발되었습니다.`;
+      const soldOutMessage = `${article.userPhotoCard.user.nickname} 님의 [${article.userPhotoCard.photoCard.rank} | ${article.userPhotoCard.photoCard.title}] 포토카드가 품절 되어 교환이 불발되었습니다.`;
 
       if (article.exchange.length !== 0) {
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제

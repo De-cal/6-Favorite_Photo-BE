@@ -6,7 +6,7 @@ export const PhotoCardMocks = [
     title: "강아지 산책",
     description:
       "강아지 산책을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/강아지산책.jpg`,
@@ -16,7 +16,7 @@ export const PhotoCardMocks = [
     title: "고양이 낮잠",
     description:
       "고양이 낮잠을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/고양이낮잠.jpg`,
@@ -46,7 +46,7 @@ export const PhotoCardMocks = [
     title: "사막여우",
     description:
       "사막여우을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "SUPER RARE",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/사막여우_9.jpg`,
@@ -56,7 +56,7 @@ export const PhotoCardMocks = [
     title: "남자 모델",
     description:
       "남자 모델을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "LEGENDARY",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/남자모델.jpg`,
@@ -66,7 +66,7 @@ export const PhotoCardMocks = [
     title: "여자 댄서",
     description:
       "여자 댄서을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMON",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/여자댄서_4.jpg`,
@@ -76,7 +76,7 @@ export const PhotoCardMocks = [
     title: "아이돌",
     description:
       "아이돌을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/아이돌_24.jpg`,
@@ -86,7 +86,7 @@ export const PhotoCardMocks = [
     title: "스냅사진",
     description:
       "스냅사진을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/스냅사진.jpg`,
@@ -116,7 +116,7 @@ export const PhotoCardMocks = [
     title: "시계",
     description:
       "시계을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "SUPER RARE",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/시계_23.jpg`,
@@ -126,7 +126,7 @@ export const PhotoCardMocks = [
     title: "책상 위 노트북",
     description:
       "책상 위 노트북을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "LEGENDARY",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/책상 위 노트북_9.jpg`,
@@ -136,7 +136,7 @@ export const PhotoCardMocks = [
     title: "헤드폰",
     description:
       "헤드폰을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMON",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/헤드폰_18.jpg`,
@@ -146,7 +146,7 @@ export const PhotoCardMocks = [
     title: "전구",
     description:
       "전구을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/전구_8.jpg`,
@@ -156,7 +156,7 @@ export const PhotoCardMocks = [
     title: "하트 이모티콘",
     description:
       "하트 이모티콘을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/하트이모티콘_14.jpg`,
@@ -186,7 +186,7 @@ export const PhotoCardMocks = [
     title: "무지개",
     description:
       "무지개을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "SUPER RARE",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/무지개.jpg`,
@@ -196,7 +196,7 @@ export const PhotoCardMocks = [
     title: "눈사람",
     description:
       "눈사람을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "LEGENDARY",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/눈사람.jpg`,
@@ -206,7 +206,7 @@ export const PhotoCardMocks = [
     title: "떡갈비",
     description:
       "떡갈비을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMON",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/떡갈비.jpg`,
@@ -216,7 +216,7 @@ export const PhotoCardMocks = [
     title: "바닷가 노을",
     description:
       "바닷가 노을을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/바닷가 노을.jpg`,
@@ -226,7 +226,7 @@ export const PhotoCardMocks = [
     title: "한라산 설경",
     description:
       "한라산 설경을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/한라산설경_16.jpg`,
@@ -256,7 +256,7 @@ export const PhotoCardMocks = [
     title: "흑백 셀카",
     description:
       "흑백 셀카을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "SUPER RARE",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/흑백셀카_19.jpg`,
@@ -266,7 +266,7 @@ export const PhotoCardMocks = [
     title: "고양이 발바닥",
     description:
       "고양이 발바닥을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "LEGENDARY",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/고양이발바닥.jpg`,
@@ -276,7 +276,7 @@ export const PhotoCardMocks = [
     title: "햄스터 간식타임",
     description:
       "햄스터 간식타임을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMON",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/햄스터간식타임_17.jpg`,
@@ -286,7 +286,7 @@ export const PhotoCardMocks = [
     title: "노을진 도시",
     description:
       "노을진 도시을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/노을진도시.jpg`,
@@ -296,7 +296,7 @@ export const PhotoCardMocks = [
     title: "장난감 로봇",
     description:
       "장난감 로봇을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/장난감로봇_7.jpg`,
@@ -326,7 +326,7 @@ export const PhotoCardMocks = [
     title: "한강의 밤",
     description:
       "한강의 밤을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "SUPER RARE",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/한강의 밤_15.jpg`,
@@ -336,7 +336,7 @@ export const PhotoCardMocks = [
     title: "케이크 디저트",
     description:
       "케이크 디저트을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "LEGENDARY",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/케이크디저트_10.jpg`,
@@ -346,7 +346,7 @@ export const PhotoCardMocks = [
     title: "알람시계",
     description:
       "알람시계을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMON",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/알람시계_2.jpg`,
@@ -356,7 +356,7 @@ export const PhotoCardMocks = [
     title: "방울토마토",
     description:
       "방울토마토을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/방울토마토.jpg`,
@@ -366,7 +366,7 @@ export const PhotoCardMocks = [
     title: "강아지 커플",
     description:
       "강아지 커플을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/강아지커플.jpg`,
@@ -396,7 +396,7 @@ export const PhotoCardMocks = [
     title: "파스타 접시",
     description:
       "파스타 접시을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "SUPER RARE",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/파스타접시_11.jpg`,
@@ -406,7 +406,7 @@ export const PhotoCardMocks = [
     title: "레몬티 한잔",
     description:
       "레몬티 한잔을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "LEGENDARY",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/레몬티한잔.jpg`,
@@ -416,7 +416,7 @@ export const PhotoCardMocks = [
     title: "붉은 장미",
     description:
       "붉은 장미을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMON",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/붉은장미.jpg`,
@@ -426,7 +426,7 @@ export const PhotoCardMocks = [
     title: "풍선 들고 있는 아이",
     description:
       "풍선 들고 있는 아이을(를) 담은 감성적인 포토카드입니다. 고화질 인쇄로 생생한 느낌을 제공합니다.",
-    rank: "RARE",
+    rank: "COMMOM",
     genre: "ANIMAL",
     price: 100,
     imgUrl: `${imgBaseUrl}/uploads/풍선을 들고 있는 아이_13.jpg`,

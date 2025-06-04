@@ -34,7 +34,7 @@ const readNotification = async (req, res, next) => {
   }
 };
 
-  // 전체 알림 읽음 처리 -> 당장 필요 없지만 확장성 고려.
+// 전체 알림 읽음 처리 -> 당장 필요 없지만 확장성 고려.
 const readAllNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -47,11 +47,11 @@ const readAllNotifications = async (req, res, next) => {
   }
 };
 
-  // 테스트용 생성 함수.
+// 테스트용 생성 함수.
 const createExchangeSuccessNotification = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    await notificationService.createExchangeSuccessNotification(userId, "테스트용 유저 이름", "COMMON", "테스트용 카드 제목");
+    await notificationService.createExchangeSuccessNotification(userId, "김수빈", "COMMON", "우리집 강아지");
     return res.status(201).json({ message: '교환 성사 알림이 성공적으로 전송되었습니다.' });
   } catch (error) {
     next(error);
@@ -61,7 +61,7 @@ const createExchangeSuccessNotification = async (req, res, next) => {
 const createExchangeFailureNotification = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    await notificationService.createExchangeSuccessNotification(userId, "테스트용 유저 이름", "LEGENDARY", "테스트용 카드 제목");
+    await notificationService.createExchangeSuccessNotification(userId, "김재욱", "LEGENDARY", "귀여운 쿼카");
     return res.status(201).json({ message: '교환 불발 알림이 성공적으로 전송되었습니다.' });
   } catch (error) {
     next(error);
@@ -71,7 +71,7 @@ const createExchangeFailureNotification = async (req, res, next) => {
 const createExchangeOfferNotification = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    await notificationService.createExchangeOfferNotification(userId, "테스트용 유저 이름", "RARE", "테스트용 카드 제목");
+    await notificationService.createExchangeOfferNotification(userId, "이태빈", "RARE", "람보르기니 무르시엘라고");
     return res.status(201).json({ message: '교환 제시 알림이 성공적으로 전송되었습니다.' });
   } catch (error) {
     next(error);
@@ -81,7 +81,7 @@ const createExchangeOfferNotification = async (req, res, next) => {
 const createSaleSuccessNotification = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    await notificationService.createSaleSuccessNotification(userId, "SUPER RARE", "테스트용 카드 제목", 3);
+    await notificationService.createSaleSuccessNotification(userId, "SUPER RARE", "캔따개 주인", 3);
     return res.status(201).json({ message: '판매 완료 알림이 성공적으로 전송되었습니다.' });
   } catch (error) {
     next(error);
@@ -91,7 +91,7 @@ const createSaleSuccessNotification = async (req, res, next) => {
 const createSoldOutNotification = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    await notificationService.createSoldOutNotification([userId], "COMMON", "테스트용 카드 제목");
+    await notificationService.createSoldOutNotification([userId], "COMMON", "피크민 보라");
     return res.status(201).json({ message: '품절 알림이 성공적으로 전송되었습니다.' });
   } catch (error) {
     next(error);

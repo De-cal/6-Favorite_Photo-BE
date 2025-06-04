@@ -1,6 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
 
-const getNotificationsByUserId = async (userId, page = 1, limit = 10) => {
+const getNotificationsByUserId = async (userId, page = 0, limit = 10) => {
   const skip = (page) * limit;
 
   const userNotifications = await prisma.userNotification.findMany({

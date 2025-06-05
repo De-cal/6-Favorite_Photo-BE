@@ -46,7 +46,7 @@ const postArticle = async (data) => {
     );
 
     //판매용 USERPHOTOCARD 생성
-    const newCard = await cardRepository.createUserPhotocard(
+    const newCard = await cardRepository.createUserPhotoCard(
       {
         photoCardId: card.photoCardId,
         userId: card.userId,
@@ -269,7 +269,7 @@ const purchaseArticle = async ({
         price: totalPrice / purchaseQuantity,
       };
 
-      newArticle = await articleRepository.createUserPhotoCard(data, {
+      newArticle = await cardRepository.createUserPhotoCard(data, {
         tx,
       });
     }
@@ -392,7 +392,7 @@ const exchangeArticle = async ({
       status: "EXCHANGE_REQUESTED",
     };
 
-    const requesterCard = await articleRepository.createUserPhotoCard(
+    const requesterCard = await cardRepository.createUserPhotoCard(
       forExchangeData,
       { tx },
     );
@@ -542,7 +542,7 @@ const putExchangeCard = async ({ userId, exchangeId }) => {
     }
     //보유하지 않고 있다면, 새로운 userPhotocard 생성
     else {
-      await createUserPhotocard(
+      await cardRepository.createUserPhotoCard(
         {
           photoCardId: article.userPhotoCard.photoCardId,
           userId: exchange.requesterUserId,
@@ -577,7 +577,9 @@ const putExchangeCard = async ({ userId, exchangeId }) => {
 
     //userPhotocard 0인 경우 soldout으로 변경
     if (article.remainingQuantity === 1) {
-      await updateStatus(article.userPhotoCardId, "SOLDOUT", { tx });
+      await cardRepository.updateStatus(article.userPhotoCardId, "SOLDOUT", {
+        tx,
+      });
       // 유효성 검사 4 : Exchange 존재 여부
       if (article.exchange.length > 1) {
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제

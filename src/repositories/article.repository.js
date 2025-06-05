@@ -406,14 +406,6 @@ const updateUserPhotoCard = async (
   });
 };
 
-// 포토카드 구매 1-2 or 포토카드 교환 요청 3 - UserPhotoCard 생성
-const createUserPhotoCard = async (data, options = {}) => {
-  const { tx } = options;
-  const client = tx || prisma;
-
-  return await client.userPhotoCard.create({ data });
-};
-
 // 포토카드 구매 2 - CardArticle 잔여수량 감소
 const decreaseCardArticleQuantity = async (
   articleId,
@@ -676,7 +668,6 @@ export default {
   create,
   findMyCardArticles,
   updateUserPhotoCard,
-  createUserPhotoCard,
   decreaseCardArticleQuantity,
   decreaseBuyerPoints,
   increaseSellerPoints,

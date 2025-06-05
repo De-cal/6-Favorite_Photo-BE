@@ -258,7 +258,7 @@ const updateQuantity = async (cardId, quantity, options = {}) => {
   });
 };
 
-const createUserPhotocard = async (data, options = {}) => {
+const createUserPhotoCard = async (data, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.create({ data });
@@ -290,7 +290,7 @@ export default {
   remove,
   findByUserAndCard,
   updateQuantity,
-  createUserPhotocard,
+  createUserPhotoCard,
   getPhotocardById,
   updateStatus,
 };

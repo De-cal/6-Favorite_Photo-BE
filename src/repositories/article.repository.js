@@ -1,7 +1,7 @@
 import prisma from "../db/prisma/prisma.js";
 
 //마켓플레이스에서 SELLING과 SOLDOUT 다 가져오기
-export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
+const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
   const whereClause = {
     userPhotoCard: {
       status: {
@@ -65,7 +65,7 @@ export const getSellingCardsAll = async ({ keyword, page = 1, limit = 12 }) => {
 };
 
 // 포토카드 판매자 상세 불러오기
-async function getByIdWithDetails(id, options = {}) {
+const getByIdWithDetails = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
@@ -114,10 +114,10 @@ async function getByIdWithDetails(id, options = {}) {
       },
     },
   });
-}
+};
 
 // 나의판매목록페이지에서 쓸 API - 목록 가져오기
-export const findMyCardArticles = async ({
+const findMyCardArticles = async ({
   userId,
   page,
   pageSize,
@@ -326,7 +326,7 @@ export const findMyCardArticles = async ({
   };
 };
 
-async function getById(id, options = {}) {
+const getById = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.cardArticle.findUnique({
@@ -335,7 +335,7 @@ async function getById(id, options = {}) {
       userPhotoCard: true,
     },
   });
-}
+};
 
 // 포토카드 구매자 상세 불러오기
 const getByIdWithRelations = async (articleId, userId = null, options = {}) => {
@@ -384,11 +384,11 @@ const getByUserIdAndPhotoCardId = async (userId, photoCardId, options = {}) => {
   });
 };
 
-async function create(data, options = {}) {
+const create = async (data, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.cardArticle.create({ data });
-}
+};
 
 // 포토카드 구매 1-1 - UserPhotoCard 업데이트
 const updateUserPhotoCard = async (
@@ -404,14 +404,6 @@ const updateUserPhotoCard = async (
     where: { id: userPhotoCardId },
     data: { quantity, price },
   });
-};
-
-// 포토카드 구매 1-2 or 포토카드 교환 요청 3 - UserPhotoCard 생성
-const createUserPhotoCard = async (data, options = {}) => {
-  const { tx } = options;
-  const client = tx || prisma;
-
-  return await client.userPhotoCard.create({ data });
 };
 
 // 포토카드 구매 2 - CardArticle 잔여수량 감소
@@ -541,7 +533,7 @@ const increaseQuantity = async (id, options = {}) => {
   });
 };
 
-export const increaseUserPhotoCardQuantity = async (
+const increaseUserPhotoCardQuantity = async (
   cardId,
   amount = 1,
   options = {},
@@ -552,7 +544,7 @@ export const increaseUserPhotoCardQuantity = async (
     data: { quantity: { increment: amount } },
   });
 };
-export const decreaseUserPhotoCardQuantity = async (
+const decreaseUserPhotoCardQuantity = async (
   cardId,
   amount = 1,
   options = {},
@@ -564,11 +556,7 @@ export const decreaseUserPhotoCardQuantity = async (
   });
 };
 
-export const updateUserPhotoCardStatus = async (
-  cardId,
-  status,
-  options = {},
-) => {
+const updateUserPhotoCardStatus = async (cardId, status, options = {}) => {
   const client = options.tx || prisma;
   return await client.userPhotoCard.update({
     where: { id: cardId },
@@ -576,14 +564,14 @@ export const updateUserPhotoCardStatus = async (
   });
 };
 
-export const updateArticle = async (articleId, data, options = {}) => {
+const updateArticle = async (articleId, data, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.cardArticle.update({ where: { id: articleId }, data });
 };
 
 // Get active exchanges for an article (for delete validation)
-async function getActiveExchanges(articleId, options = {}) {
+const getActiveExchanges = async (articleId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
@@ -604,27 +592,19 @@ async function getActiveExchanges(articleId, options = {}) {
       recipientArticleId: articleId, // Use articleId directly instead of recipientCardId
     },
   });
-}
+};
 
 // Remove article
-async function remove(id, options = {}) {
+const remove = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
   return await client.cardArticle.delete({
     where: { id },
   });
-}
+};
 
-export async function getExchange() {
-  const exchanges = prisma.Exchange.findMany();
-  return await exchanges.json();
-}
-
-export const getExchangeWithPhotocardInfo = async (
-  exchangeId,
-  options = {},
-) => {
+const getExchangeWithPhotocardInfo = async (exchangeId, options = {}) => {
   const client = options.tx || prisma;
 
   return await client.exchange.findUnique({
@@ -644,10 +624,7 @@ export const getExchangeWithPhotocardInfo = async (
   });
 };
 
-export const getRequesterUserIdsByArticleId = async (
-  articleId,
-  options = {},
-) => {
+const getRequesterUserIdsByArticleId = async (articleId, options = {}) => {
   const client = options.tx || prisma;
   const { excludeUserId, includeUserId } = options;
 
@@ -673,7 +650,7 @@ export const getRequesterUserIdsByArticleId = async (
 };
 
 // UserPhotoCard 삭제
-export const deleteUserPhotoCard = async (cardId, options = {}) => {
+const deleteUserPhotoCard = async (cardId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
@@ -691,7 +668,6 @@ export default {
   create,
   findMyCardArticles,
   updateUserPhotoCard,
-  createUserPhotoCard,
   decreaseCardArticleQuantity,
   decreaseBuyerPoints,
   increaseSellerPoints,

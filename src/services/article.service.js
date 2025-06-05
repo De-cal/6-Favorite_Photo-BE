@@ -530,7 +530,7 @@ const putExchangeCard = async ({ userId, exchangeId }) => {
     } = notificationData;
 
     //요청자가 요청한 카드 보유하고 있는지 확인
-    const card = await findByUserAndCard(
+    const card = await cardRepository.findByUserAndCard(
       requesterUserId,
       article.userPhotoCard.photoCardId,
       { tx },

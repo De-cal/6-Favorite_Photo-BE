@@ -1,4 +1,3 @@
-// notification.service.js
 import notificationRepository from "../repositories/notification.repository.js";
 
 // 알림 조회
@@ -41,115 +40,8 @@ const readAllNotifications = async (userId) => {
   return result;
 };
 
-// 포토 카드 교환 성사 알림 생성 (구매자 대상) -> 교환 수락시 발생.(판매자 입장) -> 세빈님
-const createExchangeSuccessNotification = async (
-  requesterUserId,
-  recipientNickname,
-  rank,
-  title
-) => {
-  const message = `${recipientNickname} 님과의 [${rank} | ${title}] 포토카드 교환이 성사되었습니다.`;
-  try {
-    await notificationRepository.createNotification(message, [requesterUserId]);
-    return { status: 201, message: "교환 성사 알림이 성공적으로 생성되었습니다." };
-  } catch (error) {
-    throw { status: 500, message: "교환 성사 알림 생성에 실패했습니다." };
-  }
-};
-
-// 포토 카드 교환 불발 알림 생성 (구매자 대상) -> 교환 거절시 발생.(판매자 입장) -> 세빈님
-const createExchangeFailureNotification = async (
-  requesterUserId,
-  recipientNickname,
-  rank,
-  title
-) => {
-  const message = `${recipientNickname} 님과의 [${rank} | ${title}] 포토카드 교환이 불발되었습니다.`;
-  try {
-    await notificationRepository.createNotification(message, [requesterUserId]);
-    return { status: 201, message: "교환 불발 알림이 성공적으로 생성되었습니다." };
-  } catch (error) {
-    throw { status: 500, message: "교환 불발 알림 생성에 실패했습니다." };
-  }
-};
-
-// 포토 카드 교환 제안 알림 생성 (판매자 대상) -> 교환 제안시 발생.(요청자 입장) -> 태빈님
-const createExchangeOfferNotification = async (
-  recipientUserId,
-  requesterNickname,
-  rank,
-  title
-) => {
-  const message = `${requesterNickname} 님이 [${rank} | ${title}] 포토카드 교환을 제안했습니다.`;
-  try {
-    await notificationRepository.createNotification(message, [recipientUserId]);
-    return { status: 201, message: "교환 제안 알림이 성공적으로 생성되었습니다." };
-  } catch (error) {
-    throw { status: 500, message: "교환 제안 알림 생성에 실패했습니다." };
-  }
-};
-
-// 포토 카드 판매 성사 알림 생성 (판매자 대상) -> 구매 요청시 발생.(구매자 입장.) -> 태빈님
-const createSaleSuccessNotification = async (
-  sellerUserId,
-  rank,
-  title,
-  quantity
-) => {
-  const message = `[${rank} | ${title}] ${quantity}장을 성공적으로 판매했습니다.`;
-  try {
-    await notificationRepository.createNotification(message, [sellerUserId]);
-    return { status: 201, message: "판매 성사 알림이 성공적으로 생성되었습니다." };
-  } catch (error) {
-    throw { status: 500, message: "판매 성사 알림 생성에 실패했습니다." };
-  }
-};
-
-// 포토 카드 판매 중단 알림 생성 (교환 제시자들 대상) -> 판매 내리기시 발생
-const createSaleCancellationNotification = async (
-  requesterUserIds,
-  sellerNickname,
-  rank,
-  title
-) => {
-  const message = `${sellerNickname} 님의 [${rank} | ${title}] 포토카드 판매가 중단되어 교환이 취소되었습니다.`;
-  try {
-    if (!Array.isArray(requesterUserIds) || requesterUserIds.length === 0) {
-      return { status: 200, message: "알림을 보낼 대상 사용자가 없습니다." };
-    }
-    await notificationRepository.createNotification(message, requesterUserIds);
-    return { status: 201, message: "판매 중단 알림이 성공적으로 생성되었습니다." };
-  } catch (error) {
-    throw { status: 500, message: "판매 중단 알림 생성에 실패했습니다." };
-  }
-};
-
-// 포토 카드 품절 알림 생성 (관심 목록 등록 유저들 또는 판매자 대상). 여러명에게
-// 수량이 0이 되었을때 발생. 마지막카드 구매, 교환수락, 판매 취소. 
-const createSoldOutNotification = async (requesterUserIds, rank, title) => {
-  const message = `[${rank} | ${title}] 포토카드가 품절 되었습니다.`;
-  try {
-    if (!Array.isArray(requesterUserIds) || requesterUserIds.length === 0) {
-      throw { status: 400, message: "알림을 보낼 대상 사용자가 지정되지 않았습니다." };
-    }
-    await notificationRepository.createNotification(message, requesterUserIds);
-    return { status: 201, message: "품절 알림이 성공적으로 생성되었습니다." };
-  } catch (error) {
-    if (error.status) {
-      throw error;
-    }
-    throw { status: 500, message: "품절 알림 생성에 실패했습니다." };
-  }
-};
-
 export default { 
   getMyNotifications, 
   readNotification, 
   readAllNotifications, 
-  createExchangeSuccessNotification, 
-  createExchangeFailureNotification, 
-  createExchangeOfferNotification, 
-  createSaleSuccessNotification, 
-  createSaleCancellationNotification,
-  createSoldOutNotification 
 };

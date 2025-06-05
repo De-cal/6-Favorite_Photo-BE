@@ -521,7 +521,7 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
       throw error;
     }
 
-    // 알림 메시지에 필요한 데이터.
+    // 9. 알림 메시지에 필요한 데이터.
     let notificationMessage = "";
     const notificationData =
       await articleRepository.getExchangeWithPhotocardInfo(exchangeId, { tx });
@@ -574,12 +574,12 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
     //userPhotocard quantity 1 감소
     await articleRepository.decreaseQuantity(article.userPhotoCardId);
 
-    // 교환 성사 알림 메시지.
+    // 9. 교환 성사 알림 메시지.
     notificationMessage = `${recipientNickname} 님과의 [${rank} | ${title}] 포토카드 교환이 성사되었습니다.`;
     await notificationRepository.createNotification(notificationMessage, [
       exchange.requesterUserId,
     ]);
-
+            
     //userPhotocard 0인 경우 soldout으로 변경
     if (article.remainingQuantity === 1) {
       await updateStatus(article.userPhotoCardId, "SOLDOUT", { tx });
@@ -588,15 +588,14 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
         // 포토카드 구매 6. 교환 신청 들어온 Exchange 전부 삭제
         await articleRepository.deleteExchanges(article.id, { tx });
 
-        // 교환 요청자 품절 알림 메시지.
+        // 10. 교환 요청자 품절 알림 메시지.
         const message = `${recipientNickname} 님의 [${rank} | ${title}] 포토카드가 품절 되어 교환이 불발되었습니다.`;
         const requesterUserIds =
           await articleRepository.getRequesterUserIdsByArticleId(article.id, {
             tx,
             excludeUserId: exchange.requesterUserId,
-            includeUserId: recipientId,
           });
-        // 교환 요청자 품절 알림.
+        // 10. 교환 요청자 품절 알림.
         await notificationRepository.createNotification(
           message,
           requesterUserIds,
@@ -628,9 +627,9 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
             }
           }),
         );
-        // 판매자 품절 알림 메시지.
+        // 11. 판매자 품절 알림 메시지.
         const sellerMessage = `[${rank} | ${title}] 포토카드가 품절 되었습니다.`;
-        // 판매자 품절 알림.
+        // 11. 판매자 품절 알림.
         await notificationRepository.createNotification(
           sellerMessage,
           [recipientId],

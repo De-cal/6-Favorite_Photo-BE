@@ -1,4 +1,3 @@
-// notification.controller.js
 import notificationService from "../services/notification.service.js";
 
 // 알림 조회
@@ -48,76 +47,8 @@ const readAllNotifications = async (req, res, next) => {
   }
 };
 
-// 테스트용 생성 함수.
-const createExchangeSuccessNotification = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    await notificationService.createExchangeSuccessNotification(userId, "김수빈", "COMMON", "우리집 강아지");
-    return res.status(201).json({ message: '교환 성사 알림이 성공적으로 전송되었습니다.' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const createExchangeFailureNotification = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    await notificationService.createExchangeSuccessNotification(userId, "김재욱", "LEGENDARY", "귀여운 쿼카");
-    return res.status(201).json({ message: '교환 불발 알림이 성공적으로 전송되었습니다.' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const createExchangeOfferNotification = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    await notificationService.createExchangeOfferNotification(userId, "이태빈", "RARE", "람보르기니 무르시엘라고");
-    return res.status(201).json({ message: '교환 제시 알림이 성공적으로 전송되었습니다.' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const createSaleSuccessNotification = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    await notificationService.createSaleSuccessNotification(userId, "SUPER RARE", "캔따개 주인", 3);
-    return res.status(201).json({ message: '판매 완료 알림이 성공적으로 전송되었습니다.' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const createSoldOutNotification = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    await notificationService.createSoldOutNotification([userId], "COMMON", "피크민 보라");
-    return res.status(201).json({ message: '품절 알림이 성공적으로 전송되었습니다.' });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// 판매 중단 알림 테스트용 함수
-const createSaleCancellationNotification = async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    await notificationService.createSaleCancellationNotification([userId], "판매자닉네임", "RARE", "테스트용 카드 제목");
-    return res.status(201).json({ message: '판매 중단 알림이 성공적으로 전송되었습니다.' });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export default { 
   getMyNotifications, 
   readNotification, 
   readAllNotifications, 
-  createExchangeSuccessNotification,
-  createExchangeFailureNotification, 
-  createExchangeOfferNotification, 
-  createSaleSuccessNotification, 
-  createSoldOutNotification,
-  createSaleCancellationNotification
 };

@@ -32,6 +32,22 @@ const cardController = {
     }
   },
 
+  // 사용자 생성 상태 조회 API
+  getUserCreateStatus: async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const result = await cardService.getUserCreateStatus(userId);
+      
+      return res.status(200).json({
+        success: true,
+        data: result
+      });
+    } catch (error) {
+      console.error("생성 상태 조회 에러:", error);
+      next(error);
+    }
+  },
+
   createCard: async (req, res, next) => {
     try {
       const userId = req.user.id;

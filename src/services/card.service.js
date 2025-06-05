@@ -30,6 +30,36 @@ const createCardWithTransaction = async (data) => {
   return await cardRepository.createWithUserUpdate(data);
 };
 
+// 사용자의 현재 생성 가능 횟수 조회
+const getUserCreateStatus = async (userId) => {
+  try {
+    const user = await authRepository.findById(userId);
+    
+    if (!user) {
+      const error = new Error("사용자를 찾을 수 없습니다.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
+    const currentMonth = new Date().toLocaleDateString('ko-KR', { 
+      year: 'numeric', 
+      month: 'long' 
+    });
+    
+    return {
+      createCount: user.createCount,
+      maxCount: 3,
+      remainingCount: user.createCount,
+      canCreate: user.createCount > 0,
+      currentMonth,
+      status: user.createCount > 0 ? 'available' : 'exhausted'
+    };
+    
+  } catch (error) {
+    throw error;
+  }
+};
+
 const findManyAtMygallery = async ({
   userId,
   page = 1,
@@ -65,4 +95,5 @@ export default {
   findManyAtMygallery,
   createCard,
   createCardWithTransaction,
+  getUserCreateStatus,
 };

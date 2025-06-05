@@ -1,5 +1,6 @@
 import cardService from "../services/card.service.js";
 
+
 // 단일 포토카드 조회
 const getCardById = async (req, res, next) => {
   try {
@@ -28,6 +29,22 @@ const getMyGallery = async (req, res, next) => {
 
     return res.status(200).json(result);
   } catch (error) {
+    next(error);
+  }
+};
+
+// 사용자 생성 상태 조회 API
+const getUserCreateStatus = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const result = await cardService.getUserCreateStatus(userId);
+    
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (error) {
+    console.error("생성 상태 조회 에러:", error);
     next(error);
   }
 };
@@ -80,4 +97,5 @@ export default {
   getCardById,
   getMyGallery,
   createCard,
+  getUserCreateStatus,
 };

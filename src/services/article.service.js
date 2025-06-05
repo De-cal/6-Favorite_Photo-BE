@@ -1,32 +1,28 @@
 import prisma from "../db/prisma/prisma.js";
-import cardRepository, {
-  createUserPhotocard,
-  findByUserAndCard,
-  updateStatus,
-} from "../repositories/card.repository.js";
+import cardRepository from "../repositories/card.repository.js";
 import authRepository from "../repositories/auth.repository.js";
 import notificationRepository from "../repositories/notification.repository.js";
 import articleRepository from "../repositories/article.repository.js";
 
 // 포토카드 판매자 상세 불러오기
-async function getByIdWithDetails(id) {
+const getByIdWithDetails = async (id) => {
   return await articleRepository.getByIdWithDetails(id);
-}
+};
 
-async function getById(id) {
+const getById = async (id) => {
   return await articleRepository.getById(id);
-}
+};
 
 // 포토카드 구매자 상세 불러오기
 const getByIdWithRelations = async (articleId, userId) => {
   return await articleRepository.getByIdWithRelations(articleId, userId);
 };
 
-async function getSellingCardsAll({ keyword, page, limit }) {
+const getSellingCardsAll = async ({ keyword, page, limit }) => {
   return await articleRepository.getSellingCardsAll({ keyword, page, limit });
-}
+};
 
-async function postArticle(data) {
+const postArticle = async (data) => {
   return await prisma.$transaction(async (tx) => {
     const card = await cardRepository.getById(data.userPhotoCardId, { tx });
     //유효성 검사 1: 포토카드 있는지 확인
@@ -70,9 +66,9 @@ async function postArticle(data) {
       { tx },
     );
   });
-}
+};
 
-async function deleteArticle(articleId, userId) {
+const deleteArticle = async (articleId, userId) => {
   return await prisma.$transaction(async (tx) => {
     // 1. 아티클 상세 정보 조회 (교환 정보 포함)
     const article = await articleRepository.getByIdWithDetails(articleId, {
@@ -179,9 +175,8 @@ async function deleteArticle(articleId, userId) {
       message: "아티클이 성공적으로 삭제되었습니다",
     };
   });
-}
-
-export async function findMyCardArticles({
+};
+const findMyCardArticles = async ({
   userId,
   page = 1,
   pageSize = 15,
@@ -190,7 +185,7 @@ export async function findMyCardArticles({
   keyword,
   sellingType,
   soldOut,
-}) {
+}) => {
   const pageNum = Number(page);
   const pageSizeNum = Number(pageSize);
   const parsedSoldOut =
@@ -213,7 +208,7 @@ export async function findMyCardArticles({
     soldOut: parsedSoldOut,
     keyword,
   });
-}
+};
 
 // 포토카드 구매
 const purchaseArticle = async ({
@@ -490,7 +485,7 @@ const cancelExchange = async ({ userId, exchangeId }) => {
 };
 
 //포토카드 승인
-export const putExchangeCard = async ({ userId, exchangeId }) => {
+const putExchangeCard = async ({ userId, exchangeId }) => {
   return await prisma.$transaction(async (tx) => {
     //유효성 검사 1: 유효한 교환 요청인지 확인
     const exchange = await articleRepository.getExchangeById(exchangeId, {
@@ -579,7 +574,7 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
     await notificationRepository.createNotification(notificationMessage, [
       exchange.requesterUserId,
     ]);
-            
+
     //userPhotocard 0인 경우 soldout으로 변경
     if (article.remainingQuantity === 1) {
       await updateStatus(article.userPhotoCardId, "SOLDOUT", { tx });
@@ -649,7 +644,7 @@ export const putExchangeCard = async ({ userId, exchangeId }) => {
   });
 };
 
-export const patchArticle = async (articleId, userId, data) => {
+const patchArticle = async (articleId, userId, data) => {
   return await prisma.$transaction(async (tx) => {
     const article = await articleRepository.getById(articleId, { tx });
     //유효성 검사 1: 작성자인지 확인

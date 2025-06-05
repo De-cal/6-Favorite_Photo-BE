@@ -1,6 +1,6 @@
 import prisma from "../db/prisma/prisma.js";
 
-export const findMyGallerySellingCards = async ({
+const findMyGallerySellingCards = async ({
   userId,
   page,
   pageSize,
@@ -96,13 +96,13 @@ export const findMyGallerySellingCards = async ({
   };
 };
 
-async function getById(id, options = {}) {
+const getById = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.findUnique({ where: { id } });
-}
+};
 
-async function getByUser(userId, options = {}) {
+const getByUser = async (userId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.findMany({
@@ -115,18 +115,18 @@ async function getByUser(userId, options = {}) {
       },
     },
   });
-}
+};
 
-async function decreaseCard(id, quantity, options = {}) {
+const decreaseCard = async (id, quantity, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.update({
     where: { id },
     data: { quantity: { decrement: quantity } },
   });
-}
+};
 
-async function increaseCard(id, quantity, options = {}) {
+const increaseCard = async (id, quantity, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.update({
@@ -136,9 +136,9 @@ async function increaseCard(id, quantity, options = {}) {
       status: "OWNED", // 아티클 삭제 시 상태도 OWNED로 복원
     },
   });
-}
+};
 
-async function create(data, options = {}) {
+const create = async (data, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
 
@@ -182,10 +182,10 @@ async function create(data, options = {}) {
       userPhotoCards,
     };
   });
-}
+};
 
 // ✅ 새로운 함수: 카드 생성 + 사용자 createCount 업데이트
-async function createWithUserUpdate(data) {
+const createWithUserUpdate = async (data) => {
   const {
     title,
     rank,
@@ -218,14 +218,14 @@ async function createWithUserUpdate(data) {
         photoCardId: photoCard.id,
         price,
         quantity: totalQuantity,
-        status: 'OWNED'
+        status: "OWNED",
       },
     });
 
     // 3. 사용자 createCount 차감
     await tx.user.update({
       where: { id: creatorId },
-      data: { createCount: { decrement: 1 } }
+      data: { createCount: { decrement: 1 } },
     });
 
     return {
@@ -233,15 +233,15 @@ async function createWithUserUpdate(data) {
       userPhotoCard,
     };
   });
-}
+};
 
-async function remove(id, options = {}) {
+const remove = async (id, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.delete({ where: { id } });
-}
+};
 
-export const findByUserAndCard = async (userId, cardId, options = {}) => {
+const findByUserAndCard = async (userId, cardId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.findFirst({
@@ -249,7 +249,7 @@ export const findByUserAndCard = async (userId, cardId, options = {}) => {
   });
 };
 
-export const updateQuantity = async (cardId, quantity, options = {}) => {
+const updateQuantity = async (cardId, quantity, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.update({
@@ -258,13 +258,13 @@ export const updateQuantity = async (cardId, quantity, options = {}) => {
   });
 };
 
-export const createUserPhotocard = async (data, options = {}) => {
+const createUserPhotocard = async (data, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.create({ data });
 };
 
-export const updateStatus = async (cardId, status, options = {}) => {
+const updateStatus = async (cardId, status, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.userPhotoCard.update({
@@ -273,7 +273,7 @@ export const updateStatus = async (cardId, status, options = {}) => {
   });
 };
 
-export const getPhotocardById = async (cardId, options = {}) => {
+const getPhotocardById = async (cardId, options = {}) => {
   const { tx } = options;
   const client = tx || prisma;
   return await client.photoCard.findUnique({ where: { id: cardId } });
@@ -292,4 +292,5 @@ export default {
   updateQuantity,
   createUserPhotocard,
   getPhotocardById,
+  updateStatus,
 };

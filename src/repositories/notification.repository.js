@@ -1,7 +1,7 @@
 import prisma from "../db/prisma/prisma.js";
 
 const getNotificationsByUserId = async (userId, page = 0, limit = 10) => {
-  const skip = (page) * limit;
+  const skip = page * limit;
 
   const userNotifications = await prisma.userNotification.findMany({
     where: {
@@ -17,7 +17,7 @@ const getNotificationsByUserId = async (userId, page = 0, limit = 10) => {
     take: limit,
   });
 
-  const formattedNotifications = userNotifications.map(item => ({
+  const formattedNotifications = userNotifications.map((item) => ({
     id: item.notification.id,
     message: item.notification.message,
     createdAt: item.createdAt,
@@ -50,7 +50,7 @@ const readNotificationByUserId = async (userId, notificationId) => {
   });
 };
 
-  // 시안에는 없지만 모두 읽음 처리 필요할까 싶어서.
+// 시안에는 없지만 모두 읽음 처리 필요할까 싶어서.
 const readAllNotificationsByUserId = async (userId) => {
   return await prisma.userNotification.updateMany({
     where: {
@@ -82,4 +82,10 @@ export const createNotification = async (message, userIds, options = {}) => {
   return newNotification;
 };
 
-export default { getNotificationsByUserId, getUnReadCountByUserId, readNotificationByUserId, readAllNotificationsByUserId, createNotification };
+export default {
+  getNotificationsByUserId,
+  getUnReadCountByUserId,
+  readNotificationByUserId,
+  readAllNotificationsByUserId,
+  createNotification,
+};

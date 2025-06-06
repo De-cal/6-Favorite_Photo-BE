@@ -1,0 +1,219 @@
+import articleService from "../services/article.service.js";
+
+// 포토카드 판매자 상세 불러오기
+const getById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const article = await articleService.getByIdWithDetails(id);
+    return res.status(200).json(article);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 포토카드 구매자 상세 불러오기
+const getByIdWithRelations = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const articleId = req.params.id;
+    const article = await articleService.getByIdWithRelations(
+      articleId,
+      userId,
+    );
+
+    res.status(200).json(article);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllSelling = async (req, res, next) => {
+  try {
+    const { keyword = "", page = 1, limit = 12 } = req.query;
+    const parsedPage = parseInt(page, 10); //정수로 세팅
+    const parsedLimit = parseInt(limit, 10); //정수로 세팅
+
+    const data = await articleService.getSellingCardsAll({
+      keyword,
+      page: parsedPage,
+      limit: parsedLimit,
+    });
+
+    return res.status(200).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+//판매 글 업로드
+const postArticle = async (req, res, next) => {
+  try {
+    const {
+      price,
+      totalQuantity,
+      exchangeText,
+      exchangeRank,
+      exchangeGenre,
+      userPhotoCardId,
+    } = req.body;
+
+    const article = await articleService.postArticle({
+      price,
+      totalQuantity,
+      exchangeText,
+      exchangeRank,
+      exchangeGenre,
+      userPhotoCardId,
+    });
+
+    return res.status(201).json(article);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getMyArticles = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { page, pageSize, rank, genre, keyword, sellingType, soldOut } =
+      req.query;
+    const result = await articleService.findMyCardArticles({
+      userId,
+      page,
+      pageSize,
+      rank,
+      genre,
+      keyword,
+      sellingType,
+      soldOut,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteArticle = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { id: articleId } = req.params;
+
+    // userId를 service에 전달하여 권한 확인
+    const result = await articleService.deleteArticle(articleId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "판매글이 성공적으로 삭제되었습니다.",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 포토카드 구매
+const purchaseArticle = async (req, res, next) => {
+  try {
+    const buyerId = req.user.id;
+    const articleId = req.params.id;
+    const { purchaseQuantity, totalPrice } = req.body;
+
+    const article = await articleService.purchaseArticle({
+      buyerId,
+      articleId,
+      purchaseQuantity,
+      totalPrice,
+    });
+
+    res.status(201).json(article);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 포토카드 교환 요청
+const exchangeArticle = async (req, res, next) => {
+  try {
+    const requesterUserId = req.user.id;
+    const articleId = req.params.id;
+    const { userPhotoCardId, description } = req.body;
+
+    const exchange = await articleService.exchangeArticle({
+      requesterUserId,
+      userPhotoCardId,
+      articleId,
+      description,
+    });
+
+    res.status(201).json(exchange);
+  } catch (e) {
+    next(e);
+  }
+};
+
+// 포토카드 교환 요청 취소 & 거절
+const cancelExchange = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const exchangeId = req.params.exchangeId;
+
+    await articleService.cancelExchange({ userId, exchangeId });
+
+    res.status(200).json({
+      message: "교환 요청이 정상적으로 취소되었습니다.",
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+// 포토카드 승인
+const putExchangeCard = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { exchangeId } = req.params;
+    const result = await articleService.putExchangeCard({
+      userId,
+      exchangeId,
+    });
+
+    res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
+//아티클 수정
+const patchArticle = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { id: articleId } = req.params;
+    const { price, totalQuantity, exchangeText, exchangeRank, exchangeGenre } =
+      req.body;
+    const article = await articleService.patchArticle(articleId, userId, {
+      price,
+      totalQuantity,
+      exchangeText,
+      exchangeRank,
+      exchangeGenre,
+    });
+    res.status(200).json(article);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default {
+  getById,
+  getByIdWithRelations,
+  getAllSelling,
+  deleteArticle,
+  getMyArticles,
+  exchangeArticle,
+  cancelExchange,
+  putExchangeCard,
+  patchArticle,
+  purchaseArticle,
+  postArticle,
+};

@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  nickname    String   @unique
+  pointAmount Int      @default(100) //가입축하금
+  createCount Int      @default(3) //월간 생성 가능 횟수
+  createdAt   DateTime @default(now())
+  googleId    String?  @unique
+
+  notifications UserNotification[]
+  userPhotoCard UserPhotoCard[]
+  photoCard     PhotoCard[]
+  requesterUser Exchange[]         @relation("requesterUser")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  message   String
+  createdAt DateTime @default(now())
+
+  users UserNotification[]
+}
+
+model UserNotification {
+  userId         String
+  notificationId String
+  isRead         Boolean @default(false)
+
+  user         User         @relation(fields: [userId], references: [id])
+  notification Notification @relation(fields: [notificationId], references: [id])
+  createdAt    DateTime     @default(now())
+
+  @@id([userId, notificationId]) ///복합유니크 
+}
+
+model PhotoCard {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  rank        RankList
+  genre       Genre
+  price       Int
+  imgUrl      String
+  creatorId   String
+  creator     User     @relation(fields: [creatorId], references: [id])
+  createdAt   DateTime @default(now())
+
+  userPhotoCard UserPhotoCard[]
+}
+
+enum RankList {
+  COMMON // 일반
+  RARE // 레어
+  SUPERRARE // 슈퍼레어
+  LEGENDARY // 레전더리
+}
+
+enum Genre {
+  LANDSCAPE // 풍경
+  PORTRAIT // 인물
+  ANIMAL // 동물
+  OBJECT // 사물
+  FOOD // 음식
+  ETC // 기타
+}
+
+model UserPhotoCard {
+  id          String              @id @default(uuid())
+  userId      String
+  photoCardId String
+  quantity    Int
+  price       Int //실제판매가격            
+  status      UserPhotoCardStatus @default(OWNED)
+  createdAt   DateTime            @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  photoCard PhotoCard @relation(fields: [photoCardId], references: [id])
+
+  cardArticle CardArticle[]
+  requester   Exchange[]    @relation("Exchangerequester")
+}
+
+enum UserPhotoCardStatus {
+  OWNED // 보유중  => 마이갤러리 
+  SELLING // 판매중   => 판매중
+  EXCHANGE_REQUESTED // 교환 요청  ->교환제시 대기중 
+  SOLDOUT // 품절 
+}
+
+model CardArticle {
+  id                String        @id @default(uuid())
+  price             Int
+  totalQuantity     Int
+  remainingQuantity Int
+  exchangeText      String
+  exchangeRank      RankList
+  exchangeGenre     Genre
+  userPhotoCardId   String
+  createdAt         DateTime      @default(now())
+  userPhotoCard     UserPhotoCard @relation(fields: [userPhotoCardId], references: [id])
+  exchange          Exchange[]    @relation("Exchangerecipient")
+}
+
+model Exchange {
+  id                 String   @id @default(uuid())
+  requesterUserId    String
+  requesterCardId    String
+  recipientArticleId String
+  description        String
+  createdAt          DateTime @default(now())
+
+  requesterCard    UserPhotoCard @relation("Exchangerequester", fields: [requesterCardId], references: [id])
+  recipientArticle CardArticle   @relation("Exchangerecipient", fields: [recipientArticleId], references: [id])
+  requesterUser    User          @relation("requesterUser", fields: [requesterUserId], references: [id])
+
+  @@unique([requesterUserId, recipientArticleId])
+}

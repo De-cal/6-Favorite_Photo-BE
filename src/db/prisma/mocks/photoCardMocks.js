@@ -7,6 +7,11 @@ function getRandomPrice(min, max) {
   return min + randomValue * 10;
 }
 
+// 1부터 7까지의 무작위 creatorId를 반환하는 함수
+function getRandomCreatorId() {
+  return Math.floor(Math.random() * 7) + 1;
+}
+
 export const PhotoCardMocks = [
   {
     title: "여우",
@@ -16,7 +21,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: getRandomPrice(300, 500),
     imgUrl: `${imgBaseUrl}/uploads/여우.jpg`,
-    creatorId: 4,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "앵무새",
@@ -26,7 +31,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: getRandomPrice(300, 500),
     imgUrl: `${imgBaseUrl}/uploads/앵무새.jpg`,
-    creatorId: 7,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "백호",
@@ -36,7 +41,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: getRandomPrice(800, 950),
     imgUrl: `${imgBaseUrl}/uploads/백호.jpg`,
-    creatorId: 1,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "종달새",
@@ -46,7 +51,7 @@ export const PhotoCardMocks = [
     genre: "ANIMAL",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/종달새.jpg`,
-    creatorId: 2,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "사막",
@@ -56,7 +61,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/사막.jpg`,
-    creatorId: 5,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "밤하늘의 별",
@@ -66,7 +71,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(500, 790),
     imgUrl: `${imgBaseUrl}/uploads/밤하늘의 별.jpg`,
-    creatorId: 3,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "웃고있는 남자",
@@ -76,7 +81,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/웃고있는 남자.jpg`,
-    creatorId: 6,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "아인슈타인",
@@ -86,7 +91,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: getRandomPrice(800, 950),
     imgUrl: `${imgBaseUrl}/uploads/아인슈타인.jpg`,
-    creatorId: 1,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "앉아있는 여자",
@@ -96,7 +101,7 @@ export const PhotoCardMocks = [
     genre: "PORTRAIT",
     price: getRandomPrice(300, 500),
     imgUrl: `${imgBaseUrl}/uploads/앉아있는 여자.jpg`,
-    creatorId: 5,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "후지산",
@@ -106,7 +111,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(300, 500),
     imgUrl: `${imgBaseUrl}/uploads/후지산.jpg`,
-    creatorId: 3,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "영국",
@@ -116,7 +121,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/영국.jpg`,
-    creatorId: 4,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "네덜란드",
@@ -126,7 +131,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/네덜란드.jpg`,
-    creatorId: 7,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "휴양지",
@@ -136,7 +141,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/휴양지.jpg`,
-    creatorId: 2,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "모래시계",
@@ -146,7 +151,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: getRandomPrice(300, 500),
     imgUrl: `${imgBaseUrl}/uploads/모래시계.jpg`,
-    creatorId: 6,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "핑크튜브",
@@ -156,7 +161,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/핑크튜브.jpg`,
-    creatorId: 1,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "호수",
@@ -166,7 +171,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/호수.png`,
-    creatorId: 5,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "선인장",
@@ -176,7 +181,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/선인장.jpg`,
-    creatorId: 3,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "지구본 모형",
@@ -186,7 +191,7 @@ export const PhotoCardMocks = [
     genre: "OBJECT",
     price: getRandomPrice(300, 500),
     imgUrl: `${imgBaseUrl}/uploads/지구본 모형.jpg`,
-    creatorId: 4,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "피자",
@@ -196,7 +201,7 @@ export const PhotoCardMocks = [
     genre: "FOOD",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/피자.jpg`,
-    creatorId: 7,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "샐러드",
@@ -206,7 +211,7 @@ export const PhotoCardMocks = [
     genre: "LANDSCAPE",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/샐러드.jpg`,
-    creatorId: 6,
+    creatorId: getRandomCreatorId(),
   },
   {
     title: "포케",
@@ -216,6 +221,6 @@ export const PhotoCardMocks = [
     genre: "FOOD",
     price: getRandomPrice(0, 300),
     imgUrl: `${imgBaseUrl}/uploads/포케.jpg`,
-    creatorId: 1,
+    creatorId: getRandomCreatorId(),
   },
 ];

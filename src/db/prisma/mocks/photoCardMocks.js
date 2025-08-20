@@ -1,4 +1,4 @@
-const imgBaseUrl = "https://six-favorite-photo-team1-server.onrender.com";
+const imgBaseUrl = "https://favorite-photo-server.onrender.com";
 // const imgBaseUrl = "http://localhost:5050";
 
 export const PhotoCardMocks = [

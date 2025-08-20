@@ -12,10 +12,7 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "../uploads"));
   },
   filename: function (req, file, cb) {
-    cb(
-      null,
-      `https://favorite-photo-server.onrender.com/uploads/${file.originalname}`,
-    );
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 

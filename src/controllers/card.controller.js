@@ -1,6 +1,5 @@
 import cardService from "../services/card.service.js";
 
-
 // 단일 포토카드 조회
 const getCardById = async (req, res, next) => {
   try {
@@ -38,10 +37,10 @@ const getUserCreateStatus = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const result = await cardService.getUserCreateStatus(userId);
-    
+
     return res.status(200).json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     console.error("생성 상태 조회 에러:", error);
@@ -54,7 +53,11 @@ const createCard = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { title, rank, genre, price, totalQuantity, description } = req.body;
-    const imagePath = req.file?.filename;
+    const filename = req.file?.filename;
+
+    const imagePath = filename
+      ? `https://favorite-photo-server.onrender.com/uploads/${filename}`
+      : null;
 
     if (!userId) {
       return res.status(401).json({ message: "로그인이 필요합니다." });

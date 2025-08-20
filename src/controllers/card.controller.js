@@ -53,11 +53,7 @@ const createCard = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { title, rank, genre, price, totalQuantity, description } = req.body;
-    const filename = req.file?.filename;
-
-    const imagePath = filename
-      ? `https://favorite-photo-server.onrender.com/uploads/${filename}`
-      : null;
+    const imagePath = req.file?.filename;
 
     if (!userId) {
       return res.status(401).json({ message: "로그인이 필요합니다." });

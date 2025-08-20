@@ -42,16 +42,26 @@ function getRandomExchangeInfo(currentGenre) {
   return { genre, text };
 }
 
+// 주어진 배열에서 n개의 무작위 요소를 반환하는 함수
+function getRandomElements(arr, n) {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+
+// 1부터 max(포함)까지의 무작위 정수를 반환하는 함수
+function getRandomQuantity(max) {
+  return Math.floor(Math.random() * max) + 1;
+}
+
 async function main() {
   console.log("🧹 Clearing old data...");
   await prisma.exchange.deleteMany();
   await prisma.cardArticle.deleteMany();
   await prisma.userPhotoCard.deleteMany();
+  await prisma.userNotification.deleteMany();
+  await prisma.notification.deleteMany();
   await prisma.photoCard.deleteMany();
-  await prisma.userNotification.deleteMany(); // ✅ 먼저 관계 테이블 제거
-  await prisma.notification.deleteMany(); //
-  await prisma.exchange.deleteMany(); //
-  await prisma.user.deleteMany(); // ✅ 이후 user 삭제
+  await prisma.user.deleteMany();
 
   // 이후 시드 데이터 생성...
 
@@ -88,75 +98,78 @@ async function main() {
     createdPhotoCards.push(created);
   }
 
-  console.log("📦 Creating user cards & articles...");
+  console.log("📦 Creating user cards...");
+  const allUserPhotoCards = [];
   for (const user of createdUsers) {
-    for (const card of createdPhotoCards) {
-      // 판매용 카드 3장
-      const sellingCard = await prisma.userPhotoCard.create({
+    const randomCards = getRandomElements(createdPhotoCards, 5);
+
+    for (const card of randomCards) {
+      // 50% 확률로 판매용(SELLING) 또는 보유용(OWNED)으로 설정
+      const isSelling = Math.random() < 0.5;
+      const quantity = getRandomQuantity(10); // 1~10 사이의 무작위 수량 할당
+
+      const userPhotoCard = await prisma.userPhotoCard.create({
         data: {
           userId: user.id,
           photoCardId: card.id,
-          quantity: 3,
+          quantity: quantity,
           price: card.price,
-          status: "SELLING",
+          status: isSelling ? "SELLING" : "OWNED",
         },
       });
-
-      const { genre: exchangeGenre, text: exchangeText } =
-        getRandomExchangeInfo(card.genre);
-
-      await prisma.cardArticle.create({
-        data: {
-          price: sellingCard.price,
-          totalQuantity: 3,
-          remainingQuantity: 3,
-          exchangeText,
-          exchangeRank: card.rank,
-          exchangeGenre,
-          userPhotoCardId: sellingCard.id,
-        },
-      });
-
-      // 보유용 카드 2장
-      await prisma.userPhotoCard.create({
-        data: {
-          userId: user.id,
-          photoCardId: card.id,
-          quantity: 2,
-          price: card.price,
-          status: "OWNED",
-        },
-      });
+      if (isSelling) {
+        allUserPhotoCards.push(userPhotoCard);
+      }
     }
   }
 
-  console.log("💤 Marking 5 random SELLING cards as sold out per user...");
-  for (const user of createdUsers) {
-    const sellingCards = await prisma.userPhotoCard.findMany({
-      where: {
-        userId: user.id,
-        status: "SELLING",
+  console.log("📝 Creating card articles from a random subset...");
+  const uniqueSellingCards = Array.from(
+    new Set(allUserPhotoCards.map((card) => card.photoCardId)),
+  ).map((id) => allUserPhotoCards.find((card) => card.photoCardId === id));
+
+  const articlesToCreate = getRandomElements(uniqueSellingCards, 20);
+
+  const createdArticles = [];
+  for (const articleCard of articlesToCreate) {
+    const photoCard = createdPhotoCards.find(
+      (pc) => pc.id === articleCard.photoCardId,
+    );
+    const { genre: exchangeGenre, text: exchangeText } = getRandomExchangeInfo(
+      photoCard.genre,
+    );
+
+    const createdArticle = await prisma.cardArticle.create({
+      data: {
+        price: articleCard.price,
+        totalQuantity: articleCard.quantity,
+        remainingQuantity: articleCard.quantity,
+        exchangeText,
+        exchangeRank: photoCard.rank,
+        exchangeGenre,
+        userPhotoCardId: articleCard.id,
       },
-      select: { id: true },
+    });
+    createdArticles.push(createdArticle);
+  }
+
+  console.log("💤 Marking random articles as sold out...");
+  const soldOutArticles = getRandomElements(createdArticles, 5);
+  for (const article of soldOutArticles) {
+    await prisma.cardArticle.update({
+      where: { id: article.id },
+      data: {
+        remainingQuantity: 0,
+      },
     });
 
-    const shuffled = sellingCards.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 5);
-
-    for (const card of selected) {
-      await prisma.userPhotoCard.update({
-        where: { id: card.id },
-        data: {
-          quantity: 0,
-          status: "SOLDOUT", // ⬅️ 여기 추가
-        },
-      });
-
-      await prisma.cardArticle.updateMany({
-        where: { userPhotoCardId: card.id },
-        data: { remainingQuantity: 0 },
-      });
-    }
+    await prisma.userPhotoCard.update({
+      where: { id: article.userPhotoCardId },
+      data: {
+        quantity: 0,
+        status: "SOLDOUT",
+      },
+    });
   }
 
   console.log("✅ Seed complete!");

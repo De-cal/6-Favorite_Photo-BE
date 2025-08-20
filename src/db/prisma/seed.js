@@ -138,7 +138,7 @@ async function main() {
     }
   }
 
-  console.log("💤 Marking 5 random SELLING cards as sold out per user...");
+  console.log("💤 Marking 1 random SELLING cards as sold out per user...");
   for (const user of createdUsers) {
     const sellingCards = await prisma.userPhotoCard.findMany({
       where: {
@@ -149,7 +149,7 @@ async function main() {
     });
 
     const shuffled = sellingCards.sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 5);
+    const selected = shuffled.slice(0, 1);
 
     for (const card of selected) {
       await prisma.userPhotoCard.update({

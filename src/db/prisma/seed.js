@@ -42,16 +42,21 @@ function getRandomExchangeInfo(currentGenre) {
   return { genre, text };
 }
 
+// 주어진 배열에서 n개의 무작위 요소를 반환하는 함수
+function getRandomElements(arr, n) {
+  const shuffled = [...arr].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+
 async function main() {
   console.log("🧹 Clearing old data...");
   await prisma.exchange.deleteMany();
   await prisma.cardArticle.deleteMany();
   await prisma.userPhotoCard.deleteMany();
+  await prisma.userNotification.deleteMany();
+  await prisma.notification.deleteMany();
   await prisma.photoCard.deleteMany();
-  await prisma.userNotification.deleteMany(); // ✅ 먼저 관계 테이블 제거
-  await prisma.notification.deleteMany(); //
-  await prisma.exchange.deleteMany(); //
-  await prisma.user.deleteMany(); // ✅ 이후 user 삭제
+  await prisma.user.deleteMany();
 
   // 이후 시드 데이터 생성...
 
@@ -89,8 +94,11 @@ async function main() {
   }
 
   console.log("📦 Creating user cards & articles...");
+  // 각 사용자에게 무작위로 3개의 카드를 할당합니다.
   for (const user of createdUsers) {
-    for (const card of createdPhotoCards) {
+    const randomCards = getRandomElements(createdPhotoCards, 3); // 3개로 수정
+
+    for (const card of randomCards) {
       // 판매용 카드 3장
       const sellingCard = await prisma.userPhotoCard.create({
         data: {
@@ -148,7 +156,7 @@ async function main() {
         where: { id: card.id },
         data: {
           quantity: 0,
-          status: "SOLDOUT", // ⬅️ 여기 추가
+          status: "SOLDOUT",
         },
       });
 
